@@ -2,13 +2,14 @@ import { gameConfig } from "../config/gameConfig";
 import { Character } from "../entities/Character";
 import { PositionMarker } from "../entities/PositionMarker";
 import { MovementSystem } from "../systems/MovementSystem";
+import { GridSystem } from "../systems/GridSystem";
 
 export class GameScene extends Phaser.Scene {
   private character?: Character;
   private positionMarker?: PositionMarker;
   private systems: {
     movement?: MovementSystem;
-    grid?: any;
+    grid?: GridSystem;
     camera?: any;
     debug?: any;
   } = {};
@@ -76,6 +77,11 @@ export class GameScene extends Phaser.Scene {
         this.positionMarker
       );
     }
+
+    // Initialize grid system
+    if (this.character) {
+      this.systems.grid = new GridSystem(this, this.character);
+    }
   }
 
   private setupInput(): void {
@@ -94,5 +100,9 @@ export class GameScene extends Phaser.Scene {
 
   getPositionMarker(): PositionMarker | undefined {
     return this.positionMarker;
+  }
+
+  getGridSystem(): GridSystem | undefined {
+    return this.systems.grid;
   }
 }

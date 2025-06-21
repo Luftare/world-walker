@@ -60,7 +60,7 @@ describe("HexagonUtils", () => {
       const worldCoord = HexagonUtils.hexagonToWorld(hexCoord.q, hexCoord.r);
 
       expect(worldCoord.x).toBeGreaterThan(0);
-      expect(worldCoord.y).toBeCloseTo(0, 1);
+      expect(worldCoord.y).toBeCloseTo(0, 1); // Flat-top coordinate system has Y≈0 for (1,0)
     });
   });
 

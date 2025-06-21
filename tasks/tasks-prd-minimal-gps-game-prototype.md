@@ -44,7 +44,7 @@
   - [x] 3.4 Integrate movement system with game scene
 - [ ] 4.0 Hexagonal Grid System
   - [x] 4.1 Create HexagonUtils for grid calculations
-  - [ ] 4.2 Create GridSystem for dynamic hexagon management
+  - [x] 4.2 Create GridSystem for dynamic hexagon management
   - [ ] 4.3 Create Feature entity (green circles)
   - [ ] 4.4 Implement hexagon population logic
   - [ ] 4.5 Add grid persistence for populated hexagons

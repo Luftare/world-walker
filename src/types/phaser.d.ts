@@ -17,12 +17,17 @@ declare namespace Phaser {
 
     class Graphics extends GameObject {
       fillStyle(color: number, alpha?: number): Graphics;
-      lineStyle(width: number, color: number): Graphics;
+      lineStyle(width: number, color: number, alpha?: number): Graphics;
       fillCircle(x: number, y: number, radius: number): Graphics;
       strokeCircle(x: number, y: number, radius: number): Graphics;
       setPosition(x: number, y: number): Graphics;
       clear(): Graphics;
       destroy(): void;
+      beginPath(): Graphics;
+      moveTo(x: number, y: number): Graphics;
+      lineTo(x: number, y: number): Graphics;
+      closePath(): Graphics;
+      strokePath(): Graphics;
     }
 
     class GameObject {

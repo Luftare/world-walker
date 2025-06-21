@@ -21,7 +21,7 @@ export class HexagonUtils {
   ): Array<{ x: number; y: number }> {
     const points: Array<{ x: number; y: number }> = [];
     for (let i = 0; i < 6; i++) {
-      const angle = i * this.HEXAGON_ANGLE;
+      const angle = i * this.HEXAGON_ANGLE + Math.PI / 2;
       points.push({
         x: centerX + radius * Math.cos(angle),
         y: centerY + radius * Math.sin(angle),
