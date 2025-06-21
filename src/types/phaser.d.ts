@@ -13,6 +13,7 @@ declare namespace Phaser {
   namespace GameObjects {
     class GameObjectFactory {
       graphics(): Graphics;
+      text(x: number, y: number, text: string, style?: any): Text;
     }
 
     class Graphics extends GameObject {
@@ -28,6 +29,15 @@ declare namespace Phaser {
       lineTo(x: number, y: number): Graphics;
       closePath(): Graphics;
       strokePath(): Graphics;
+      setVisible(visible: boolean): Graphics;
+    }
+
+    class Text extends GameObject {
+      setText(text: string): Text;
+      setScrollFactor(x: number, y?: number): Text;
+      setDepth(depth: number): Text;
+      setVisible(visible: boolean): Text;
+      destroy(): void;
     }
 
     class GameObject {
@@ -38,11 +48,25 @@ declare namespace Phaser {
   namespace Input {
     class InputPlugin {
       on(event: string, callback: (pointer: Pointer) => void): void;
+      keyboard: Phaser.Input.Keyboard.KeyboardPlugin;
     }
 
     class Pointer {
       worldX: number;
       worldY: number;
+    }
+
+    namespace Keyboard {
+      class KeyboardPlugin {
+        addKey(key: string): Key;
+      }
+
+      class Key {
+        isDown: boolean;
+        on(event: string, callback: () => void): void;
+      }
+
+      function JustDown(key: Key): boolean;
     }
   }
 

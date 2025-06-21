@@ -4,6 +4,7 @@ import { PositionMarker } from "../entities/PositionMarker";
 import { MovementSystem } from "../systems/MovementSystem";
 import { GridSystem } from "../systems/GridSystem";
 import { CameraSystem } from "../systems/CameraSystem";
+import { DebugSystem } from "../systems/DebugSystem";
 
 export class GameScene extends Phaser.Scene {
   private character?: Character;
@@ -12,7 +13,7 @@ export class GameScene extends Phaser.Scene {
     movement?: MovementSystem;
     grid?: GridSystem;
     camera?: CameraSystem;
-    debug?: any;
+    debug?: DebugSystem;
   } = {};
 
   constructor() {
@@ -88,6 +89,16 @@ export class GameScene extends Phaser.Scene {
     if (this.character) {
       this.systems.camera = new CameraSystem(this, this.character);
     }
+
+    // Initialize debug system
+    if (this.character && this.positionMarker && gameConfig.devMode) {
+      this.systems.debug = new DebugSystem(
+        this,
+        this.character,
+        this.positionMarker,
+        this.systems.camera
+      );
+    }
   }
 
   private setupInput(): void {
@@ -114,5 +125,9 @@ export class GameScene extends Phaser.Scene {
 
   getCameraSystem(): CameraSystem | undefined {
     return this.systems.camera;
+  }
+
+  getDebugSystem(): DebugSystem | undefined {
+    return this.systems.debug;
   }
 }
