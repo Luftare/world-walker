@@ -30,6 +30,7 @@ declare namespace Phaser {
       closePath(): Graphics;
       strokePath(): Graphics;
       setVisible(visible: boolean): Graphics;
+      rotation: number;
     }
 
     class Text extends GameObject {
@@ -42,6 +43,7 @@ declare namespace Phaser {
 
     class GameObject {
       setPosition(x: number, y: number): GameObject;
+      rotation: number;
     }
   }
 

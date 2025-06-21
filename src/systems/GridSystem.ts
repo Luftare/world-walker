@@ -209,4 +209,16 @@ export class GridSystem {
     });
     return features;
   }
+
+  // Update feature rotations to counter camera rotation
+  updateFeatureRotations(cameraRotation: number): void {
+    this.populatedHexagons.forEach((populatedHex) => {
+      if (
+        populatedHex.featureEntity &&
+        !populatedHex.featureEntity.isCollected()
+      ) {
+        populatedHex.featureEntity.updateRotation(cameraRotation);
+      }
+    });
+  }
 }

@@ -45,6 +45,12 @@ export class GameScene extends Phaser.Scene {
         system.update(time, delta);
       }
     });
+
+    // Update feature rotations to counter camera rotation
+    if (this.systems.camera && this.systems.grid) {
+      const cameraRotation = this.systems.camera.getRotation();
+      this.systems.grid.updateFeatureRotations(cameraRotation);
+    }
   }
 
   private setupWorld(): void {

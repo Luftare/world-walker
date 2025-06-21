@@ -38,6 +38,8 @@ export class DebugSystem {
       A: this.scene.input.keyboard!.addKey("A"),
       S: this.scene.input.keyboard!.addKey("S"),
       D: this.scene.input.keyboard!.addKey("D"),
+      Q: this.scene.input.keyboard!.addKey("Q"),
+      E: this.scene.input.keyboard!.addKey("E"),
     };
 
     // Add debug toggle key (F12)
@@ -91,6 +93,21 @@ export class DebugSystem {
       newX += moveDistance;
     }
 
+    // Handle QE camera rotation
+    if (this.cameraSystem) {
+      const rotationSpeed = 0.05;
+      let currentRotation = this.cameraSystem.getRotation();
+
+      if (this.keys["Q"] && this.keys["Q"].isDown) {
+        currentRotation -= rotationSpeed;
+        this.cameraSystem.setTargetRotation(currentRotation);
+      }
+      if (this.keys["E"] && this.keys["E"].isDown) {
+        currentRotation += rotationSpeed;
+        this.cameraSystem.setTargetRotation(currentRotation);
+      }
+    }
+
     // Update position marker if moved
     if (newX !== markerPos.x || newY !== markerPos.y) {
       this.positionMarker.setPosition(newX, newY);
@@ -109,14 +126,20 @@ export class DebugSystem {
         Math.pow(markerPos.y - characterPos.y, 2)
     );
 
+    const cameraRotation = this.cameraSystem
+      ? this.cameraSystem.getRotation()
+      : 0;
+
     const debugInfo = [
       "DEBUG MODE (F12 to toggle)",
       `Character: (${characterPos.x.toFixed(1)}, ${characterPos.y.toFixed(1)})`,
       `Marker: (${markerPos.x.toFixed(1)}, ${markerPos.y.toFixed(1)})`,
       `Distance: ${distance.toFixed(1)}`,
+      `Camera Rotation: ${(cameraRotation * (180 / Math.PI)).toFixed(1)}°`,
       "",
       "Controls:",
       "WASD - Move marker",
+      "Q/E - Rotate camera",
     ];
 
     this.debugText.setText(debugInfo.join("\n"));

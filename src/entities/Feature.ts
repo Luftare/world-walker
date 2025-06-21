@@ -8,6 +8,7 @@ export class Feature {
   private y: number;
   private hexCoord: HexagonCoord;
   private collected: boolean = false;
+  private baseRotation: number = 0; // Track base rotation for counter-rotation
 
   constructor(
     scene: Phaser.Scene,
@@ -31,15 +32,42 @@ export class Feature {
       return;
     }
 
-    // Draw feature as green circle with border
-    this.graphics.fillStyle(gameConfig.colors.feature);
-    this.graphics.lineStyle(2, gameConfig.colors.featureBorder);
-    this.graphics.fillCircle(0, 0, gameConfig.featureRadius * gameConfig.scale);
-    this.graphics.strokeCircle(
-      0,
-      0,
-      gameConfig.featureRadius * gameConfig.scale
-    );
+    const scale = gameConfig.scale;
+    const radius = gameConfig.featureRadius * scale;
+
+    // Draw smiley face
+    // Face (yellow circle)
+    this.graphics.fillStyle(0xffff00);
+    this.graphics.lineStyle(2, 0xcc9900);
+    this.graphics.fillCircle(0, 0, radius);
+    this.graphics.strokeCircle(0, 0, radius);
+
+    // Eyes (black circles)
+    const eyeOffset = radius * 0.35;
+    const eyeRadius = radius * 0.15;
+    this.graphics.fillStyle(0x000000);
+    this.graphics.fillCircle(-eyeOffset, -eyeOffset * 0.5, eyeRadius);
+    this.graphics.fillCircle(eyeOffset, -eyeOffset * 0.5, eyeRadius);
+
+    // Mouth (simple curved line using connected line segments)
+    this.graphics.lineStyle(3, 0x000000);
+    this.graphics.beginPath();
+    const mouthRadius = radius * 0.4;
+    const mouthCenterY = eyeOffset * 0.2;
+    const segments = 8;
+
+    for (let i = 0; i <= segments; i++) {
+      const angle = (i / segments) * Math.PI;
+      const x = -mouthRadius + (2 * mouthRadius * i) / segments;
+      const y = mouthCenterY + Math.sin(angle) * mouthRadius * 0.5;
+
+      if (i === 0) {
+        this.graphics.moveTo(x, y);
+      } else {
+        this.graphics.lineTo(x, y);
+      }
+    }
+    this.graphics.strokePath();
 
     // Set position
     this.graphics.setPosition(this.x, this.y);
@@ -61,6 +89,12 @@ export class Feature {
 
   isCollected(): boolean {
     return this.collected;
+  }
+
+  // Update rotation to counter camera rotation
+  updateRotation(cameraRotation: number): void {
+    // Counter-rotate to maintain smiley face orientation
+    this.graphics.rotation = -cameraRotation;
   }
 
   collect(): void {
