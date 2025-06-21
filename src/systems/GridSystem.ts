@@ -143,21 +143,22 @@ export class GridSystem {
   }
 
   private drawHexagon(hex: HexagonCoord): void {
-    if (!this.gridGraphics) return;
+    const graphics = this.gridGraphics;
+    if (!graphics) return;
 
     const worldPos = HexagonUtils.hexagonToWorld(hex.q, hex.r);
     const points = HexagonUtils.calculateHexagonPoints(worldPos.x, worldPos.y);
 
     // Draw hexagon outline
-    this.gridGraphics.beginPath();
-    this.gridGraphics.moveTo(points[0].x, points[0].y);
+    graphics.beginPath();
+    graphics.moveTo(points[0]!.x, points[0]!.y);
 
     for (let i = 1; i < points.length; i++) {
-      this.gridGraphics.lineTo(points[i].x, points[i].y);
+      graphics.lineTo(points[i]!.x, points[i]!.y);
     }
 
-    this.gridGraphics.closePath();
-    this.gridGraphics.strokePath();
+    graphics.closePath();
+    graphics.strokePath();
 
     // Draw small dot for populated hexagons (but not features, since they're now real entities)
     const hexKey = this.getHexagonKey(hex);
@@ -165,8 +166,8 @@ export class GridSystem {
 
     if (populatedHex && !populatedHex.hasFeature) {
       // Only draw dot for populated hexagons without features
-      this.gridGraphics.fillStyle(gameConfig.colors.grid, 0.3);
-      this.gridGraphics.fillCircle(worldPos.x, worldPos.y, 2);
+      graphics.fillStyle(gameConfig.colors.grid, 0.3);
+      graphics.fillCircle(worldPos.x, worldPos.y, 2);
     }
   }
 
