@@ -32,8 +32,8 @@
   - [x] 1.3 Set up basic HTML structure with Phaser 3
   - [x] 1.4 Create project directory structure
 - [ ] 2.0 Core Game Scene and Rendering
-  - [ ] 2.1 Create main GameScene class with Phaser 3 setup
-  - [ ] 2.2 Implement basic game loop and update cycle
+  - [x] 2.1 Create main GameScene class with Phaser 3 setup
+  - [x] 2.2 Implement basic game loop and update cycle
   - [ ] 2.3 Create Character entity with gray circle rendering
   - [ ] 2.4 Create PositionMarker entity with semi-transparent rendering
   - [ ] 2.5 Add entities to scene and verify rendering

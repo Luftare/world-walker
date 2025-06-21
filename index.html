@@ -39,10 +39,9 @@
 
     <!-- Game Scripts -->
     <script type="module">
-      // Import game configuration
-      import { gameConfig } from "./dist/config/gameConfig.js";
+      import { gameConfig } from "./src/config/gameConfig.ts";
+      import { GameScene } from "./src/scenes/GameScene.ts";
 
-      // Game configuration for Phaser
       const config = {
         type: Phaser.AUTO,
         width: 800,
@@ -56,24 +55,10 @@
             debug: gameConfig.devMode,
           },
         },
-        scene: {
-          preload: function () {
-            // Preload assets here
-          },
-          create: function () {
-            // Create game objects here
-            console.log("Game scene created");
-          },
-          update: function () {
-            // Game loop update
-          },
-        },
+        scene: GameScene,
       };
 
-      // Create the game instance
       const game = new Phaser.Game(config);
-
-      // Remove loading message when game is ready
       game.events.once("ready", () => {
         document.getElementById("loading").style.display = "none";
       });
