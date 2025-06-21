@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GPS Game Prototype</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: #000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        font-family: Arial, sans-serif;
+      }
+
+      #game-container {
+        border: 2px solid #333;
+        border-radius: 8px;
+        overflow: hidden;
+      }
+
+      #loading {
+        color: #fff;
+        text-align: center;
+        padding: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="game-container">
+      <div id="loading">Loading GPS Game Prototype...</div>
+    </div>
+
+    <!-- Phaser 3 Library -->
+    <script src="node_modules/phaser/dist/phaser.min.js"></script>
+
+    <!-- Game Scripts -->
+    <script type="module">
+      // Import game configuration
+      import { gameConfig } from "./dist/config/gameConfig.js";
+
+      // Game configuration for Phaser
+      const config = {
+        type: Phaser.AUTO,
+        width: 800,
+        height: 600,
+        parent: "game-container",
+        backgroundColor: gameConfig.colors.background,
+        physics: {
+          default: "arcade",
+          arcade: {
+            gravity: { y: 0 },
+            debug: gameConfig.devMode,
+          },
+        },
+        scene: {
+          preload: function () {
+            // Preload assets here
+          },
+          create: function () {
+            // Create game objects here
+            console.log("Game scene created");
+          },
+          update: function () {
+            // Game loop update
+          },
+        },
+      };
+
+      // Create the game instance
+      const game = new Phaser.Game(config);
+
+      // Remove loading message when game is ready
+      game.events.once("ready", () => {
+        document.getElementById("loading").style.display = "none";
+      });
+    </script>
+  </body>
+</html>

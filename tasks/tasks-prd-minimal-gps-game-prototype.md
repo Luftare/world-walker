@@ -3,6 +3,8 @@
 ## Relevant Files
 
 - `src/config/gameConfig.ts` - Contains all game configuration parameters and settings with TypeScript types
+- `dist/config/gameConfig.js` - Compiled JavaScript version of game configuration
+- `index.html` - Main HTML file with Phaser 3 setup and game initialization
 - `src/scenes/GameScene.ts` - Main game scene with Phaser 3 setup and game loop
 - `src/systems/MovementSystem.ts` - Handles character movement towards position marker
 - `src/systems/GridSystem.ts` - Manages hexagonal grid generation and feature spawning
@@ -13,7 +15,6 @@
 - `src/entities/Feature.ts` - Generic feature entity (green circles) for hexagons
 - `src/utils/HexagonUtils.ts` - Utility functions for hexagonal grid calculations
 - `src/utils/CoordinateUtils.ts` - Coordinate conversion and distance calculations
-- `index.html` - Main HTML file with Phaser 3 setup
 - `package.json` - Project dependencies and scripts
 - `tsconfig.json` - TypeScript configuration
 - `.gitignore` - Git ignore rules for the project
@@ -28,7 +29,7 @@
 - [ ] 1.0 Project Setup and Configuration
   - [x] 1.1 Initialize project with package.json and dependencies
   - [x] 1.2 Create game configuration file with all parameters
-  - [ ] 1.3 Set up basic HTML structure with Phaser 3
+  - [x] 1.3 Set up basic HTML structure with Phaser 3
   - [ ] 1.4 Create project directory structure
 - [ ] 2.0 Core Game Scene and Rendering
   - [ ] 2.1 Create main GameScene class with Phaser 3 setup
