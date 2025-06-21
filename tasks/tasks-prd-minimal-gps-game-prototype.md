@@ -31,17 +31,17 @@
   - [x] 1.2 Create game configuration file with all parameters
   - [x] 1.3 Set up basic HTML structure with Phaser 3
   - [x] 1.4 Create project directory structure
-- [ ] 2.0 Core Game Scene and Rendering
+- [x] 2.0 Core Game Scene and Rendering
   - [x] 2.1 Create main GameScene class with Phaser 3 setup
   - [x] 2.2 Implement basic game loop and update cycle
   - [x] 2.3 Create Character entity with gray circle rendering
   - [x] 2.4 Create PositionMarker entity with semi-transparent rendering
-  - [ ] 2.5 Add entities to scene and verify rendering
-- [ ] 3.0 Character Movement System
-  - [ ] 3.1 Create MovementSystem class
-  - [ ] 3.2 Implement smooth movement towards position marker
-  - [ ] 3.3 Add overshoot detection logic for stopping
-  - [ ] 3.4 Integrate movement system with game scene
+  - [x] 2.5 Add entities to scene and verify rendering
+- [x] 3.0 Character Movement System
+  - [x] 3.1 Create MovementSystem class
+  - [x] 3.2 Implement smooth movement towards position marker
+  - [x] 3.3 Add overshoot detection logic for stopping
+  - [x] 3.4 Integrate movement system with game scene
 - [ ] 4.0 Hexagonal Grid System
   - [ ] 4.1 Create HexagonUtils for grid calculations
   - [ ] 4.2 Create GridSystem for dynamic hexagon management

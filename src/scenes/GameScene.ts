@@ -1,12 +1,13 @@
 import { gameConfig } from "../config/gameConfig";
 import { Character } from "../entities/Character";
 import { PositionMarker } from "../entities/PositionMarker";
+import { MovementSystem } from "../systems/MovementSystem";
 
 export class GameScene extends Phaser.Scene {
   private character?: Character;
   private positionMarker?: PositionMarker;
   private systems: {
-    movement?: any;
+    movement?: MovementSystem;
     grid?: any;
     camera?: any;
     debug?: any;
@@ -18,25 +19,20 @@ export class GameScene extends Phaser.Scene {
 
   override preload(): void {
     // Preload any assets here
-    console.log("GameScene: Preloading assets...");
   }
 
   override create(): void {
-    console.log("GameScene: Creating game objects...");
-
     // Set up the game world
     this.setupWorld();
-
-    // Initialize game systems
-    this.initializeSystems();
 
     // Create initial game entities
     this.createEntities();
 
+    // Initialize game systems
+    this.initializeSystems();
+
     // Set up input handling
     this.setupInput();
-
-    console.log("GameScene: Setup complete");
   }
 
   override update(time: number, delta: number): void {
@@ -56,12 +52,6 @@ export class GameScene extends Phaser.Scene {
     this.cameras.main.setBackgroundColor(gameConfig.colors.background);
   }
 
-  private initializeSystems(): void {
-    // Initialize game systems here
-    // These will be implemented in later tasks
-    console.log("GameScene: Initializing systems...");
-  }
-
   private createEntities(): void {
     // Create character using the Character entity class
     this.character = new Character(
@@ -76,8 +66,16 @@ export class GameScene extends Phaser.Scene {
       gameConfig.world.startLocation.x,
       gameConfig.world.startLocation.y
     );
+  }
 
-    console.log("GameScene: Entities created");
+  private initializeSystems(): void {
+    // Initialize movement system
+    if (this.character && this.positionMarker) {
+      this.systems.movement = new MovementSystem(
+        this.character,
+        this.positionMarker
+      );
+    }
   }
 
   private setupInput(): void {
@@ -85,13 +83,8 @@ export class GameScene extends Phaser.Scene {
     this.input.on("pointerdown", (pointer: Phaser.Input.Pointer) => {
       if (this.positionMarker) {
         this.positionMarker.setPosition(pointer.worldX, pointer.worldY);
-        console.log(
-          `Position marker moved to: ${pointer.worldX}, ${pointer.worldY}`
-        );
       }
     });
-
-    console.log("GameScene: Input setup complete");
   }
 
   // Public methods for other systems to access game objects
