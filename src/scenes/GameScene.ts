@@ -3,6 +3,7 @@ import { Character } from "../entities/Character";
 import { PositionMarker } from "../entities/PositionMarker";
 import { MovementSystem } from "../systems/MovementSystem";
 import { GridSystem } from "../systems/GridSystem";
+import { CameraSystem } from "../systems/CameraSystem";
 
 export class GameScene extends Phaser.Scene {
   private character?: Character;
@@ -10,7 +11,7 @@ export class GameScene extends Phaser.Scene {
   private systems: {
     movement?: MovementSystem;
     grid?: GridSystem;
-    camera?: any;
+    camera?: CameraSystem;
     debug?: any;
   } = {};
 
@@ -82,6 +83,11 @@ export class GameScene extends Phaser.Scene {
     if (this.character) {
       this.systems.grid = new GridSystem(this, this.character);
     }
+
+    // Initialize camera system
+    if (this.character) {
+      this.systems.camera = new CameraSystem(this, this.character);
+    }
   }
 
   private setupInput(): void {
@@ -104,5 +110,9 @@ export class GameScene extends Phaser.Scene {
 
   getGridSystem(): GridSystem | undefined {
     return this.systems.grid;
+  }
+
+  getCameraSystem(): CameraSystem | undefined {
+    return this.systems.camera;
   }
 }

@@ -65,6 +65,18 @@ declare namespace Phaser {
 
     class Camera {
       setBackgroundColor(color: number): void;
+      centerOn(x: number, y: number): void;
+      setZoom(zoom: number): void;
+      setRotation(rotation: number): void;
+      setBounds(x: number, y: number, width: number, height: number): void;
+      removeBounds(): void;
+      shake(duration: number, intensity: number): void;
+      flash(duration: number, red: number, green: number, blue: number): void;
+      scrollX: number;
+      scrollY: number;
+      width: number;
+      height: number;
+      zoom: number;
     }
   }
 
