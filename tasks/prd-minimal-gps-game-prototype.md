@@ -29,7 +29,7 @@ This PRD defines the development of a minimal prototype for a GPS-based adventur
 1. **Character Movement**
 
    - Character must move smoothly towards the position marker at a fixed velocity
-   - Character must stop when reaching the position marker (no oscillation)
+   - Character must stop when the next movement step would take it further from the target than its current position
    - Character must be represented as a gray circle with a border
    - Movement speed must be configurable (default: 2 meters/second)
 
@@ -110,9 +110,8 @@ This PRD defines the development of a minimal prototype for a GPS-based adventur
 
 1. **Feature Variety**: Should different hexagons have different types of features, or all the same for now?
 2. **Grid Persistence**: Should populated hexagon data persist between sessions?
-3. **Movement Precision**: What tolerance should be used for "reaching" the position marker?
-4. **Camera Rotation Speed**: What should be the rotation speed for QE controls?
-5. **Populate Distance**: What distance should trigger hexagon population?
+3. **Camera Rotation Speed**: What should be the rotation speed for QE controls?
+4. **Populate Distance**: What distance should trigger hexagon population?
 
 ## Configuration Parameters
 

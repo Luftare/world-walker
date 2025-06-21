@@ -6,6 +6,8 @@
   "scripts": {
     "start": "npx http-server -p 8080 -c-1",
     "dev": "npx http-server -p 8080 -c-1 --cors",
+    "build": "tsc",
+    "build:watch": "tsc --watch",
     "test": "jest",
     "test:watch": "jest --watch"
   },
@@ -14,14 +16,17 @@
   },
   "devDependencies": {
     "http-server": "^14.1.1",
-    "jest": "^29.7.0"
+    "jest": "^29.7.0",
+    "typescript": "^5.3.0",
+    "@types/jest": "^29.5.0"
   },
   "keywords": [
     "phaser",
     "game",
     "gps",
     "hexagonal",
-    "prototype"
+    "prototype",
+    "typescript"
   ],
   "author": "",
   "license": "MIT"

@@ -1,11 +1,13 @@
 ---
-description: All code changes must follow these guidelines
+description: 
 globs: 
-alwaysApply: false
+alwaysApply: true
 ---
-Carefully follow these rules:
+Code-writing rules:
 - Only implement the requested changes
 - Don't change any existing behavior unless explicitly asked to do so
 - When any code becomes even slightly complex, ask user if he'd like to refactor the code
 - Never use any or unknown types unless user explicitly agrees to do so
 - Use arrow functions whenever suitable over "function foo() {}"
+- Never use comments unless absolutely necessary, write the code so that it's self-explanatory
+- 

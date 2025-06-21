@@ -2,19 +2,21 @@
 
 ## Relevant Files
 
-- `src/config/gameConfig.js` - Contains all game configuration parameters and settings
-- `src/scenes/GameScene.js` - Main game scene with Phaser 3 setup and game loop
-- `src/systems/MovementSystem.js` - Handles character movement towards position marker
-- `src/systems/GridSystem.js` - Manages hexagonal grid generation and feature spawning
-- `src/systems/CameraSystem.js` - Controls camera centering and rotation
-- `src/systems/DebugSystem.js` - Handles debug controls (WASD, QE) and grid visualization
-- `src/entities/Character.js` - Character entity with rendering and physics
-- `src/entities/PositionMarker.js` - Position marker entity for movement target
-- `src/entities/Feature.js` - Generic feature entity (green circles) for hexagons
-- `src/utils/HexagonUtils.js` - Utility functions for hexagonal grid calculations
-- `src/utils/CoordinateUtils.js` - Coordinate conversion and distance calculations
+- `src/config/gameConfig.ts` - Contains all game configuration parameters and settings with TypeScript types
+- `src/scenes/GameScene.ts` - Main game scene with Phaser 3 setup and game loop
+- `src/systems/MovementSystem.ts` - Handles character movement towards position marker
+- `src/systems/GridSystem.ts` - Manages hexagonal grid generation and feature spawning
+- `src/systems/CameraSystem.ts` - Controls camera centering and rotation
+- `src/systems/DebugSystem.ts` - Handles debug controls (WASD, QE) and grid visualization
+- `src/entities/Character.ts` - Character entity with rendering and physics
+- `src/entities/PositionMarker.ts` - Position marker entity for movement target
+- `src/entities/Feature.ts` - Generic feature entity (green circles) for hexagons
+- `src/utils/HexagonUtils.ts` - Utility functions for hexagonal grid calculations
+- `src/utils/CoordinateUtils.ts` - Coordinate conversion and distance calculations
 - `index.html` - Main HTML file with Phaser 3 setup
 - `package.json` - Project dependencies and scripts
+- `tsconfig.json` - TypeScript configuration
+- `.gitignore` - Git ignore rules for the project
 
 ### Notes
 
@@ -25,7 +27,7 @@
 
 - [ ] 1.0 Project Setup and Configuration
   - [x] 1.1 Initialize project with package.json and dependencies
-  - [ ] 1.2 Create game configuration file with all parameters
+  - [x] 1.2 Create game configuration file with all parameters
   - [ ] 1.3 Set up basic HTML structure with Phaser 3
   - [ ] 1.4 Create project directory structure
 - [ ] 2.0 Core Game Scene and Rendering
@@ -37,7 +39,7 @@
 - [ ] 3.0 Character Movement System
   - [ ] 3.1 Create MovementSystem class
   - [ ] 3.2 Implement smooth movement towards position marker
-  - [ ] 3.3 Add stopping logic when reaching target
+  - [ ] 3.3 Add overshoot detection logic for stopping
   - [ ] 3.4 Integrate movement system with game scene
 - [ ] 4.0 Hexagonal Grid System
   - [ ] 4.1 Create HexagonUtils for grid calculations
