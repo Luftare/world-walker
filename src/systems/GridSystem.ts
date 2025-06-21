@@ -1,11 +1,12 @@
 import { gameConfig } from "../config/gameConfig";
 import { HexagonUtils, HexagonCoord } from "../utils/HexagonUtils";
 import { Character } from "../entities/Character";
+import { Feature } from "../entities/Feature";
 
 interface PopulatedHexagon {
   coord: HexagonCoord;
   hasFeature: boolean;
-  featureEntity?: any; // Will be Feature entity when implemented
+  featureEntity?: Feature | undefined;
 }
 
 export class GridSystem {
@@ -58,6 +59,9 @@ export class GridSystem {
     if (gameConfig.devMode && this.gridGraphics) {
       this.updateGridVisualization();
     }
+
+    // Check for feature collection
+    this.checkFeatureCollection();
   }
 
   private populateHexagonsAroundPosition(centerHex: HexagonCoord): void {
@@ -86,16 +90,33 @@ export class GridSystem {
     // Determine if this hexagon should have a feature (simple random for now)
     const hasFeature = Math.random() < 0.3; // 30% chance
 
+    let featureEntity: Feature | undefined;
+    if (hasFeature) {
+      const worldPos = HexagonUtils.hexagonToWorld(hex.q, hex.r);
+      featureEntity = new Feature(this.scene, worldPos.x, worldPos.y, hex);
+    }
+
     const populatedHex: PopulatedHexagon = {
       coord: hex,
       hasFeature,
-      featureEntity: undefined, // Will be created when Feature entity is implemented
+      featureEntity,
     };
 
     this.populatedHexagons.set(hexKey, populatedHex);
+  }
 
-    // TODO: Create Feature entity if hasFeature is true
-    // This will be implemented in task 4.3
+  private checkFeatureCollection(): void {
+    const characterPos = this.character.getPosition();
+
+    this.populatedHexagons.forEach((populatedHex) => {
+      const feature = populatedHex.featureEntity;
+      if (populatedHex.hasFeature && feature && !feature.isCollected()) {
+        if (feature.canCollect(characterPos.x, characterPos.y)) {
+          feature.collect();
+          // Could add score, sound effects, etc. here
+        }
+      }
+    });
   }
 
   private updateGridVisualization(): void {
@@ -138,20 +159,14 @@ export class GridSystem {
     this.gridGraphics.closePath();
     this.gridGraphics.strokePath();
 
-    // Highlight populated hexagons
+    // Draw small dot for populated hexagons (but not features, since they're now real entities)
     const hexKey = this.getHexagonKey(hex);
     const populatedHex = this.populatedHexagons.get(hexKey);
 
-    if (populatedHex) {
-      if (populatedHex.hasFeature) {
-        // Draw a small circle to indicate feature
-        this.gridGraphics.fillStyle(gameConfig.colors.feature, 0.5);
-        this.gridGraphics.fillCircle(worldPos.x, worldPos.y, 5);
-      } else {
-        // Draw a small dot to indicate populated but no feature
-        this.gridGraphics.fillStyle(gameConfig.colors.grid, 0.3);
-        this.gridGraphics.fillCircle(worldPos.x, worldPos.y, 2);
-      }
+    if (populatedHex && !populatedHex.hasFeature) {
+      // Only draw dot for populated hexagons without features
+      this.gridGraphics.fillStyle(gameConfig.colors.grid, 0.3);
+      this.gridGraphics.fillCircle(worldPos.x, worldPos.y, 2);
     }
   }
 
@@ -181,5 +196,16 @@ export class GridSystem {
         this.populateHexagon(hex);
       }
     });
+  }
+
+  // Get all features (useful for other systems)
+  getFeatures(): Feature[] {
+    const features: Feature[] = [];
+    this.populatedHexagons.forEach((populatedHex) => {
+      if (populatedHex.featureEntity) {
+        features.push(populatedHex.featureEntity);
+      }
+    });
+    return features;
   }
 }
