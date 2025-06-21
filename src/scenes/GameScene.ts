@@ -1,8 +1,10 @@
 import { gameConfig } from "../config/gameConfig";
+import { Character } from "../entities/Character";
+import { PositionMarker } from "../entities/PositionMarker";
 
 export class GameScene extends Phaser.Scene {
-  private character?: Phaser.GameObjects.Graphics;
-  private positionMarker?: Phaser.GameObjects.Graphics;
+  private character?: Character;
+  private positionMarker?: PositionMarker;
   private systems: {
     movement?: any;
     grid?: any;
@@ -61,43 +63,16 @@ export class GameScene extends Phaser.Scene {
   }
 
   private createEntities(): void {
-    // Create character (gray circle)
-    this.character = this.add.graphics();
-    this.character.fillStyle(gameConfig.colors.player);
-    this.character.lineStyle(2, gameConfig.colors.playerBorder);
-    this.character.fillCircle(0, 0, gameConfig.playerRadius * gameConfig.scale);
-    this.character.strokeCircle(
-      0,
-      0,
-      gameConfig.playerRadius * gameConfig.scale
-    );
-
-    // Position character at world start location
-    this.character.setPosition(
+    // Create character using the Character entity class
+    this.character = new Character(
+      this,
       gameConfig.world.startLocation.x,
       gameConfig.world.startLocation.y
     );
 
-    // Create position marker (semi-transparent blue circle)
-    this.positionMarker = this.add.graphics();
-    this.positionMarker.fillStyle(
-      gameConfig.colors.marker,
-      gameConfig.markerAlpha
-    );
-    this.positionMarker.lineStyle(1, gameConfig.colors.marker);
-    this.positionMarker.fillCircle(
-      0,
-      0,
-      gameConfig.markerRadius * gameConfig.scale
-    );
-    this.positionMarker.strokeCircle(
-      0,
-      0,
-      gameConfig.markerRadius * gameConfig.scale
-    );
-
-    // Position marker starts at same location as character
-    this.positionMarker.setPosition(
+    // Create position marker using the PositionMarker entity class
+    this.positionMarker = new PositionMarker(
+      this,
       gameConfig.world.startLocation.x,
       gameConfig.world.startLocation.y
     );
@@ -120,11 +95,11 @@ export class GameScene extends Phaser.Scene {
   }
 
   // Public methods for other systems to access game objects
-  getCharacter(): Phaser.GameObjects.Graphics | undefined {
+  getCharacter(): Character | undefined {
     return this.character;
   }
 
-  getPositionMarker(): Phaser.GameObjects.Graphics | undefined {
+  getPositionMarker(): PositionMarker | undefined {
     return this.positionMarker;
   }
 }

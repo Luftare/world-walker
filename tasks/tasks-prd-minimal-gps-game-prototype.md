@@ -34,8 +34,8 @@
 - [ ] 2.0 Core Game Scene and Rendering
   - [x] 2.1 Create main GameScene class with Phaser 3 setup
   - [x] 2.2 Implement basic game loop and update cycle
-  - [ ] 2.3 Create Character entity with gray circle rendering
-  - [ ] 2.4 Create PositionMarker entity with semi-transparent rendering
+  - [x] 2.3 Create Character entity with gray circle rendering
+  - [x] 2.4 Create PositionMarker entity with semi-transparent rendering
   - [ ] 2.5 Add entities to scene and verify rendering
 - [ ] 3.0 Character Movement System
   - [ ] 3.1 Create MovementSystem class

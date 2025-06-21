@@ -21,6 +21,8 @@ declare namespace Phaser {
       fillCircle(x: number, y: number, radius: number): Graphics;
       strokeCircle(x: number, y: number, radius: number): Graphics;
       setPosition(x: number, y: number): Graphics;
+      clear(): Graphics;
+      destroy(): void;
     }
 
     class GameObject {
