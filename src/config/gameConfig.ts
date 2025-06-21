@@ -12,6 +12,7 @@ export interface GameConfig {
   devMode: boolean;
   rotationSpeed: number;
   movementSpeed: number;
+  debugMovementSpeed: number;
   featureRadius: number;
   markerRadius: number;
   markerAlpha: number;
@@ -39,8 +40,9 @@ export const gameConfig: GameConfig = {
   populateDistance: 70,
   scale: 20,
   devMode: true,
-  rotationSpeed: 0.3,
+  rotationSpeed: 1.0,
   movementSpeed: 3,
+  debugMovementSpeed: 300,
   featureRadius: 2,
   markerRadius: 1,
   markerAlpha: 0.6,

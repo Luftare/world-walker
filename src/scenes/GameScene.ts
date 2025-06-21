@@ -5,6 +5,7 @@ import { MovementSystem } from "../systems/MovementSystem";
 import { GridSystem } from "../systems/GridSystem";
 import { CameraSystem } from "../systems/CameraSystem";
 import { DebugSystem } from "../systems/DebugSystem";
+import { UIScene } from "../scenes/UIScene";
 
 export class GameScene extends Phaser.Scene {
   private character?: Character;
@@ -15,6 +16,8 @@ export class GameScene extends Phaser.Scene {
     camera?: CameraSystem;
     debug?: DebugSystem;
   } = {};
+  private uiScene?: UIScene;
+  private score: number = 0;
 
   constructor() {
     super({ key: "GameScene" });
@@ -25,6 +28,14 @@ export class GameScene extends Phaser.Scene {
   }
 
   override create(): void {
+    // Start the UI scene if it's not already running
+    if (!this.scene.isActive("UIScene")) {
+      this.scene.launch("UIScene");
+    }
+
+    // Get reference to UI scene
+    this.uiScene = this.scene.get("UIScene") as UIScene;
+
     // Set up the game world
     this.setupWorld();
 
@@ -36,6 +47,17 @@ export class GameScene extends Phaser.Scene {
 
     // Set up input handling
     this.setupInput();
+
+    // Set up debug toggle callback
+    if (this.uiScene) {
+      this.uiScene.setDebugToggleCallback((enabled: boolean) => {
+        if (this.systems.debug) {
+          const newState = !this.systems.debug.isDebugEnabled();
+          this.systems.debug.setDebugEnabled(newState);
+          this.uiScene?.updateDebugButtonText(newState);
+        }
+      });
+    }
   }
 
   override update(time: number, delta: number): void {
@@ -51,6 +73,43 @@ export class GameScene extends Phaser.Scene {
       const cameraRotation = this.systems.camera.getRotation();
       this.systems.grid.updateFeatureRotations(cameraRotation);
     }
+
+    // Update UI with debug info
+    this.updateUI();
+  }
+
+  private updateUI(): void {
+    if (!this.uiScene) return;
+
+    // Update debug info
+    if (this.systems.debug && this.systems.debug.isDebugEnabled()) {
+      const character = this.getCharacter();
+      const marker = this.getPositionMarker();
+      const camera = this.getCameraSystem();
+
+      if (character && marker && camera) {
+        const charPos = character.getPosition();
+        const markerPos = marker.getPosition();
+        const cameraRotation = camera.getRotation();
+
+        const debugInfo = `Character: (${charPos.x.toFixed(
+          1
+        )}, ${charPos.y.toFixed(1)})
+Marker: (${markerPos.x.toFixed(1)}, ${markerPos.y.toFixed(1)})
+Camera Rotation: ${((cameraRotation * 180) / Math.PI).toFixed(1)}°`;
+
+        this.uiScene.updateDebugInfo(debugInfo);
+      }
+    } else {
+      this.uiScene.updateDebugInfo("");
+    }
+
+    // Update score
+    this.uiScene.updateScore(this.score);
+
+    // Update debug button state
+    const isDebugEnabled = this.systems.debug?.isDebugEnabled() || false;
+    this.uiScene.updateDebugButtonText(isDebugEnabled);
   }
 
   private setupWorld(): void {
@@ -135,5 +194,14 @@ export class GameScene extends Phaser.Scene {
 
   getDebugSystem(): DebugSystem | undefined {
     return this.systems.debug;
+  }
+
+  // Method to update score (called when collecting features)
+  addScore(points: number): void {
+    this.score += points;
+  }
+
+  getScore(): number {
+    return this.score;
   }
 }

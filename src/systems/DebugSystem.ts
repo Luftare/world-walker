@@ -10,7 +10,6 @@ export class DebugSystem {
   private cameraSystem: CameraSystem | undefined;
   private keys: { [key: string]: Phaser.Input.Keyboard.Key } = {};
   private debugGraphics?: Phaser.GameObjects.Graphics;
-  private debugText?: Phaser.GameObjects.Text;
   private isEnabled: boolean;
 
   constructor(
@@ -27,130 +26,110 @@ export class DebugSystem {
 
     if (this.isEnabled) {
       this.initializeDebugControls();
-      this.createDebugUI();
+      this.createDebugGraphics();
     }
   }
 
   private initializeDebugControls(): void {
-    // Create keyboard keys for WASD movement
+    // Initialize keyboard controls for debug movement
     this.keys = {
-      W: this.scene.input.keyboard!.addKey("W"),
-      A: this.scene.input.keyboard!.addKey("A"),
-      S: this.scene.input.keyboard!.addKey("S"),
-      D: this.scene.input.keyboard!.addKey("D"),
-      Q: this.scene.input.keyboard!.addKey("Q"),
-      E: this.scene.input.keyboard!.addKey("E"),
+      W: this.scene.input.keyboard.addKey("W"),
+      A: this.scene.input.keyboard.addKey("A"),
+      S: this.scene.input.keyboard.addKey("S"),
+      D: this.scene.input.keyboard.addKey("D"),
+      Q: this.scene.input.keyboard.addKey("Q"),
+      E: this.scene.input.keyboard.addKey("E"),
+      F1: this.scene.input.keyboard.addKey("F1"),
     };
 
-    // Add debug toggle key (F12)
-    const debugToggleKey = this.scene.input.keyboard!.addKey("F12");
-    debugToggleKey.on("down", () => {
+    // Set up key event listeners
+    this.keys["F1"]?.on("down", () => {
       this.toggleDebugMode();
     });
   }
 
-  private createDebugUI(): void {
+  private createDebugGraphics(): void {
     // Create debug graphics for drawing debug info
     this.debugGraphics = this.scene.add.graphics();
-
-    // Create debug text display
-    this.debugText = this.scene.add.text(10, 10, "", {
-      fontSize: "14px",
-      color: "#ffffff",
-      backgroundColor: "#000000",
-      padding: { x: 8, y: 4 },
-    });
-    this.debugText.setScrollFactor(0); // Keep text fixed to camera
-    this.debugText.setDepth(1000); // Ensure it's on top
   }
 
   update(time: number, delta: number): void {
     if (!this.isEnabled) return;
 
-    this.handleMovementInput(delta);
-    this.updateDebugDisplay();
+    this.handleDebugMovement(delta);
+    this.updateDebugVisualization();
   }
 
-  private handleMovementInput(delta: number): void {
-    const markerPos = this.positionMarker.getPosition();
-    const moveSpeed = gameConfig.movementSpeed * 2; // Debug movement is faster
-    const moveDistance = moveSpeed * (delta / 16); // Normalize to 60fps
+  private handleDebugMovement(delta: number): void {
+    const debugMoveSpeed = gameConfig.debugMovementSpeed;
+    const rotationSpeed = gameConfig.rotationSpeed;
+    const deltaSeconds = delta / 1000;
 
-    let newX = markerPos.x;
-    let newY = markerPos.y;
+    // WASD movement for position marker
+    if (this.keys["W"]?.isDown) {
+      const currentPos = this.positionMarker.getPosition();
+      const newY = currentPos.y - debugMoveSpeed * deltaSeconds;
+      this.positionMarker.setPosition(currentPos.x, newY);
+    }
+    if (this.keys["S"]?.isDown) {
+      const currentPos = this.positionMarker.getPosition();
+      const newY = currentPos.y + debugMoveSpeed * deltaSeconds;
+      this.positionMarker.setPosition(currentPos.x, newY);
+    }
+    if (this.keys["A"]?.isDown) {
+      const currentPos = this.positionMarker.getPosition();
+      const newX = currentPos.x - debugMoveSpeed * deltaSeconds;
+      this.positionMarker.setPosition(newX, currentPos.y);
+    }
+    if (this.keys["D"]?.isDown) {
+      const currentPos = this.positionMarker.getPosition();
+      const newX = currentPos.x + debugMoveSpeed * deltaSeconds;
+      this.positionMarker.setPosition(newX, currentPos.y);
+    }
 
-    // Handle WASD movement for position marker
-    if (this.keys["W"] && this.keys["W"].isDown) {
-      newY -= moveDistance;
-    }
-    if (this.keys["S"] && this.keys["S"].isDown) {
-      newY += moveDistance;
-    }
-    if (this.keys["A"] && this.keys["A"].isDown) {
-      newX -= moveDistance;
-    }
-    if (this.keys["D"] && this.keys["D"].isDown) {
-      newX += moveDistance;
-    }
-
-    // Handle QE camera rotation
+    // QE rotation for camera
     if (this.cameraSystem) {
-      const rotationSpeed = 0.05;
-      let currentRotation = this.cameraSystem.getRotation();
-
-      if (this.keys["Q"] && this.keys["Q"].isDown) {
-        currentRotation -= rotationSpeed;
-        this.cameraSystem.setTargetRotation(currentRotation);
+      if (this.keys["Q"]?.isDown) {
+        const currentRotation = this.cameraSystem.getRotation();
+        this.cameraSystem.setTargetRotation(
+          currentRotation - rotationSpeed * deltaSeconds
+        );
       }
-      if (this.keys["E"] && this.keys["E"].isDown) {
-        currentRotation += rotationSpeed;
-        this.cameraSystem.setTargetRotation(currentRotation);
+      if (this.keys["E"]?.isDown) {
+        const currentRotation = this.cameraSystem.getRotation();
+        this.cameraSystem.setTargetRotation(
+          currentRotation + rotationSpeed * deltaSeconds
+        );
       }
-    }
-
-    // Update position marker if moved
-    if (newX !== markerPos.x || newY !== markerPos.y) {
-      this.positionMarker.setPosition(newX, newY);
     }
   }
 
-  private updateDebugDisplay(): void {
-    if (!this.debugText) return;
+  private updateDebugVisualization(): void {
+    if (!this.debugGraphics) return;
 
+    this.debugGraphics.clear();
+
+    // Draw debug info around character
     const characterPos = this.character.getPosition();
+    this.debugGraphics.lineStyle(2, 0xff0000, 0.8);
+    this.debugGraphics.strokeCircle(characterPos.x, characterPos.y, 20);
+
+    // Draw debug info around position marker
     const markerPos = this.positionMarker.getPosition();
+    this.debugGraphics.lineStyle(2, 0x00ff00, 0.8);
+    this.debugGraphics.strokeCircle(markerPos.x, markerPos.y, 15);
 
-    // Calculate distance between character and marker
-    const distance = Math.sqrt(
-      Math.pow(markerPos.x - characterPos.x, 2) +
-        Math.pow(markerPos.y - characterPos.y, 2)
-    );
-
-    const cameraRotation = this.cameraSystem
-      ? this.cameraSystem.getRotation()
-      : 0;
-
-    const debugInfo = [
-      "DEBUG MODE (F12 to toggle)",
-      `Character: (${characterPos.x.toFixed(1)}, ${characterPos.y.toFixed(1)})`,
-      `Marker: (${markerPos.x.toFixed(1)}, ${markerPos.y.toFixed(1)})`,
-      `Distance: ${distance.toFixed(1)}`,
-      `Camera Rotation: ${(cameraRotation * (180 / Math.PI)).toFixed(1)}°`,
-      "",
-      "Controls:",
-      "WASD - Move marker",
-      "Q/E - Rotate camera",
-    ];
-
-    this.debugText.setText(debugInfo.join("\n"));
+    // Draw line between character and marker
+    this.debugGraphics.lineStyle(1, 0xffff00, 0.5);
+    this.debugGraphics.beginPath();
+    this.debugGraphics.moveTo(characterPos.x, characterPos.y);
+    this.debugGraphics.lineTo(markerPos.x, markerPos.y);
+    this.debugGraphics.strokePath();
   }
 
   private toggleDebugMode(): void {
     this.isEnabled = !this.isEnabled;
 
-    if (this.debugText) {
-      this.debugText.setVisible(this.isEnabled);
-    }
     if (this.debugGraphics) {
       this.debugGraphics.setVisible(this.isEnabled);
     }
@@ -165,7 +144,9 @@ export class DebugSystem {
 
   setDebugEnabled(enabled: boolean): void {
     this.isEnabled = enabled;
-    this.toggleDebugMode();
+    if (this.debugGraphics) {
+      this.debugGraphics.setVisible(enabled);
+    }
   }
 
   // Method to draw debug information (can be called by other systems)
@@ -194,9 +175,6 @@ export class DebugSystem {
   destroy(): void {
     if (this.debugGraphics) {
       this.debugGraphics.destroy();
-    }
-    if (this.debugText) {
-      this.debugText.destroy();
     }
   }
 }

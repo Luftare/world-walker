@@ -8,6 +8,15 @@ declare namespace Phaser {
     input: Phaser.Input.InputPlugin;
     physics: Phaser.Physics.Arcade.ArcadePhysics;
     cameras: Phaser.Cameras.CameraManager;
+    scene: Phaser.Scenes.SceneManager;
+  }
+
+  namespace Scenes {
+    class SceneManager {
+      get(key: string): Scene;
+      isActive(key: string): boolean;
+      launch(key: string): void;
+    }
   }
 
   namespace GameObjects {
@@ -38,7 +47,13 @@ declare namespace Phaser {
       setScrollFactor(x: number, y?: number): Text;
       setDepth(depth: number): Text;
       setVisible(visible: boolean): Text;
+      setInteractive(config?: any): Text;
+      on(event: string, callback: () => void): Text;
+      setStyle(style: any): Text;
+      setOrigin(x: number, y?: number): Text;
       destroy(): void;
+      width: number;
+      height: number;
     }
 
     class GameObject {
@@ -103,6 +118,7 @@ declare namespace Phaser {
       width: number;
       height: number;
       zoom: number;
+      on(event: string, callback: () => void): void;
     }
   }
 

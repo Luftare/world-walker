@@ -41,6 +41,7 @@
     <script type="module">
       import { gameConfig } from "./src/config/gameConfig.ts";
       import { GameScene } from "./src/scenes/GameScene.ts";
+      import { UIScene } from "./src/scenes/UIScene.ts";
 
       const config = {
         type: Phaser.AUTO,
@@ -55,7 +56,7 @@
             debug: gameConfig.devMode,
           },
         },
-        scene: GameScene,
+        scene: [GameScene, UIScene],
       };
 
       const game = new Phaser.Game(config);

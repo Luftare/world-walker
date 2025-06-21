@@ -61,7 +61,7 @@ export class CameraSystem {
 
   private updateCameraRotation(delta: number): void {
     // Smooth rotation interpolation
-    const rotationSpeed = gameConfig.rotationSpeed || 0.1;
+    const rotationSpeed = gameConfig.rotationSpeed;
     const rotationDiff = this.targetRotation - this.currentRotation;
 
     // Handle rotation wrapping (shortest path)
@@ -73,7 +73,7 @@ export class CameraSystem {
           : rotationDiff + 2 * Math.PI;
     }
 
-    if (Math.abs(adjustedDiff) > 0.01) {
+    if (Math.abs(adjustedDiff) > 0.001) {
       const lerpFactor = Math.min(rotationSpeed * (delta / 16), 1);
       this.currentRotation += adjustedDiff * lerpFactor;
 
