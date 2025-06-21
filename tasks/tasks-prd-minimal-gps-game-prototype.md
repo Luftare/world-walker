@@ -43,7 +43,7 @@
   - [x] 3.3 Add overshoot detection logic for stopping
   - [x] 3.4 Integrate movement system with game scene
 - [ ] 4.0 Hexagonal Grid System
-  - [ ] 4.1 Create HexagonUtils for grid calculations
+  - [x] 4.1 Create HexagonUtils for grid calculations
   - [ ] 4.2 Create GridSystem for dynamic hexagon management
   - [ ] 4.3 Create Feature entity (green circles)
   - [ ] 4.4 Implement hexagon population logic

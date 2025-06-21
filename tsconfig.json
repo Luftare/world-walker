@@ -24,7 +24,7 @@
     "noUncheckedIndexedAccess": true,
     "allowUnusedLabels": false,
     "allowUnreachableCode": false,
-    "types": ["node"]
+    "types": ["node", "jest"]
   },
   "include": ["src/**/*", "src/types/**/*"],
   "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"]
