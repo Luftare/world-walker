@@ -10,4 +10,4 @@ Code-writing rules:
 - Never use any or unknown types unless user explicitly agrees to do so
 - Use arrow functions whenever suitable over "function foo() {}"
 - Never use comments unless absolutely necessary, write the code so that it's self-explanatory
-- 
+- After concluding a change completed, run linter and tests to prevent regression
