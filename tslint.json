@@ -12,7 +12,8 @@
     "quotemark": [true, "double"],
     "indent": [true, "spaces", 2],
     "no-string-literal": false,
-    "array-type": false
+    "array-type": false,
+    "no-unused-variable": true
   },
   "rulesDirectory": []
 }

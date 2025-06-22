@@ -2,12 +2,10 @@ import { gameConfig } from "../config/gameConfig";
 
 export class PositionMarker {
   private graphics: Phaser.GameObjects.Graphics;
-  private scene: Phaser.Scene;
   private x: number;
   private y: number;
 
   constructor(scene: Phaser.Scene, x: number = 0, y: number = 0) {
-    this.scene = scene;
     this.x = x;
     this.y = y;
     this.graphics = scene.add.graphics();

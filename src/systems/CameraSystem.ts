@@ -3,14 +3,12 @@ import { gameConfig } from "../config/gameConfig";
 import { Character } from "../entities/Character";
 
 export class CameraSystem {
-  private scene: Phaser.Scene;
   private character: Character;
   private camera: Phaser.Cameras.Scene2D.Camera;
   private targetRotation: number = 0;
   private currentRotation: number = 0;
 
   constructor(scene: Phaser.Scene, character: Character) {
-    this.scene = scene;
     this.character = character;
     this.camera = scene.cameras.main;
 

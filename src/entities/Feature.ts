@@ -3,12 +3,10 @@ import { HexagonCoord } from "../utils/HexagonUtils";
 
 export class Feature {
   private graphics: Phaser.GameObjects.Graphics;
-  private scene: Phaser.Scene;
   private x: number;
   private y: number;
   private hexCoord: HexagonCoord;
   private collected: boolean = false;
-  private baseRotation: number = 0; // Track base rotation for counter-rotation
 
   constructor(
     scene: Phaser.Scene,
@@ -16,7 +14,6 @@ export class Feature {
     y: number = 0,
     hexCoord: HexagonCoord
   ) {
-    this.scene = scene;
     this.x = x;
     this.y = y;
     this.hexCoord = hexCoord;
