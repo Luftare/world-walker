@@ -35,7 +35,10 @@ export class GameScene extends Phaser.Scene {
     // Preload any assets here
   }
 
-  async create(): Promise<void> {
+  async create(data?: {
+    geolocationService?: GeolocationService;
+    compassService?: CompassService;
+  }): Promise<void> {
     // Start the UI scene if it's not already running
     if (!this.scene.isActive("UIScene")) {
       this.scene.launch("UIScene");
@@ -44,12 +47,17 @@ export class GameScene extends Phaser.Scene {
     // Get reference to UI scene
     this.uiScene = this.scene.get("UIScene") as UIScene;
 
-    // Initialize compass after geolocation
-    await this.initializeCompass();
-
-    // Initialize geolocation if enabled
-    if (gameConfig.geolocation.enabled) {
+    // Initialize services from menu scene
+    if (data?.geolocationService) {
+      this.geolocationService = data.geolocationService;
+      this.geolocationEnabled = true;
       await this.initializeGeolocation();
+    }
+
+    if (data?.compassService) {
+      this.compassService = data.compassService;
+      this.compassEnabled = true;
+      await this.initializeCompass();
     }
 
     // Set up the game world
@@ -77,27 +85,9 @@ export class GameScene extends Phaser.Scene {
   }
 
   private async initializeGeolocation(): Promise<void> {
+    if (!this.geolocationService) return;
+
     try {
-      this.geolocationService = new GeolocationService();
-
-      // Request location permission
-      const hasPermission =
-        await this.geolocationService.requestLocationPermission();
-
-      if (!hasPermission) {
-        console.warn(
-          "Location permission denied. Geolocation features will be disabled."
-        );
-        return;
-      }
-
-      // Get initial location
-      const initialLocation =
-        await this.geolocationService.getInitialLocation();
-      console.log("Initial location obtained:", initialLocation);
-
-      this.geolocationEnabled = true;
-
       // Start location tracking
       this.geolocationService.startLocationTracking(
         (x: number, y: number) => {
@@ -118,28 +108,15 @@ export class GameScene extends Phaser.Scene {
 
       console.log("Geolocation tracking started");
     } catch (error) {
-      console.error("Failed to initialize geolocation:", error);
-      this.uiScene?.updateDebugInfo(`GPS Init Error: ${error}`);
+      console.error("Failed to start geolocation tracking:", error);
+      this.uiScene?.updateDebugInfo(`GPS Tracking Error: ${error}`);
     }
   }
 
   private async initializeCompass(): Promise<void> {
+    if (!this.compassService) return;
+
     try {
-      this.compassService = new CompassService();
-
-      // Request compass permission
-      const hasPermission =
-        await this.compassService.requestCompassPermission();
-
-      if (!hasPermission) {
-        console.warn(
-          "Compass permission denied. Compass features will be disabled."
-        );
-        return;
-      }
-
-      this.compassEnabled = true;
-
       // Start compass tracking
       this.compassService.startCompassTracking((direction: number) => {
         // Convert degrees to radians
@@ -153,8 +130,8 @@ export class GameScene extends Phaser.Scene {
 
       console.log("Compass tracking started");
     } catch (error) {
-      console.error("Failed to initialize compass:", error);
-      this.uiScene?.updateDebugInfo(`Compass Init Error: ${error}`);
+      console.error("Failed to start compass tracking:", error);
+      this.uiScene?.updateDebugInfo(`Compass Tracking Error: ${error}`);
     }
   }
 

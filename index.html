@@ -39,6 +39,7 @@
     <script type="module">
       import Phaser from "phaser";
       import { gameConfig } from "./src/config/gameConfig.ts";
+      import { MenuScene } from "./src/scenes/MenuScene.ts";
       import { GameScene } from "./src/scenes/GameScene.ts";
       import { UIScene } from "./src/scenes/UIScene.ts";
 
@@ -57,7 +58,7 @@
             debug: gameConfig.devMode,
           },
         },
-        scene: [GameScene, UIScene],
+        scene: [MenuScene, GameScene, UIScene],
         scale: {
           mode: Phaser.Scale.AUTO,
           autoCenter: Phaser.Scale.CENTER_BOTH,
@@ -77,6 +78,12 @@
         const uiScene = game.scene.getScene("UIScene");
         if (uiScene && uiScene.resize) {
           uiScene.resize();
+        }
+
+        // Resize menu elements
+        const menuScene = game.scene.getScene("MenuScene");
+        if (menuScene && menuScene.resize) {
+          menuScene.resize();
         }
       });
     </script>
