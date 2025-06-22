@@ -17,8 +17,12 @@ export class UIScene extends Phaser.Scene {
   }
 
   private createUIElements(): void {
+    const gameWidth = this.cameras.main.width;
+    const gameHeight = this.cameras.main.height;
+    const padding = 10;
+
     // Create debug text (top-left)
-    this.debugText = this.add.text(10, 10, "Debug Info", {
+    this.debugText = this.add.text(padding, padding, "Debug Info", {
       fontSize: "14px",
       color: "#ffffff",
       backgroundColor: "#000000",
@@ -28,20 +32,21 @@ export class UIScene extends Phaser.Scene {
     this.debugText.setDepth(1000);
 
     // Create score text (top-right)
-    this.scoreText = this.add.text(600, 10, "Score: 0", {
+    this.scoreText = this.add.text(gameWidth - padding, padding, "Score: 0", {
       fontSize: "16px",
       color: "#ffffff",
       backgroundColor: "#000000",
       padding: { x: 8, y: 4 },
     });
+    this.scoreText.setOrigin(1, 0); // Right-align
     this.scoreText.setScrollFactor(0);
     this.scoreText.setDepth(1000);
 
     // Create toggle debug button (top-right, below score)
     const initialDebugState = gameConfig.devMode;
     this.debugButton = this.add.text(
-      600,
-      50,
+      gameWidth - padding,
+      padding + 40,
       initialDebugState ? "Debug: ON" : "Debug: OFF",
       {
         fontSize: "14px",
@@ -50,6 +55,7 @@ export class UIScene extends Phaser.Scene {
         padding: { x: 8, y: 4 },
       }
     );
+    this.debugButton.setOrigin(1, 0); // Right-align
     this.debugButton.setScrollFactor(0);
     this.debugButton.setDepth(1000);
     this.debugButton.setInteractive({ useHandCursor: true });
@@ -59,8 +65,8 @@ export class UIScene extends Phaser.Scene {
 
     // Create controls text (bottom-left)
     this.controlsText = this.add.text(
-      10,
-      550,
+      padding,
+      gameHeight - padding,
       "Tap to move • WASD: Debug movement • Q/E: Rotate camera",
       {
         fontSize: "12px",
@@ -69,6 +75,7 @@ export class UIScene extends Phaser.Scene {
         padding: { x: 8, y: 4 },
       }
     );
+    this.controlsText.setOrigin(0, 1); // Bottom-left align
     this.controlsText.setScrollFactor(0);
     this.controlsText.setDepth(1000);
   }
@@ -114,6 +121,28 @@ export class UIScene extends Phaser.Scene {
 
   toggleVisibility(): void {
     this.setVisible(!this.isVisible);
+  }
+
+  resize(): void {
+    const gameWidth = this.cameras.main.width;
+    const gameHeight = this.cameras.main.height;
+    const padding = 10;
+
+    if (this.debugText) {
+      this.debugText.setPosition(padding, padding);
+    }
+
+    if (this.scoreText) {
+      this.scoreText.setPosition(gameWidth - padding, padding);
+    }
+
+    if (this.debugButton) {
+      this.debugButton.setPosition(gameWidth - padding, padding + 40);
+    }
+
+    if (this.controlsText) {
+      this.controlsText.setPosition(padding, gameHeight - padding);
+    }
   }
 
   destroy(): void {

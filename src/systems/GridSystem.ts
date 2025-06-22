@@ -3,6 +3,9 @@ import { HexagonUtils, HexagonCoord } from "../utils/HexagonUtils";
 import { Character } from "../entities/Character";
 import { Feature } from "../entities/Feature";
 
+// Declare localStorage as global for browser environment
+declare const localStorage: Storage;
+
 interface PopulatedHexagon {
   coord: HexagonCoord;
   hasFeature: boolean;
@@ -261,8 +264,8 @@ export class GridSystem {
         "world-hoarder-grid-data",
         JSON.stringify(persistedData)
       );
-    } catch (error) {
-      console.warn("Failed to save grid data to localStorage:", error);
+    } catch {
+      // Silently handle localStorage errors
     }
   }
 
@@ -271,7 +274,7 @@ export class GridSystem {
       const savedData = localStorage.getItem("world-hoarder-grid-data");
       if (!savedData) return;
 
-      const persistedData: PersistedHexagon[] = JSON.parse(savedData);
+      const persistedData = JSON.parse(savedData) as PersistedHexagon[];
 
       persistedData.forEach((persistedHex) => {
         const hexCoord: HexagonCoord = { q: persistedHex.q, r: persistedHex.r };
@@ -308,8 +311,8 @@ export class GridSystem {
           this.populatedHexagons.set(hexKey, populatedHex);
         }
       });
-    } catch (error) {
-      console.warn("Failed to load grid data from localStorage:", error);
+    } catch {
+      // Silently handle localStorage errors
     }
   }
 
@@ -322,9 +325,8 @@ export class GridSystem {
   clearGridData(): void {
     try {
       localStorage.removeItem("world-hoarder-grid-data");
-      console.log("Grid data cleared from localStorage");
-    } catch (error) {
-      console.warn("Failed to clear grid data from localStorage:", error);
+    } catch {
+      // Silently handle localStorage errors
     }
   }
 }
