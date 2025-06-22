@@ -26,7 +26,7 @@ export class CameraSystem {
     // this.camera.setBounds(minX, minY, maxX, maxY);
 
     // Set camera zoom if needed
-    this.camera.setZoom(1);
+    this.camera.setZoom(window.devicePixelRatio || 1);
   }
 
   update(_: number, delta: number): void {
