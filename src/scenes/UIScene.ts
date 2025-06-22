@@ -8,9 +8,11 @@ export class UIScene extends Phaser.Scene {
   private debugButton?: Phaser.GameObjects.Text;
   private isVisible: boolean = true;
   private onDebugToggle?: () => void;
+  private devicePixelRatio: number;
 
   constructor() {
     super({ key: "UIScene" });
+    this.devicePixelRatio = window.devicePixelRatio || 1;
   }
 
   create(): void {
@@ -20,24 +22,30 @@ export class UIScene extends Phaser.Scene {
   private createUIElements(): void {
     const gameWidth = this.cameras.main.width;
     const gameHeight = this.cameras.main.height;
-    const padding = 10;
+    const padding = 10 * this.devicePixelRatio;
+    const fontSize = {
+      debug: `${14 * this.devicePixelRatio}px`,
+      score: `${16 * this.devicePixelRatio}px`,
+      button: `${14 * this.devicePixelRatio}px`,
+      controls: `${12 * this.devicePixelRatio}px`,
+    };
 
     // Create debug text (top-left)
     this.debugText = this.add.text(padding, padding, "Debug Info", {
-      fontSize: "14px",
+      fontSize: fontSize.debug,
       color: "#ffffff",
       backgroundColor: "#000000",
-      padding: { x: 8, y: 4 },
+      padding: { x: 8 * this.devicePixelRatio, y: 4 * this.devicePixelRatio },
     });
     this.debugText.setScrollFactor(0);
     this.debugText.setDepth(1000);
 
     // Create score text (top-right)
     this.scoreText = this.add.text(gameWidth - padding, padding, "Score: 0", {
-      fontSize: "16px",
+      fontSize: fontSize.score,
       color: "#ffffff",
       backgroundColor: "#000000",
-      padding: { x: 8, y: 4 },
+      padding: { x: 8 * this.devicePixelRatio, y: 4 * this.devicePixelRatio },
     });
     this.scoreText.setOrigin(1, 0); // Right-align
     this.scoreText.setScrollFactor(0);
@@ -47,13 +55,13 @@ export class UIScene extends Phaser.Scene {
     const initialDebugState = gameConfig.devMode;
     this.debugButton = this.add.text(
       gameWidth - padding,
-      padding + 40,
+      padding + 40 * this.devicePixelRatio,
       initialDebugState ? "Debug: ON" : "Debug: OFF",
       {
-        fontSize: "14px",
+        fontSize: fontSize.button,
         color: "#ffffff",
         backgroundColor: initialDebugState ? "#006600" : "#333333",
-        padding: { x: 8, y: 4 },
+        padding: { x: 8 * this.devicePixelRatio, y: 4 * this.devicePixelRatio },
       }
     );
     this.debugButton.setOrigin(1, 0); // Right-align
@@ -70,10 +78,10 @@ export class UIScene extends Phaser.Scene {
       gameHeight - padding,
       "Tap to move • WASD: Debug movement • Q/E: Rotate camera",
       {
-        fontSize: "12px",
+        fontSize: fontSize.controls,
         color: "#cccccc",
         backgroundColor: "#000000",
-        padding: { x: 8, y: 4 },
+        padding: { x: 8 * this.devicePixelRatio, y: 4 * this.devicePixelRatio },
       }
     );
     this.controlsText.setOrigin(0, 1); // Bottom-left align
@@ -127,7 +135,7 @@ export class UIScene extends Phaser.Scene {
   resize(): void {
     const gameWidth = this.cameras.main.width;
     const gameHeight = this.cameras.main.height;
-    const padding = 10;
+    const padding = 10 * this.devicePixelRatio;
 
     if (this.debugText) {
       this.debugText.setPosition(padding, padding);
@@ -138,7 +146,10 @@ export class UIScene extends Phaser.Scene {
     }
 
     if (this.debugButton) {
-      this.debugButton.setPosition(gameWidth - padding, padding + 40);
+      this.debugButton.setPosition(
+        gameWidth - padding,
+        padding + 40 * this.devicePixelRatio
+      );
     }
 
     if (this.controlsText) {
