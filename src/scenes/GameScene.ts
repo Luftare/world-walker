@@ -7,6 +7,7 @@ import { CameraSystem } from "../systems/CameraSystem";
 import { DebugSystem } from "../systems/DebugSystem";
 import { UIScene } from "../scenes/UIScene";
 import { GeolocationService } from "../utils/GeolocationService";
+import { CompassService } from "../utils/CompassService";
 
 export class GameScene extends Phaser.Scene {
   private character?: Character;
@@ -23,6 +24,8 @@ export class GameScene extends Phaser.Scene {
   private saveInterval: number = 30000; // Save every 30 seconds
   private geolocationService?: GeolocationService;
   private geolocationEnabled: boolean = false;
+  private compassService?: CompassService;
+  private compassEnabled: boolean = false;
 
   constructor() {
     super({ key: "GameScene" });
@@ -45,6 +48,9 @@ export class GameScene extends Phaser.Scene {
     if (gameConfig.geolocation.enabled) {
       await this.initializeGeolocation();
     }
+
+    // Initialize compass after geolocation
+    await this.initializeCompass();
 
     // Set up the game world
     this.setupWorld();
@@ -117,6 +123,47 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
+  private async initializeCompass(): Promise<void> {
+    try {
+      this.compassService = new CompassService();
+
+      // Request compass permission
+      const hasPermission =
+        await this.compassService.requestCompassPermission();
+
+      if (!hasPermission) {
+        console.warn(
+          "Compass permission denied. Compass features will be disabled."
+        );
+        return;
+      }
+
+      this.compassEnabled = true;
+
+      // Start compass tracking
+      this.compassService.startCompassTracking(
+        (direction: number) => {
+          // Convert degrees to radians
+          const radians = (direction * Math.PI) / 180;
+
+          // Apply compass direction to camera rotation
+          if (this.systems.camera) {
+            this.systems.camera.setTargetRotation(radians);
+          }
+        },
+        (error: string) => {
+          console.error("Compass error:", error);
+          this.uiScene?.updateDebugInfo(`Compass Error: ${error}`);
+        }
+      );
+
+      console.log("Compass tracking started");
+    } catch (error) {
+      console.error("Failed to initialize compass:", error);
+      this.uiScene?.updateDebugInfo(`Compass Init Error: ${error}`);
+    }
+  }
+
   override update(time: number, delta: number): void {
     // Update all systems
     Object.values(this.systems).forEach((system) => {
@@ -171,6 +218,18 @@ Camera Rotation: ${((cameraRotation * 180) / Math.PI).toFixed(1)}°`;
             : "Tracking: No";
           debugInfo += `\n${geoStatus}\n${trackingStatus}`;
         }
+
+        // Add compass status
+        const compassStatus = this.compassEnabled
+          ? "Compass: Active"
+          : "Compass: Inactive";
+        const compassTrackingStatus = this.compassService?.isTracking()
+          ? "Compass Tracking: Yes"
+          : "Compass Tracking: No";
+        const compassHeading = this.compassService?.getCurrentHeading() || 0;
+        debugInfo += `\n${compassStatus}\n${compassTrackingStatus}\nCompass Heading: ${compassHeading.toFixed(
+          1
+        )}°`;
 
         this.uiScene.updateDebugInfo(debugInfo);
       }
@@ -279,6 +338,14 @@ Camera Rotation: ${((cameraRotation * 180) / Math.PI).toFixed(1)}°`;
 
   isGeolocationEnabled(): boolean {
     return this.geolocationEnabled;
+  }
+
+  getCompassService(): CompassService | undefined {
+    return this.compassService;
+  }
+
+  isCompassEnabled(): boolean {
+    return this.compassEnabled;
   }
 
   // Method to update score (called when collecting features)

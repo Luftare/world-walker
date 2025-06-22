@@ -14,7 +14,8 @@
     "lint:fix": "tslint -p tsconfig.json --fix"
   },
   "dependencies": {
-    "phaser": "^3.70.0"
+    "phaser": "^3.70.0",
+    "universal-compass": "^1.0.0"
   },
   "devDependencies": {
     "@types/jest": "^29.5.14",
