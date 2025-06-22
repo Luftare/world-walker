@@ -6,7 +6,7 @@ export class UIScene extends Phaser.Scene {
   private controlsText?: Phaser.GameObjects.Text;
   private debugButton?: Phaser.GameObjects.Text;
   private isVisible: boolean = true;
-  private onDebugToggle?: (enabled: boolean) => void;
+  private onDebugToggle?: () => void;
 
   constructor() {
     super({ key: "UIScene" });
@@ -73,13 +73,13 @@ export class UIScene extends Phaser.Scene {
     this.controlsText.setDepth(1000);
   }
 
-  setDebugToggleCallback(callback: (enabled: boolean) => void): void {
+  setDebugToggleCallback(callback: () => void): void {
     this.onDebugToggle = callback;
   }
 
   private toggleDebug(): void {
     if (this.onDebugToggle) {
-      this.onDebugToggle(true); // This will be toggled in the callback
+      this.onDebugToggle();
     }
   }
 

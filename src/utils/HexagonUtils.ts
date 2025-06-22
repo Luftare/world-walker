@@ -17,7 +17,7 @@ export class HexagonUtils {
   static calculateHexagonPoints(
     centerX: number,
     centerY: number,
-    radius: number = this.HEXAGON_RADIUS
+    radius: number = this.HEXAGON_RADIUS,
   ): Array<{ x: number; y: number }> {
     const points: Array<{ x: number; y: number }> = [];
     for (let i = 0; i < 6; i++) {
@@ -88,7 +88,7 @@ export class HexagonUtils {
 
   static getHexagonsInRange(
     center: HexagonCoord,
-    range: number
+    range: number,
   ): HexagonCoord[] {
     const hexagons: HexagonCoord[] = [];
 
@@ -110,7 +110,7 @@ export class HexagonUtils {
   static isHexagonInRange(
     center: HexagonCoord,
     target: HexagonCoord,
-    range: number
+    range: number,
   ): boolean {
     return this.getHexagonDistance(center, target) <= range;
   }

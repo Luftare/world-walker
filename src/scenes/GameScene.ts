@@ -50,7 +50,7 @@ export class GameScene extends Phaser.Scene {
 
     // Set up debug toggle callback
     if (this.uiScene) {
-      this.uiScene.setDebugToggleCallback((enabled: boolean) => {
+      this.uiScene.setDebugToggleCallback(() => {
         if (this.systems.debug) {
           const newState = !this.systems.debug.isDebugEnabled();
           this.systems.debug.setDebugEnabled(newState);
@@ -93,7 +93,7 @@ export class GameScene extends Phaser.Scene {
         const cameraRotation = camera.getRotation();
 
         const debugInfo = `Character: (${charPos.x.toFixed(
-          1
+          1,
         )}, ${charPos.y.toFixed(1)})
 Marker: (${markerPos.x.toFixed(1)}, ${markerPos.y.toFixed(1)})
 Camera Rotation: ${((cameraRotation * 180) / Math.PI).toFixed(1)}°`;
@@ -125,14 +125,14 @@ Camera Rotation: ${((cameraRotation * 180) / Math.PI).toFixed(1)}°`;
     this.character = new Character(
       this,
       gameConfig.world.startLocation.x,
-      gameConfig.world.startLocation.y
+      gameConfig.world.startLocation.y,
     );
 
     // Create position marker using the PositionMarker entity class
     this.positionMarker = new PositionMarker(
       this,
       gameConfig.world.startLocation.x,
-      gameConfig.world.startLocation.y
+      gameConfig.world.startLocation.y,
     );
   }
 
@@ -141,7 +141,7 @@ Camera Rotation: ${((cameraRotation * 180) / Math.PI).toFixed(1)}°`;
     if (this.character && this.positionMarker) {
       this.systems.movement = new MovementSystem(
         this.character,
-        this.positionMarker
+        this.positionMarker,
       );
     }
 
@@ -161,7 +161,7 @@ Camera Rotation: ${((cameraRotation * 180) / Math.PI).toFixed(1)}°`;
         this,
         this.character,
         this.positionMarker,
-        this.systems.camera
+        this.systems.camera,
       );
     }
   }

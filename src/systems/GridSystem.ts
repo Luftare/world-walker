@@ -32,19 +32,19 @@ export class GridSystem {
     const characterPos = this.character.getPosition();
     const characterHex = HexagonUtils.worldToHexagon(
       characterPos.x,
-      characterPos.y
+      characterPos.y,
     );
     this.lastCharacterHex = characterHex;
 
     this.populateHexagonsAroundPosition(characterHex);
   }
 
-  update(time: number, delta: number): void {
+  update(): void {
     // Check if character has moved to a different hexagon
     const characterPos = this.character.getPosition();
     const currentHex = HexagonUtils.worldToHexagon(
       characterPos.x,
-      characterPos.y
+      characterPos.y,
     );
 
     if (
@@ -67,11 +67,11 @@ export class GridSystem {
   private populateHexagonsAroundPosition(centerHex: HexagonCoord): void {
     const populateRange = Math.ceil(
       gameConfig.populateDistance /
-        (gameConfig.hexagonRadius * gameConfig.scale)
+        (gameConfig.hexagonRadius * gameConfig.scale),
     );
     const hexagonsToPopulate = HexagonUtils.getHexagonsInRange(
       centerHex,
-      populateRange
+      populateRange,
     );
 
     hexagonsToPopulate.forEach((hex) => {
@@ -129,12 +129,12 @@ export class GridSystem {
     const characterPos = this.character.getPosition();
     const characterHex = HexagonUtils.worldToHexagon(
       characterPos.x,
-      characterPos.y
+      characterPos.y,
     );
     const visibleRange = 3; // Show 3 hexagon rings around character
     const visibleHexagons = HexagonUtils.getHexagonsInRange(
       characterHex,
-      visibleRange
+      visibleRange,
     );
 
     visibleHexagons.forEach((hex) => {

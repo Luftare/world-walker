@@ -53,9 +53,8 @@ export class DebugSystem {
     this.debugGraphics = this.scene.add.graphics();
   }
 
-  update(time: number, delta: number): void {
+  update(_: number, delta: number): void {
     if (!this.isEnabled) return;
-
     this.handleDebugMovement(delta);
     this.updateDebugVisualization();
   }
@@ -133,8 +132,6 @@ export class DebugSystem {
     if (this.debugGraphics) {
       this.debugGraphics.setVisible(this.isEnabled);
     }
-
-    console.log(`Debug mode: ${this.isEnabled ? "ON" : "OFF"}`);
   }
 
   // Public methods for external control
@@ -147,21 +144,6 @@ export class DebugSystem {
     if (this.debugGraphics) {
       this.debugGraphics.setVisible(enabled);
     }
-  }
-
-  // Method to draw debug information (can be called by other systems)
-  drawDebugInfo(
-    x: number,
-    y: number,
-    info: string,
-    color: number = 0xff0000
-  ): void {
-    if (!this.isEnabled || !this.debugGraphics) return;
-
-    this.debugGraphics.fillStyle(color, 0.8);
-    this.debugGraphics.fillCircle(x, y, 3);
-
-    // Could add text rendering here if needed
   }
 
   // Method to clear debug graphics

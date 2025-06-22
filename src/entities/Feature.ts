@@ -14,7 +14,7 @@ export class Feature {
     scene: Phaser.Scene,
     x: number,
     y: number,
-    hexCoord: HexagonCoord
+    hexCoord: HexagonCoord,
   ) {
     this.scene = scene;
     this.x = x;
@@ -112,7 +112,7 @@ export class Feature {
     }
 
     const distance = Math.sqrt(
-      Math.pow(worldX - this.x, 2) + Math.pow(worldY - this.y, 2)
+      Math.pow(worldX - this.x, 2) + Math.pow(worldY - this.y, 2),
     );
 
     const collectionRadius =

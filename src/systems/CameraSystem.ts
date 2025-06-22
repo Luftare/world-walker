@@ -28,7 +28,7 @@ export class CameraSystem {
     this.camera.setZoom(1);
   }
 
-  update(time: number, delta: number): void {
+  update(_: number, delta: number): void {
     this.updateCameraPosition(delta);
     this.updateCameraRotation(delta);
   }

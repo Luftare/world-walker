@@ -11,7 +11,7 @@ export class MovementSystem {
     this.positionMarker = positionMarker;
   }
 
-  update(time: number, delta: number): void {
+  update(_: number, delta: number): void {
     const characterPos = this.character.getPosition();
     const targetPos = this.positionMarker.getPosition();
 
