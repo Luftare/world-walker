@@ -6,6 +6,7 @@ import { GridSystem } from "../systems/GridSystem";
 import { CameraSystem } from "../systems/CameraSystem";
 import { DebugSystem } from "../systems/DebugSystem";
 import { UIScene } from "../scenes/UIScene";
+import { GeolocationService } from "../utils/GeolocationService";
 
 export class GameScene extends Phaser.Scene {
   private character?: Character;
@@ -20,6 +21,8 @@ export class GameScene extends Phaser.Scene {
   private score: number = 0;
   private lastSaveTime: number = 0;
   private saveInterval: number = 30000; // Save every 30 seconds
+  private geolocationService?: GeolocationService;
+  private geolocationEnabled: boolean = false;
 
   constructor() {
     super({ key: "GameScene" });
@@ -29,7 +32,7 @@ export class GameScene extends Phaser.Scene {
     // Preload any assets here
   }
 
-  create(): void {
+  async create(): Promise<void> {
     // Start the UI scene if it's not already running
     if (!this.scene.isActive("UIScene")) {
       this.scene.launch("UIScene");
@@ -37,6 +40,11 @@ export class GameScene extends Phaser.Scene {
 
     // Get reference to UI scene
     this.uiScene = this.scene.get("UIScene") as UIScene;
+
+    // Initialize geolocation if enabled
+    if (gameConfig.geolocation.enabled) {
+      await this.initializeGeolocation();
+    }
 
     // Set up the game world
     this.setupWorld();
@@ -59,6 +67,53 @@ export class GameScene extends Phaser.Scene {
           this.uiScene?.updateDebugButtonText(newState);
         }
       });
+    }
+  }
+
+  private async initializeGeolocation(): Promise<void> {
+    try {
+      this.geolocationService = new GeolocationService();
+
+      // Request location permission
+      const hasPermission =
+        await this.geolocationService.requestLocationPermission();
+
+      if (!hasPermission) {
+        console.warn(
+          "Location permission denied. Geolocation features will be disabled."
+        );
+        return;
+      }
+
+      // Get initial location
+      const initialLocation =
+        await this.geolocationService.getInitialLocation();
+      console.log("Initial location obtained:", initialLocation);
+
+      this.geolocationEnabled = true;
+
+      // Start location tracking
+      this.geolocationService.startLocationTracking(
+        (x: number, y: number) => {
+          // Convert meters to pixels
+          const xPixels = x * gameConfig.scale;
+          const yPixels = y * gameConfig.scale;
+
+          // Update position marker
+          if (this.positionMarker) {
+            this.positionMarker.setPosition(xPixels, yPixels);
+          }
+        },
+        (error: string) => {
+          console.error("Geolocation error:", error);
+          this.uiScene?.updateDebugInfo(`GPS Error: ${error}`);
+        }
+      );
+
+      console.log("Geolocation tracking started");
+    } catch (error) {
+      console.error("Failed to initialize geolocation:", error);
+      this.uiScene?.updateDebugInfo(`GPS Init Error: ${error}`);
     }
   }
 
@@ -100,11 +155,22 @@ export class GameScene extends Phaser.Scene {
         const markerPos = marker.getPosition();
         const cameraRotation = camera.getRotation();
 
-        const debugInfo = `Character: (${charPos.x.toFixed(
+        let debugInfo = `Character: (${charPos.x.toFixed(
           1
         )}, ${charPos.y.toFixed(1)})
 Marker: (${markerPos.x.toFixed(1)}, ${markerPos.y.toFixed(1)})
 Camera Rotation: ${((cameraRotation * 180) / Math.PI).toFixed(1)}°`;
+
+        // Add geolocation status
+        if (gameConfig.geolocation.enabled) {
+          const geoStatus = this.geolocationEnabled
+            ? "GPS: Active"
+            : "GPS: Inactive";
+          const trackingStatus = this.geolocationService?.isTracking()
+            ? "Tracking: Yes"
+            : "Tracking: No";
+          debugInfo += `\n${geoStatus}\n${trackingStatus}`;
+        }
 
         this.uiScene.updateDebugInfo(debugInfo);
       }
@@ -176,11 +242,14 @@ Camera Rotation: ${((cameraRotation * 180) / Math.PI).toFixed(1)}°`;
 
   private setupInput(): void {
     // Set up input handling for mouse/touch
-    this.input.on("pointerdown", (pointer: Phaser.Input.Pointer) => {
-      if (this.positionMarker) {
-        this.positionMarker.setPosition(pointer.worldX, pointer.worldY);
-      }
-    });
+    // Only allow manual positioning if geolocation is disabled
+    if (!gameConfig.geolocation.enabled || !this.geolocationEnabled) {
+      this.input.on("pointerdown", (pointer: Phaser.Input.Pointer) => {
+        if (this.positionMarker) {
+          this.positionMarker.setPosition(pointer.worldX, pointer.worldY);
+        }
+      });
+    }
   }
 
   // Public methods for other systems to access game objects
@@ -202,6 +271,14 @@ Camera Rotation: ${((cameraRotation * 180) / Math.PI).toFixed(1)}°`;
 
   getDebugSystem(): DebugSystem | undefined {
     return this.systems.debug;
+  }
+
+  getGeolocationService(): GeolocationService | undefined {
+    return this.geolocationService;
+  }
+
+  isGeolocationEnabled(): boolean {
+    return this.geolocationEnabled;
   }
 
   // Method to update score (called when collecting features)

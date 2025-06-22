@@ -31,6 +31,9 @@ export interface GameConfig {
       y: number;
     };
   };
+  geolocation: {
+    enabled: boolean;
+  };
 }
 
 export const gameConfig: GameConfig = {
@@ -60,5 +63,8 @@ export const gameConfig: GameConfig = {
       x: 0,
       y: 0,
     },
+  },
+  geolocation: {
+    enabled: true,
   },
 };
