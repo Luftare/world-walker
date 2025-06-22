@@ -24,7 +24,7 @@ export class Character {
     this.graphics.strokeCircle(
       0,
       0,
-      gameConfig.playerRadius * gameConfig.scale,
+      gameConfig.playerRadius * gameConfig.scale
     );
 
     // Set position

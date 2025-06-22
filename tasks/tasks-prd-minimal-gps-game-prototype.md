@@ -45,8 +45,8 @@
 - [ ] 4.0 Hexagonal Grid System
   - [x] 4.1 Create HexagonUtils for grid calculations
   - [x] 4.2 Create GridSystem for dynamic hexagon management
-  - [ ] 4.3 Create Feature entity (green circles)
-  - [ ] 4.4 Implement hexagon population logic
+  - [x] 4.3 Create Feature entity (green circles)
+  - [x] 4.4 Implement hexagon population logic
   - [ ] 4.5 Add grid persistence for populated hexagons
 - [ ] 5.0 Camera and Debug Controls
   - [ ] 5.1 Create CameraSystem for centering and rotation

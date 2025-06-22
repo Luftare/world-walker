@@ -12,9 +12,9 @@ export class Feature {
 
   constructor(
     scene: Phaser.Scene,
-    x: number,
-    y: number,
-    hexCoord: HexagonCoord,
+    x: number = 0,
+    y: number = 0,
+    hexCoord: HexagonCoord
   ) {
     this.scene = scene;
     this.x = x;
@@ -32,41 +32,28 @@ export class Feature {
       return;
     }
 
-    const scale = gameConfig.scale;
-    const radius = gameConfig.featureRadius * scale;
+    // Draw feature as green circle
+    this.graphics.fillStyle(gameConfig.colors.feature);
+    this.graphics.lineStyle(1, gameConfig.colors.featureBorder);
+    this.graphics.fillCircle(0, 0, gameConfig.featureRadius * gameConfig.scale);
+    this.graphics.strokeCircle(
+      0,
+      0,
+      gameConfig.featureRadius * gameConfig.scale
+    );
 
-    // Draw smiley face
-    // Face (yellow circle)
-    this.graphics.fillStyle(0xffff00);
-    this.graphics.lineStyle(2, 0xcc9900);
-    this.graphics.fillCircle(0, 0, radius);
-    this.graphics.strokeCircle(0, 0, radius);
+    // Draw a rectangle inside the circle to make counter-rotation visible
+    const rectSize = gameConfig.featureRadius * gameConfig.scale * 0.6;
+    this.graphics.lineStyle(2, 0x000000); // Black rectangle outline
 
-    // Eyes (black circles)
-    const eyeOffset = radius * 0.35;
-    const eyeRadius = radius * 0.15;
-    this.graphics.fillStyle(0x000000);
-    this.graphics.fillCircle(-eyeOffset, -eyeOffset * 0.5, eyeRadius);
-    this.graphics.fillCircle(eyeOffset, -eyeOffset * 0.5, eyeRadius);
-
-    // Mouth (simple curved line using connected line segments)
-    this.graphics.lineStyle(3, 0x000000);
+    // Don't remove this, it's used for ensuring counter-rotation works correctly
+    // Draw rectangle using path
     this.graphics.beginPath();
-    const mouthRadius = radius * 0.4;
-    const mouthCenterY = eyeOffset * 0.2;
-    const segments = 8;
-
-    for (let i = 0; i <= segments; i++) {
-      const angle = (i / segments) * Math.PI;
-      const x = -mouthRadius + (2 * mouthRadius * i) / segments;
-      const y = mouthCenterY + Math.sin(angle) * mouthRadius * 0.5;
-
-      if (i === 0) {
-        this.graphics.moveTo(x, y);
-      } else {
-        this.graphics.lineTo(x, y);
-      }
-    }
+    this.graphics.moveTo(-rectSize / 2, -rectSize / 2);
+    this.graphics.lineTo(rectSize / 2, -rectSize / 2);
+    this.graphics.lineTo(rectSize / 2, rectSize / 2);
+    this.graphics.lineTo(-rectSize / 2, rectSize / 2);
+    this.graphics.closePath();
     this.graphics.strokePath();
 
     // Set position
@@ -112,7 +99,7 @@ export class Feature {
     }
 
     const distance = Math.sqrt(
-      Math.pow(worldX - this.x, 2) + Math.pow(worldY - this.y, 2),
+      Math.pow(worldX - this.x, 2) + Math.pow(worldY - this.y, 2)
     );
 
     const collectionRadius =
