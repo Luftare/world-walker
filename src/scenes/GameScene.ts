@@ -25,11 +25,11 @@ export class GameScene extends Phaser.Scene {
     super({ key: "GameScene" });
   }
 
-  override preload(): void {
+  preload(): void {
     // Preload any assets here
   }
 
-  override create(): void {
+  create(): void {
     // Start the UI scene if it's not already running
     if (!this.scene.isActive("UIScene")) {
       this.scene.launch("UIScene");

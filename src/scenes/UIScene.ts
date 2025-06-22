@@ -1,3 +1,4 @@
+import Phaser from "phaser";
 import { gameConfig } from "../config/gameConfig";
 
 export class UIScene extends Phaser.Scene {
@@ -12,7 +13,7 @@ export class UIScene extends Phaser.Scene {
     super({ key: "UIScene" });
   }
 
-  override create(): void {
+  create(): void {
     this.createUIElements();
   }
 

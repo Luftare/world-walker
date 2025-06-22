@@ -1,10 +1,11 @@
+import Phaser from "phaser";
 import { gameConfig } from "../config/gameConfig";
 import { Character } from "../entities/Character";
 
 export class CameraSystem {
   private scene: Phaser.Scene;
   private character: Character;
-  private camera: Phaser.Cameras.Camera;
+  private camera: Phaser.Cameras.Scene2D.Camera;
   private targetRotation: number = 0;
   private currentRotation: number = 0;
 

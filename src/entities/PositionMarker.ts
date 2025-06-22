@@ -24,7 +24,7 @@ export class PositionMarker {
     this.graphics.strokeCircle(
       0,
       0,
-      gameConfig.markerRadius * gameConfig.scale,
+      gameConfig.markerRadius * gameConfig.scale
     );
 
     // Set position

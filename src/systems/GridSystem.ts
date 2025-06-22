@@ -1,3 +1,4 @@
+import Phaser from "phaser";
 import { gameConfig } from "../config/gameConfig";
 import { HexagonUtils, HexagonCoord } from "../utils/HexagonUtils";
 import { Character } from "../entities/Character";

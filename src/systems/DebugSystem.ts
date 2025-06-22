@@ -1,3 +1,4 @@
+import Phaser from "phaser";
 import { gameConfig } from "../config/gameConfig";
 import { Character } from "../entities/Character";
 import { PositionMarker } from "../entities/PositionMarker";
@@ -8,7 +9,7 @@ export class DebugSystem {
   private character: Character;
   private positionMarker: PositionMarker;
   private cameraSystem: CameraSystem | undefined;
-  private keys: { [key: string]: Phaser.Input.Keyboard.Key } = {};
+  private keys: { [key: string]: Phaser.Input.Keyboard.Key | undefined } = {};
   private debugGraphics?: Phaser.GameObjects.Graphics;
   private isEnabled: boolean;
 
@@ -33,13 +34,13 @@ export class DebugSystem {
   private initializeDebugControls(): void {
     // Initialize keyboard controls for debug movement
     this.keys = {
-      W: this.scene.input.keyboard.addKey("W"),
-      A: this.scene.input.keyboard.addKey("A"),
-      S: this.scene.input.keyboard.addKey("S"),
-      D: this.scene.input.keyboard.addKey("D"),
-      Q: this.scene.input.keyboard.addKey("Q"),
-      E: this.scene.input.keyboard.addKey("E"),
-      F1: this.scene.input.keyboard.addKey("F1"),
+      W: this.scene?.input?.keyboard?.addKey("W"),
+      A: this.scene?.input?.keyboard?.addKey("A"),
+      S: this.scene?.input?.keyboard?.addKey("S"),
+      D: this.scene?.input?.keyboard?.addKey("D"),
+      Q: this.scene?.input?.keyboard?.addKey("Q"),
+      E: this.scene?.input?.keyboard?.addKey("E"),
+      F1: this.scene?.input?.keyboard?.addKey("F1"),
     };
 
     // Set up key event listeners
