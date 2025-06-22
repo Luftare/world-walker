@@ -18,6 +18,8 @@ export class GameScene extends Phaser.Scene {
   } = {};
   private uiScene?: UIScene;
   private score: number = 0;
+  private lastSaveTime: number = 0;
+  private saveInterval: number = 30000; // Save every 30 seconds
 
   constructor() {
     super({ key: "GameScene" });
@@ -74,6 +76,12 @@ export class GameScene extends Phaser.Scene {
       this.systems.grid.updateFeatureRotations(cameraRotation);
     }
 
+    // Periodic grid data saving
+    if (this.systems.grid && time - this.lastSaveTime > this.saveInterval) {
+      this.systems.grid.saveGridData();
+      this.lastSaveTime = time;
+    }
+
     // Update UI with debug info
     this.updateUI();
   }
@@ -93,7 +101,7 @@ export class GameScene extends Phaser.Scene {
         const cameraRotation = camera.getRotation();
 
         const debugInfo = `Character: (${charPos.x.toFixed(
-          1,
+          1
         )}, ${charPos.y.toFixed(1)})
 Marker: (${markerPos.x.toFixed(1)}, ${markerPos.y.toFixed(1)})
 Camera Rotation: ${((cameraRotation * 180) / Math.PI).toFixed(1)}°`;
@@ -125,14 +133,14 @@ Camera Rotation: ${((cameraRotation * 180) / Math.PI).toFixed(1)}°`;
     this.character = new Character(
       this,
       gameConfig.world.startLocation.x,
-      gameConfig.world.startLocation.y,
+      gameConfig.world.startLocation.y
     );
 
     // Create position marker using the PositionMarker entity class
     this.positionMarker = new PositionMarker(
       this,
       gameConfig.world.startLocation.x,
-      gameConfig.world.startLocation.y,
+      gameConfig.world.startLocation.y
     );
   }
 
@@ -141,7 +149,7 @@ Camera Rotation: ${((cameraRotation * 180) / Math.PI).toFixed(1)}°`;
     if (this.character && this.positionMarker) {
       this.systems.movement = new MovementSystem(
         this.character,
-        this.positionMarker,
+        this.positionMarker
       );
     }
 
@@ -161,7 +169,7 @@ Camera Rotation: ${((cameraRotation * 180) / Math.PI).toFixed(1)}°`;
         this,
         this.character,
         this.positionMarker,
-        this.systems.camera,
+        this.systems.camera
       );
     }
   }
@@ -203,5 +211,14 @@ Camera Rotation: ${((cameraRotation * 180) / Math.PI).toFixed(1)}°`;
 
   getScore(): number {
     return this.score;
+  }
+
+  // Grid persistence methods
+  saveGridData(): void {
+    this.systems.grid?.saveGridData();
+  }
+
+  clearGridData(): void {
+    this.systems.grid?.clearGridData();
   }
 }

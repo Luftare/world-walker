@@ -42,14 +42,14 @@
   - [x] 3.2 Implement smooth movement towards position marker
   - [x] 3.3 Add overshoot detection logic for stopping
   - [x] 3.4 Integrate movement system with game scene
-- [ ] 4.0 Hexagonal Grid System
+- [x] 4.0 Hexagonal Grid System
   - [x] 4.1 Create HexagonUtils for grid calculations
   - [x] 4.2 Create GridSystem for dynamic hexagon management
   - [x] 4.3 Create Feature entity (green circles)
   - [x] 4.4 Implement hexagon population logic
-  - [ ] 4.5 Add grid persistence for populated hexagons
-- [ ] 5.0 Camera and Debug Controls
-  - [ ] 5.1 Create CameraSystem for centering and rotation
-  - [ ] 5.2 Create DebugSystem for WASD and QE controls
-  - [ ] 5.3 Implement grid visualization in debug mode
-  - [ ] 5.4 Integrate all systems and test complete functionality
+  - [x] 4.5 Add grid persistence for populated hexagons
+- [x] 5.0 Camera and Debug Controls
+  - [x] 5.1 Create CameraSystem for centering and rotation
+  - [x] 5.2 Create DebugSystem for WASD and QE controls
+  - [x] 5.3 Implement grid visualization in debug mode
+  - [x] 5.4 Integrate all systems and test complete functionality
