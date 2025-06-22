@@ -35,11 +35,9 @@
       <div id="loading">Loading GPS Game Prototype...</div>
     </div>
 
-    <!-- Phaser 3 Library -->
-    <script src="node_modules/phaser/dist/phaser.min.js"></script>
-
     <!-- Game Scripts -->
     <script type="module">
+      import Phaser from "phaser";
       import { gameConfig } from "./src/config/gameConfig.ts";
       import { GameScene } from "./src/scenes/GameScene.ts";
       import { UIScene } from "./src/scenes/UIScene.ts";
