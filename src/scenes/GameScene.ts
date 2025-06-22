@@ -44,13 +44,13 @@ export class GameScene extends Phaser.Scene {
     // Get reference to UI scene
     this.uiScene = this.scene.get("UIScene") as UIScene;
 
+    // Initialize compass after geolocation
+    await this.initializeCompass();
+
     // Initialize geolocation if enabled
     if (gameConfig.geolocation.enabled) {
       await this.initializeGeolocation();
     }
-
-    // Initialize compass after geolocation
-    await this.initializeCompass();
 
     // Set up the game world
     this.setupWorld();
@@ -141,21 +141,15 @@ export class GameScene extends Phaser.Scene {
       this.compassEnabled = true;
 
       // Start compass tracking
-      this.compassService.startCompassTracking(
-        (direction: number) => {
-          // Convert degrees to radians
-          const radians = (direction * Math.PI) / 180;
+      this.compassService.startCompassTracking((direction: number) => {
+        // Convert degrees to radians
+        const radians = (direction * Math.PI) / 180;
 
-          // Apply compass direction to camera rotation
-          if (this.systems.camera) {
-            this.systems.camera.setTargetRotation(radians);
-          }
-        },
-        (error: string) => {
-          console.error("Compass error:", error);
-          this.uiScene?.updateDebugInfo(`Compass Error: ${error}`);
+        // Apply compass direction to camera rotation
+        if (this.systems.camera) {
+          this.systems.camera.setTargetRotation(radians);
         }
-      );
+      });
 
       console.log("Compass tracking started");
     } catch (error) {
