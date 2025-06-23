@@ -82,7 +82,7 @@ export class GameScene extends Phaser.Scene {
           if (this.systems.debug?.isDebugEnabled()) {
             return;
           }
-          // Convert meters to pixels
+          // Convert meters to pixels (coordinates are already in meters with Y-axis inversion)
           const xPixels = x * gameConfig.scale;
           const yPixels = y * gameConfig.scale;
 

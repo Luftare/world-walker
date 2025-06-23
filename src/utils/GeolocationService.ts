@@ -1,3 +1,5 @@
+import { CoordinateUtils } from "./CoordinateUtils";
+
 export interface GeoLocation {
   latitude: number;
   longitude: number;
@@ -126,15 +128,13 @@ export class GeolocationService {
       throw new Error("Initial location or geo scale not set");
     }
 
-    // Calculate offset in degrees
-    const lonOffset = location.longitude - this.initialLocation.longitude;
-    const latOffset = location.latitude - this.initialLocation.latitude;
-
-    // Convert to meters
-    const xMeters = lonOffset * this.geoScale.metersPerLon;
-    const yMeters = latOffset * this.geoScale.metersPerLat;
-
-    return { x: xMeters, y: yMeters };
+    // Use CoordinateUtils for consistent coordinate conversion with Y-axis inversion
+    return CoordinateUtils.convertGeoToGameCoordinates(
+      location,
+      this.initialLocation,
+      this.geoScale,
+      1 // Return coordinates in meters, GameScene will convert to pixels
+    );
   }
 
   getInitialLocationData(): {

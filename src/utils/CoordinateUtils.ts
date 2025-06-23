@@ -31,11 +31,12 @@ export class CoordinateUtils {
 
     // Convert to meters
     const xMeters = lonOffset * geoScale.metersPerLon;
-    const yMeters = -latOffset * geoScale.metersPerLat; // Invert latitude to match game coordinate system
+    const yMeters = latOffset * geoScale.metersPerLat;
 
     // Convert meters to pixels
     const xPixels = this.metersToPixels(xMeters, gameScale);
-    const yPixels = this.metersToPixels(yMeters, gameScale);
+    // Invert Y-axis for game coordinate system (screen Y increases downward)
+    const yPixels = -this.metersToPixels(yMeters, gameScale);
 
     return { x: xPixels, y: yPixels };
   }
