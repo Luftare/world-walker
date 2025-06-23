@@ -41,6 +41,10 @@ export class CompassService {
     this.tracking = true;
   }
 
+  updateHeadingCallback(headingCallback: (heading: number) => void): void {
+    this.headingCallback = headingCallback;
+  }
+
   isTracking(): boolean {
     return this.tracking && this.permissionGranted;
   }

@@ -161,6 +161,13 @@ export class MenuScene extends Phaser.Scene {
       throw new Error("Compass permission denied");
     }
 
+    // Start compass tracking immediately after permission is granted
+    // This keeps it in the same call chain as the user gesture
+    this.compassService.startCompassTracking(() => {
+      // This callback will be used by the game scene
+      // For now, we just store the service with tracking started
+    });
+
     this.currentStep = "complete";
     this.updateUI();
   }

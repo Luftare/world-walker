@@ -117,8 +117,9 @@ export class GameScene extends Phaser.Scene {
     if (!this.compassService) return;
 
     try {
-      // Start compass tracking
-      this.compassService.startCompassTracking((direction: number) => {
+      // Update the compass heading callback for the game scene
+      // Tracking is already started in the menu scene to maintain the user gesture call chain
+      this.compassService.updateHeadingCallback((direction: number) => {
         // Convert degrees to radians
         const radians = (direction * Math.PI) / 180;
 
@@ -128,9 +129,9 @@ export class GameScene extends Phaser.Scene {
         }
       });
 
-      console.log("Compass tracking started");
+      console.log("Compass tracking initialized for game scene");
     } catch (error) {
-      console.error("Failed to start compass tracking:", error);
+      console.error("Failed to initialize compass for game scene:", error);
       this.uiScene?.updateDebugInfo(`Compass Tracking Error: ${error}`);
     }
   }
