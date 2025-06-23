@@ -31,22 +31,19 @@ export interface GameConfig {
       y: number;
     };
   };
-  geolocation: {
-    enabled: boolean;
-  };
 }
 
 export const gameConfig: GameConfig = {
-  playerSpeed: 2,
-  playerRadius: 3,
+  playerSpeed: 3,
+  playerRadius: 2,
   hexagonRadius: 10,
   populateDistance: 70,
-  scale: 20,
+  scale: 10,
   devMode: true,
-  rotationSpeed: 1.0,
+  rotationSpeed: 2.0,
   movementSpeed: 3,
   debugMovementSpeed: 300,
-  featureRadius: 2,
+  featureRadius: 3,
   markerRadius: 1,
   markerAlpha: 0.6,
   colors: {
@@ -63,8 +60,5 @@ export const gameConfig: GameConfig = {
       x: 0,
       y: 0,
     },
-  },
-  geolocation: {
-    enabled: true,
   },
 };

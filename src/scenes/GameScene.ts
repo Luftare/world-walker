@@ -19,13 +19,10 @@ export class GameScene extends Phaser.Scene {
     debug?: DebugSystem;
   } = {};
   private uiScene?: UIScene;
-  private score: number = 0;
   private lastSaveTime: number = 0;
   private saveInterval: number = 30000; // Save every 30 seconds
   private geolocationService?: GeolocationService;
-  private geolocationEnabled: boolean = false;
   private compassService?: CompassService;
-  private compassEnabled: boolean = false;
 
   constructor() {
     super({ key: "GameScene" });
@@ -50,26 +47,17 @@ export class GameScene extends Phaser.Scene {
     // Initialize services from menu scene
     if (data?.geolocationService) {
       this.geolocationService = data.geolocationService;
-      this.geolocationEnabled = true;
       await this.initializeGeolocation();
     }
 
     if (data?.compassService) {
       this.compassService = data.compassService;
-      this.compassEnabled = true;
       await this.initializeCompass();
     }
 
-    // Set up the game world
     this.setupWorld();
-
-    // Create initial game entities
     this.createEntities();
-
-    // Initialize game systems
     this.initializeSystems();
-
-    // Set up input handling
     this.setupInput();
 
     // Set up debug toggle callback
@@ -91,6 +79,9 @@ export class GameScene extends Phaser.Scene {
       // Start location tracking
       this.geolocationService.startLocationTracking(
         (x: number, y: number) => {
+          if (this.systems.debug?.isDebugEnabled()) {
+            return;
+          }
           // Convert meters to pixels
           const xPixels = x * gameConfig.scale;
           const yPixels = y * gameConfig.scale;
@@ -102,14 +93,10 @@ export class GameScene extends Phaser.Scene {
         },
         (error: string) => {
           console.error("Geolocation error:", error);
-          this.uiScene?.updateDebugInfo(`GPS Error: ${error}`);
         }
       );
-
-      console.log("Geolocation tracking started");
     } catch (error) {
       console.error("Failed to start geolocation tracking:", error);
-      this.uiScene?.updateDebugInfo(`GPS Tracking Error: ${error}`);
     }
   }
 
@@ -120,6 +107,9 @@ export class GameScene extends Phaser.Scene {
       // Update the compass heading callback for the game scene
       // Tracking is already started in the menu scene to maintain the user gesture call chain
       this.compassService.startCompassTracking((direction: number) => {
+        if (this.systems.debug?.isDebugEnabled()) {
+          return;
+        }
         // Convert degrees to radians
         const radians = (direction * Math.PI) / 180;
 
@@ -128,11 +118,8 @@ export class GameScene extends Phaser.Scene {
           this.systems.camera.setTargetRotation(-radians);
         }
       });
-
-      console.log("Compass tracking initialized for game scene");
     } catch (error) {
       console.error("Failed to initialize compass for game scene:", error);
-      this.uiScene?.updateDebugInfo(`Compass Tracking Error: ${error}`);
     }
   }
 
@@ -156,67 +143,12 @@ export class GameScene extends Phaser.Scene {
       this.lastSaveTime = time;
     }
 
-    // Update UI with debug info
     this.updateUI();
   }
 
   private updateUI(): void {
     if (!this.uiScene) return;
 
-    // Update debug info
-    if (this.systems.debug && this.systems.debug.isDebugEnabled()) {
-      const character = this.getCharacter();
-      const marker = this.getPositionMarker();
-      const camera = this.getCameraSystem();
-
-      if (character && marker && camera) {
-        const charPos = character.getPosition();
-        const markerPos = marker.getPosition();
-        const cameraRotation = camera.getRotation();
-
-        let debugInfo = `Character: (${charPos.x.toFixed(
-          1
-        )}, ${charPos.y.toFixed(1)})
-Marker: (${markerPos.x.toFixed(1)}, ${markerPos.y.toFixed(1)})
-Camera Rotation: ${((cameraRotation * 180) / Math.PI).toFixed(1)}°`;
-
-        // Add geolocation status
-        if (gameConfig.geolocation.enabled) {
-          const geoStatus = this.geolocationEnabled
-            ? "GPS: Active"
-            : "GPS: Inactive";
-          const trackingStatus = this.geolocationService?.isTracking()
-            ? "Tracking: Yes"
-            : "Tracking: No";
-          debugInfo += `\n${geoStatus}\n${trackingStatus}`;
-        }
-
-        // Add compass status
-        const compassStatus = this.compassEnabled
-          ? "Compass: Active"
-          : "Compass: Inactive";
-        const compassPermissionStatus =
-          this.compassService?.isPermissionGranted()
-            ? "Compass Permission: Granted"
-            : "Compass Permission: Denied";
-        const compassTrackingStatus = this.compassService?.isTracking()
-          ? "Compass Tracking: Yes"
-          : "Compass Tracking: No";
-        const compassHeading = this.compassService?.getCurrentHeading() || 0;
-        debugInfo += `\n${compassStatus}\n${compassPermissionStatus}\n${compassTrackingStatus}\nCompass Heading: ${compassHeading.toFixed(
-          1
-        )}°`;
-
-        this.uiScene.updateDebugInfo(debugInfo);
-      }
-    } else {
-      this.uiScene.updateDebugInfo("");
-    }
-
-    // Update score
-    this.uiScene.updateScore(this.score);
-
-    // Update debug button state
     const isDebugEnabled = this.systems.debug?.isDebugEnabled() || false;
     this.uiScene.updateDebugButtonText(isDebugEnabled);
   }
@@ -276,15 +208,11 @@ Camera Rotation: ${((cameraRotation * 180) / Math.PI).toFixed(1)}°`;
   }
 
   private setupInput(): void {
-    // Set up input handling for mouse/touch
-    // Only allow manual positioning if geolocation is disabled
-    if (!gameConfig.geolocation.enabled || !this.geolocationEnabled) {
-      this.input.on("pointerdown", (pointer: Phaser.Input.Pointer) => {
-        if (this.positionMarker) {
-          this.positionMarker.setPosition(pointer.worldX, pointer.worldY);
-        }
-      });
-    }
+    this.input.on("pointerdown", (pointer: Phaser.Input.Pointer) => {
+      if (this.positionMarker && this.systems.debug?.isDebugEnabled()) {
+        this.positionMarker.setPosition(pointer.worldX, pointer.worldY);
+      }
+    });
   }
 
   // Public methods for other systems to access game objects
@@ -296,41 +224,8 @@ Camera Rotation: ${((cameraRotation * 180) / Math.PI).toFixed(1)}°`;
     return this.positionMarker;
   }
 
-  getGridSystem(): GridSystem | undefined {
-    return this.systems.grid;
-  }
-
   getCameraSystem(): CameraSystem | undefined {
     return this.systems.camera;
-  }
-
-  getDebugSystem(): DebugSystem | undefined {
-    return this.systems.debug;
-  }
-
-  getGeolocationService(): GeolocationService | undefined {
-    return this.geolocationService;
-  }
-
-  isGeolocationEnabled(): boolean {
-    return this.geolocationEnabled;
-  }
-
-  getCompassService(): CompassService | undefined {
-    return this.compassService;
-  }
-
-  isCompassEnabled(): boolean {
-    return this.compassEnabled;
-  }
-
-  // Method to update score (called when collecting features)
-  addScore(points: number): void {
-    this.score += points;
-  }
-
-  getScore(): number {
-    return this.score;
   }
 
   // Grid persistence methods

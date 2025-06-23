@@ -102,7 +102,7 @@ export class GridSystem {
     const hexKey = this.getHexagonKey(hex);
 
     // Determine if this hexagon should have a feature (simple random for now)
-    const hasFeature = Math.random() < 0.3; // 30% chance
+    const hasFeature = Math.random() < 0.5;
 
     let featureEntity: Feature | undefined;
     if (hasFeature) {

@@ -101,40 +101,6 @@ export class MenuScene extends Phaser.Scene {
     );
     this.startGameButton.addEventListener("click", () => this.startGame());
 
-    // Add hover effects
-    this.compassButton.addEventListener("mouseenter", () => {
-      if (this.compassButton) {
-        this.compassButton.style.backgroundColor = "#0055aa";
-      }
-    });
-    this.compassButton.addEventListener("mouseleave", () => {
-      if (this.compassButton) {
-        this.compassButton.style.backgroundColor = "#0066cc";
-      }
-    });
-
-    this.locationButton.addEventListener("mouseenter", () => {
-      if (this.locationButton) {
-        this.locationButton.style.backgroundColor = "#0055aa";
-      }
-    });
-    this.locationButton.addEventListener("mouseleave", () => {
-      if (this.locationButton) {
-        this.locationButton.style.backgroundColor = "#0066cc";
-      }
-    });
-
-    this.startGameButton.addEventListener("mouseenter", () => {
-      if (this.startGameButton) {
-        this.startGameButton.style.backgroundColor = "#00aa55";
-      }
-    });
-    this.startGameButton.addEventListener("mouseleave", () => {
-      if (this.startGameButton) {
-        this.startGameButton.style.backgroundColor = "#00cc66";
-      }
-    });
-
     // Assemble menu
     this.menuContainer.appendChild(title);
     this.menuContainer.appendChild(this.statusDiv);
@@ -262,9 +228,5 @@ export class MenuScene extends Phaser.Scene {
     if (this.menuContainer && this.menuContainer.parentNode) {
       this.menuContainer.parentNode.removeChild(this.menuContainer);
     }
-  }
-
-  resize(): void {
-    // No-op: all menu UI is now HTML-based and responsive
   }
 }
