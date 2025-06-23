@@ -31,7 +31,7 @@ export class CoordinateUtils {
 
     // Convert to meters
     const xMeters = lonOffset * geoScale.metersPerLon;
-    const yMeters = latOffset * geoScale.metersPerLat;
+    const yMeters = -latOffset * geoScale.metersPerLat; // Invert latitude to match game coordinate system
 
     // Convert meters to pixels
     const xPixels = this.metersToPixels(xMeters, gameScale);
