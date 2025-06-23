@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import { GeolocationService } from "../utils/GeolocationService";
 import { CompassService } from "../utils/CompassService";
+import { UniversalCompass } from "../utils/Compass";
 
 export class MenuScene extends Phaser.Scene {
   private titleText?: Phaser.GameObjects.Text;
@@ -11,6 +12,8 @@ export class MenuScene extends Phaser.Scene {
   private currentStep: "location" | "compass" | "complete" = "location";
   private geolocationService?: GeolocationService;
   private compassService?: CompassService;
+  private testCompassButton?: HTMLButtonElement;
+  private compassLogDiv?: HTMLDivElement;
 
   constructor() {
     super({ key: "MenuScene" });
@@ -19,6 +22,7 @@ export class MenuScene extends Phaser.Scene {
 
   create(): void {
     this.createUIElements();
+    this.createCompassTestButton();
     this.updateUI();
   }
 
@@ -85,6 +89,89 @@ export class MenuScene extends Phaser.Scene {
       }
     );
     this.errorText.setOrigin(0.5);
+  }
+
+  private createCompassTestButton(): void {
+    // Create HTML button for isolated compass test
+    this.testCompassButton = document.createElement("button");
+    this.testCompassButton.textContent = "Test Compass (Isolated)";
+    this.testCompassButton.style.position = "absolute";
+    this.testCompassButton.style.top = "20px";
+    this.testCompassButton.style.right = "20px";
+    this.testCompassButton.style.zIndex = "1000";
+    this.testCompassButton.style.padding = "10px 15px";
+    this.testCompassButton.style.backgroundColor = "#ff6600";
+    this.testCompassButton.style.color = "white";
+    this.testCompassButton.style.border = "none";
+    this.testCompassButton.style.borderRadius = "5px";
+    this.testCompassButton.style.fontSize = "14px";
+    this.testCompassButton.style.cursor = "pointer";
+
+    // Create log div for compass data
+    this.compassLogDiv = document.createElement("div");
+    this.compassLogDiv.style.position = "absolute";
+    this.compassLogDiv.style.top = "70px";
+    this.compassLogDiv.style.right = "20px";
+    this.compassLogDiv.style.zIndex = "1000";
+    this.compassLogDiv.style.backgroundColor = "rgba(0, 0, 0, 0.8)";
+    this.compassLogDiv.style.color = "white";
+    this.compassLogDiv.style.padding = "10px";
+    this.compassLogDiv.style.borderRadius = "5px";
+    this.compassLogDiv.style.fontSize = "12px";
+    this.compassLogDiv.style.fontFamily = "monospace";
+    this.compassLogDiv.style.maxWidth = "300px";
+    this.compassLogDiv.style.maxHeight = "200px";
+    this.compassLogDiv.style.overflow = "auto";
+    this.compassLogDiv.textContent = "Compass logs will appear here...";
+
+    // Add to DOM
+    document.body.appendChild(this.testCompassButton);
+    document.body.appendChild(this.compassLogDiv);
+
+    // Add click handler
+    this.testCompassButton.addEventListener("click", () =>
+      this.testCompassIsolated()
+    );
+  }
+
+  private async testCompassIsolated(): Promise<void> {
+    if (!this.compassLogDiv) return;
+
+    this.logCompassMessage("Starting isolated compass test...");
+
+    try {
+      // Create a completely new compass instance
+      const testCompass = new UniversalCompass();
+
+      this.logCompassMessage("Created new UniversalCompass instance");
+
+      // Request permission with direct user gesture
+      this.logCompassMessage("Requesting permission...");
+      await testCompass.requestPermission();
+      this.logCompassMessage("✅ Permission granted!");
+
+      // Set up heading callback
+      testCompass.onHeading((heading: number) => {
+        this.logCompassMessage(`Heading: ${heading.toFixed(1)}°`);
+      });
+
+      this.logCompassMessage("Compass tracking started successfully!");
+    } catch (error) {
+      this.logCompassMessage(`❌ Error: ${error}`);
+      console.error("Isolated compass test error:", error);
+    }
+  }
+
+  private logCompassMessage(message: string): void {
+    if (!this.compassLogDiv) return;
+
+    const timestamp = new Date().toLocaleTimeString();
+    const logEntry = `[${timestamp}] ${message}`;
+
+    this.compassLogDiv.textContent += "\n" + logEntry;
+    this.compassLogDiv.scrollTop = this.compassLogDiv.scrollHeight;
+
+    console.log(logEntry);
   }
 
   private updateUI(): void {
