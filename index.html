@@ -18,6 +18,12 @@
         height: 100vh;
       }
 
+      @supports (height: 100dvh) {
+        #game-container {
+          height: 100dvh;
+        }
+      }
+
       #loading {
         position: absolute;
         top: 50%;
