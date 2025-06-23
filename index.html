@@ -70,8 +70,8 @@
         document.getElementById("loading").style.display = "none";
       });
 
-      // Handle window resize
-      window.addEventListener("resize", () => {
+      const handleResize = () => {
+        console.log("Resizing");
         game.scale.resize(window.innerWidth * dpr, window.innerHeight * dpr);
 
         // Resize UI elements
@@ -85,7 +85,11 @@
         if (menuScene && menuScene.resize) {
           menuScene.resize();
         }
-      });
+      };
+
+      // Handle window resize
+      window.addEventListener("resize", handleResize);
+      setTimeout(handleResize, 2000);
     </script>
   </body>
 </html>
