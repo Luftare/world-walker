@@ -19,8 +19,6 @@ export class GameScene extends Phaser.Scene {
     debug?: DebugSystem;
   } = {};
   private uiScene?: UIScene;
-  private lastSaveTime: number = 0;
-  private saveInterval: number = 30000; // Save every 30 seconds
   private geolocationService?: GeolocationService;
   private compassService?: CompassService;
 
@@ -137,12 +135,6 @@ export class GameScene extends Phaser.Scene {
       this.systems.grid.updateFeatureRotations(cameraRotation);
     }
 
-    // Periodic grid data saving
-    if (this.systems.grid && time - this.lastSaveTime > this.saveInterval) {
-      this.systems.grid.saveGridData();
-      this.lastSaveTime = time;
-    }
-
     this.updateUI();
   }
 
@@ -226,14 +218,5 @@ export class GameScene extends Phaser.Scene {
 
   getCameraSystem(): CameraSystem | undefined {
     return this.systems.camera;
-  }
-
-  // Grid persistence methods
-  saveGridData(): void {
-    this.systems.grid?.saveGridData();
-  }
-
-  clearGridData(): void {
-    this.systems.grid?.clearGridData();
   }
 }

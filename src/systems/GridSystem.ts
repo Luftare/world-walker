@@ -4,20 +4,10 @@ import { HexagonUtils, HexagonCoord } from "../utils/HexagonUtils";
 import { Character } from "../entities/Character";
 import { Feature } from "../entities/Feature";
 
-// Declare localStorage as global for browser environment
-declare const localStorage: Storage;
-
 interface PopulatedHexagon {
   coord: HexagonCoord;
   hasFeature: boolean;
   featureEntity?: Feature | undefined;
-}
-
-interface PersistedHexagon {
-  q: number;
-  r: number;
-  hasFeature: boolean;
-  isCollected: boolean;
 }
 
 export class GridSystem {
@@ -38,9 +28,6 @@ export class GridSystem {
     if (gameConfig.devMode) {
       this.gridGraphics = this.scene.add.graphics();
     }
-
-    // Load persisted grid data first
-    this.loadFromLocalStorage();
 
     // Populate initial hexagons around character's starting position
     const characterPos = this.character.getPosition();
@@ -117,30 +104,20 @@ export class GridSystem {
     };
 
     this.populatedHexagons.set(hexKey, populatedHex);
-
-    // Save grid data when new hexagons are populated
-    this.saveToLocalStorage();
   }
 
   private checkFeatureCollection(): void {
     const characterPos = this.character.getPosition();
-    let featureCollected = false;
 
     this.populatedHexagons.forEach((populatedHex) => {
       const feature = populatedHex.featureEntity;
       if (populatedHex.hasFeature && feature && !feature.isCollected()) {
         if (feature.canCollect(characterPos.x, characterPos.y)) {
           feature.collect();
-          featureCollected = true;
           // Could add score, sound effects, etc. here
         }
       }
     });
-
-    // Save grid data if a feature was collected
-    if (featureCollected) {
-      this.saveToLocalStorage();
-    }
   }
 
   private updateGridVisualization(): void {
@@ -244,90 +221,5 @@ export class GridSystem {
         populatedHex.featureEntity.updateRotation(cameraRotation);
       }
     });
-  }
-
-  // Persistence methods
-  private saveToLocalStorage(): void {
-    try {
-      const persistedData: PersistedHexagon[] = [];
-
-      this.populatedHexagons.forEach((populatedHex) => {
-        const persistedHex: PersistedHexagon = {
-          q: populatedHex.coord.q,
-          r: populatedHex.coord.r,
-          hasFeature: populatedHex.hasFeature,
-          isCollected: populatedHex.featureEntity?.isCollected() || false,
-        };
-        persistedData.push(persistedHex);
-      });
-
-      localStorage.setItem(
-        "world-hoarder-grid-data",
-        JSON.stringify(persistedData)
-      );
-    } catch {
-      // Silently handle localStorage errors
-    }
-  }
-
-  private loadFromLocalStorage(): void {
-    try {
-      const savedData = localStorage.getItem("world-hoarder-grid-data");
-      if (!savedData) return;
-
-      const persistedData = JSON.parse(savedData) as PersistedHexagon[];
-
-      persistedData.forEach((persistedHex) => {
-        const hexCoord: HexagonCoord = { q: persistedHex.q, r: persistedHex.r };
-        const hexKey = this.getHexagonKey(hexCoord);
-
-        // Only restore if not already populated
-        if (!this.populatedHexagons.has(hexKey)) {
-          let featureEntity: Feature | undefined;
-
-          if (persistedHex.hasFeature) {
-            const worldPos = HexagonUtils.hexagonToWorld(
-              hexCoord.q,
-              hexCoord.r
-            );
-            featureEntity = new Feature(
-              this.scene,
-              worldPos.x,
-              worldPos.y,
-              hexCoord
-            );
-
-            // Mark as collected if it was collected before
-            if (persistedHex.isCollected) {
-              featureEntity.collect();
-            }
-          }
-
-          const populatedHex: PopulatedHexagon = {
-            coord: hexCoord,
-            hasFeature: persistedHex.hasFeature,
-            featureEntity,
-          };
-
-          this.populatedHexagons.set(hexKey, populatedHex);
-        }
-      });
-    } catch {
-      // Silently handle localStorage errors
-    }
-  }
-
-  // Public method to save grid data (can be called periodically or on game events)
-  saveGridData(): void {
-    this.saveToLocalStorage();
-  }
-
-  // Public method to clear all saved grid data
-  clearGridData(): void {
-    try {
-      localStorage.removeItem("world-hoarder-grid-data");
-    } catch {
-      // Silently handle localStorage errors
-    }
   }
 }
