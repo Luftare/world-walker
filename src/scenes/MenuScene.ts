@@ -165,11 +165,6 @@ export class MenuScene extends Phaser.Scene {
         throw new Error("Compass permission denied");
       }
 
-      // Start compass tracking immediately after permission is granted
-      this.compassService.startCompassTracking(() => {
-        // This callback will be used by the game scene
-      });
-
       this.statusDiv.textContent = "✅ Compass enabled successfully!";
       if (this.compassButton) {
         this.compassButton.style.backgroundColor = "#00cc66";

@@ -119,13 +119,13 @@ export class GameScene extends Phaser.Scene {
     try {
       // Update the compass heading callback for the game scene
       // Tracking is already started in the menu scene to maintain the user gesture call chain
-      this.compassService.updateHeadingCallback((direction: number) => {
+      this.compassService.startCompassTracking((direction: number) => {
         // Convert degrees to radians
         const radians = (direction * Math.PI) / 180;
 
         // Apply compass direction to camera rotation
         if (this.systems.camera) {
-          this.systems.camera.setTargetRotation(radians);
+          this.systems.camera.setTargetRotation(-radians);
         }
       });
 
