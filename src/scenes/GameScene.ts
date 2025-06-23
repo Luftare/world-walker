@@ -8,6 +8,7 @@ import { DebugSystem } from "../systems/DebugSystem";
 import { UIScene } from "../scenes/UIScene";
 import { GeolocationService } from "../utils/GeolocationService";
 import { CompassService } from "../utils/CompassService";
+import { HexagonUtils } from "../utils/HexagonUtils";
 
 export class GameScene extends Phaser.Scene {
   private character?: Character;
@@ -129,12 +130,6 @@ export class GameScene extends Phaser.Scene {
       }
     });
 
-    // Update feature rotations to counter camera rotation
-    if (this.systems.camera && this.systems.grid) {
-      const cameraRotation = this.systems.camera.getRotation();
-      this.systems.grid.updateFeatureRotations(cameraRotation);
-    }
-
     this.updateUI();
   }
 
@@ -180,7 +175,11 @@ export class GameScene extends Phaser.Scene {
 
     // Initialize grid system
     if (this.character) {
-      this.systems.grid = new GridSystem(this, this.character);
+      this.systems.grid = new GridSystem(this, this.character, (hex) => {
+        // Here's where we would populate the hexagon
+        const worldPos = HexagonUtils.hexagonToWorld(hex.q, hex.r);
+        console.log("Populating hexagon:", hex, worldPos);
+      });
     }
 
     // Initialize camera system
@@ -205,18 +204,5 @@ export class GameScene extends Phaser.Scene {
         this.positionMarker.setPosition(pointer.worldX, pointer.worldY);
       }
     });
-  }
-
-  // Public methods for other systems to access game objects
-  getCharacter(): Character | undefined {
-    return this.character;
-  }
-
-  getPositionMarker(): PositionMarker | undefined {
-    return this.positionMarker;
-  }
-
-  getCameraSystem(): CameraSystem | undefined {
-    return this.systems.camera;
   }
 }

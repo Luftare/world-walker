@@ -2,24 +2,23 @@ import Phaser from "phaser";
 import { gameConfig } from "../config/gameConfig";
 import { HexagonUtils, HexagonCoord } from "../utils/HexagonUtils";
 import { Character } from "../entities/Character";
-import { Feature } from "../entities/Feature";
-
-interface PopulatedHexagon {
-  coord: HexagonCoord;
-  hasFeature: boolean;
-  featureEntity?: Feature | undefined;
-}
 
 export class GridSystem {
   private scene: Phaser.Scene;
   private character: Character;
-  private populatedHexagons: Map<string, PopulatedHexagon> = new Map();
+  private populatedHexagons: Map<string, HexagonCoord> = new Map();
   private lastCharacterHex: HexagonCoord = { q: 0, r: 0 };
   private gridGraphics?: Phaser.GameObjects.Graphics;
+  private onPopulate: (coord: HexagonCoord) => void;
 
-  constructor(scene: Phaser.Scene, character: Character) {
+  constructor(
+    scene: Phaser.Scene,
+    character: Character,
+    onPopulate: (coord: HexagonCoord) => void
+  ) {
     this.scene = scene;
     this.character = character;
+    this.onPopulate = onPopulate;
     this.initializeGrid();
   }
 
@@ -60,9 +59,6 @@ export class GridSystem {
     if (gameConfig.devMode && this.gridGraphics) {
       this.updateGridVisualization();
     }
-
-    // Check for feature collection
-    this.checkFeatureCollection();
   }
 
   private populateHexagonsAroundPosition(centerHex: HexagonCoord): void {
@@ -87,37 +83,8 @@ export class GridSystem {
 
   private populateHexagon(hex: HexagonCoord): void {
     const hexKey = this.getHexagonKey(hex);
-
-    // Determine if this hexagon should have a feature (simple random for now)
-    const hasFeature = Math.random() < 0.5;
-
-    let featureEntity: Feature | undefined;
-    if (hasFeature) {
-      const worldPos = HexagonUtils.hexagonToWorld(hex.q, hex.r);
-      featureEntity = new Feature(this.scene, worldPos.x, worldPos.y, hex);
-    }
-
-    const populatedHex: PopulatedHexagon = {
-      coord: hex,
-      hasFeature,
-      featureEntity,
-    };
-
-    this.populatedHexagons.set(hexKey, populatedHex);
-  }
-
-  private checkFeatureCollection(): void {
-    const characterPos = this.character.getPosition();
-
-    this.populatedHexagons.forEach((populatedHex) => {
-      const feature = populatedHex.featureEntity;
-      if (populatedHex.hasFeature && feature && !feature.isCollected()) {
-        if (feature.canCollect(characterPos.x, characterPos.y)) {
-          feature.collect();
-          // Could add score, sound effects, etc. here
-        }
-      }
-    });
+    this.populatedHexagons.set(hexKey, hex);
+    this.onPopulate(hex);
   }
 
   private updateGridVisualization(): void {
@@ -165,8 +132,7 @@ export class GridSystem {
     const hexKey = this.getHexagonKey(hex);
     const populatedHex = this.populatedHexagons.get(hexKey);
 
-    if (populatedHex && !populatedHex.hasFeature) {
-      // Only draw dot for populated hexagons without features
+    if (populatedHex) {
       graphics.fillStyle(gameConfig.colors.grid, 0.3);
       graphics.fillCircle(worldPos.x, worldPos.y, 2);
     }
@@ -174,52 +140,5 @@ export class GridSystem {
 
   private getHexagonKey(hex: HexagonCoord): string {
     return `${hex.q},${hex.r}`;
-  }
-
-  // Public methods for other systems
-  getPopulatedHexagons(): Map<string, PopulatedHexagon> {
-    return this.populatedHexagons;
-  }
-
-  isHexagonPopulated(hex: HexagonCoord): boolean {
-    return this.populatedHexagons.has(this.getHexagonKey(hex));
-  }
-
-  getHexagonAt(worldX: number, worldY: number): HexagonCoord {
-    return HexagonUtils.worldToHexagon(worldX, worldY);
-  }
-
-  // Method to force populate hexagons (useful for testing)
-  forcePopulateRange(centerHex: HexagonCoord, range: number): void {
-    const hexagons = HexagonUtils.getHexagonsInRange(centerHex, range);
-    hexagons.forEach((hex) => {
-      const hexKey = this.getHexagonKey(hex);
-      if (!this.populatedHexagons.has(hexKey)) {
-        this.populateHexagon(hex);
-      }
-    });
-  }
-
-  // Get all features (useful for other systems)
-  getFeatures(): Feature[] {
-    const features: Feature[] = [];
-    this.populatedHexagons.forEach((populatedHex) => {
-      if (populatedHex.featureEntity) {
-        features.push(populatedHex.featureEntity);
-      }
-    });
-    return features;
-  }
-
-  // Update feature rotations to counter camera rotation
-  updateFeatureRotations(cameraRotation: number): void {
-    this.populatedHexagons.forEach((populatedHex) => {
-      if (
-        populatedHex.featureEntity &&
-        !populatedHex.featureEntity.isCollected()
-      ) {
-        populatedHex.featureEntity.updateRotation(cameraRotation);
-      }
-    });
   }
 }
