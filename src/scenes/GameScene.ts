@@ -115,7 +115,7 @@ export class GameScene extends Phaser.Scene {
 
         // Apply compass direction to camera rotation
         if (this.systems.camera) {
-          this.systems.camera.setTargetRotation(-radians);
+          this.systems.camera.setTargetRotation(Math.PI * 0.5 - radians);
         }
       });
     } catch (error) {
