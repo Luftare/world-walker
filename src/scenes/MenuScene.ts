@@ -152,11 +152,12 @@ export class MenuScene extends Phaser.Scene {
 
   private async enableCompass(): Promise<void> {
     if (!this.compassService) {
+      console.log("Creating compass service");
       this.compassService = new CompassService();
     }
-
+    console.log("Requesting compass permission");
     const hasPermission = await this.compassService.requestCompassPermission();
-
+    console.log("Compass permission", hasPermission);
     if (!hasPermission) {
       throw new Error("Compass permission denied");
     }
