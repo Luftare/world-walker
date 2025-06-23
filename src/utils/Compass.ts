@@ -3,6 +3,7 @@ type HeadingCallback = (heading: number) => void;
 export class UniversalCompass {
   private headingCallback?: HeadingCallback;
   private listenersAdded = false;
+  private permissionGranted = false;
 
   async requestPermission(): Promise<void> {
     if (!window.DeviceOrientationEvent) {
@@ -17,20 +18,30 @@ export class UniversalCompass {
       if (response !== "granted") {
         throw new Error("Permission for DeviceOrientationEvent not granted");
       }
+      this.permissionGranted = true;
+    } else {
+      // For browsers that don't require explicit permission
+      this.permissionGranted = true;
     }
 
-    this.addListeners();
+    // Only add listeners after permission is granted
+    if (this.permissionGranted && this.headingCallback) {
+      this.addListeners();
+    }
   }
 
   onHeading(callback: HeadingCallback): void {
     this.headingCallback = callback;
 
-    if (!this.listenersAdded) {
+    // Only add listeners if permission is already granted
+    if (this.permissionGranted && !this.listenersAdded) {
       this.addListeners();
     }
   }
 
   private addListeners() {
+    if (this.listenersAdded) return;
+
     window.addEventListener(
       "deviceorientationabsolute",
       this.onDeviceOrientation.bind(this)

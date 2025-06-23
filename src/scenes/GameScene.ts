@@ -194,11 +194,15 @@ Camera Rotation: ${((cameraRotation * 180) / Math.PI).toFixed(1)}°`;
         const compassStatus = this.compassEnabled
           ? "Compass: Active"
           : "Compass: Inactive";
+        const compassPermissionStatus =
+          this.compassService?.isPermissionGranted()
+            ? "Compass Permission: Granted"
+            : "Compass Permission: Denied";
         const compassTrackingStatus = this.compassService?.isTracking()
           ? "Compass Tracking: Yes"
           : "Compass Tracking: No";
         const compassHeading = this.compassService?.getCurrentHeading() || 0;
-        debugInfo += `\n${compassStatus}\n${compassTrackingStatus}\nCompass Heading: ${compassHeading.toFixed(
+        debugInfo += `\n${compassStatus}\n${compassPermissionStatus}\n${compassTrackingStatus}\nCompass Heading: ${compassHeading.toFixed(
           1
         )}°`;
 
