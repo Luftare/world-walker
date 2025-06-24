@@ -20,9 +20,6 @@ export class CameraSystem {
     const characterPos = this.character.getPosition();
     this.camera.centerOn(characterPos.x, characterPos.y);
 
-    // Configure camera bounds (optional - can be set based on game world size)
-    // this.camera.setBounds(minX, minY, maxX, maxY);
-
     // Set camera zoom if needed
     this.camera.setZoom(window.devicePixelRatio || 1);
   }
@@ -91,52 +88,5 @@ export class CameraSystem {
 
   getRotation(): number {
     return this.currentRotation;
-  }
-
-  setZoom(zoom: number): void {
-    this.camera.setZoom(zoom);
-  }
-
-  getZoom(): number {
-    return this.camera.zoom;
-  }
-
-  // Center camera immediately on character (no smooth transition)
-  centerOnCharacter(): void {
-    const characterPos = this.character.getPosition();
-    this.camera.centerOn(characterPos.x, characterPos.y);
-  }
-
-  // Get current camera center position in world coordinates
-  getCameraCenter(): { x: number; y: number } {
-    return {
-      x: this.camera.scrollX + this.camera.width / 2,
-      y: this.camera.scrollY + this.camera.height / 2,
-    };
-  }
-
-  // Set camera bounds (useful for limiting camera movement)
-  setBounds(x: number, y: number, width: number, height: number): void {
-    this.camera.setBounds(x, y, width, height);
-  }
-
-  // Remove camera bounds
-  removeBounds(): void {
-    this.camera.removeBounds();
-  }
-
-  // Shake camera effect (useful for impacts, explosions, etc.)
-  shake(duration: number = 100, intensity: number = 0.01): void {
-    this.camera.shake(duration, intensity);
-  }
-
-  // Flash camera effect
-  flash(
-    duration: number = 250,
-    red: number = 255,
-    green: number = 255,
-    blue: number = 255
-  ): void {
-    this.camera.flash(duration, red, green, blue);
   }
 }

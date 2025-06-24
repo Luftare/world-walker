@@ -39,10 +39,6 @@ export class Character {
     return { x: this.x, y: this.y };
   }
 
-  getGraphics(): Phaser.GameObjects.Graphics {
-    return this.graphics;
-  }
-
   destroy(): void {
     this.graphics.destroy();
   }
