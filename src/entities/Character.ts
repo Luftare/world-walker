@@ -1,49 +1,33 @@
 import { gameConfig } from "../config/gameConfig";
 
-export class Character {
-  private graphics: Phaser.GameObjects.Graphics;
-  private x: number;
-  private y: number;
-
+export class Character extends Phaser.Physics.Arcade.Sprite {
   constructor(scene: Phaser.Scene, x: number = 0, y: number = 0) {
-    this.x = x;
-    this.y = y;
-    this.graphics = scene.add.graphics();
-    this.render();
-  }
-
-  private render(): void {
-    this.graphics.clear();
-
-    // Draw character as gray circle
-    this.graphics.fillStyle(gameConfig.colors.player);
-    this.graphics.lineStyle(2, gameConfig.colors.playerBorder);
-    this.graphics.fillCircle(0, 0, gameConfig.playerRadius * gameConfig.scale);
-    this.graphics.strokeCircle(
-      0,
-      0,
-      gameConfig.playerRadius * gameConfig.scale
+    super(scene, x, y, "character");
+    scene.add.existing(this);
+    scene.physics.add.existing(this);
+    this.setOrigin(0.5, 0.5);
+    this.setPosition(x, y);
+    this.setDisplaySize(
+      gameConfig.playerRadius * 2 * gameConfig.scale,
+      gameConfig.playerRadius * 2 * gameConfig.scale
     );
-
-    // Set position
-    this.graphics.setPosition(this.x, this.y);
+    this.setDepth(10);
   }
 
-  setPosition(x: number, y: number): void {
-    this.x = x;
-    this.y = y;
-    this.graphics.setPosition(x, y);
+  override setPosition(x: number, y: number): this {
+    super.setPosition(x, y);
+    return this;
   }
 
   getPosition(): { x: number; y: number } {
     return { x: this.x, y: this.y };
   }
 
-  destroy(): void {
-    this.graphics.destroy();
+  override destroy(): void {
+    super.destroy();
   }
 
-  update(): void {
-    // Update character logic
+  override update(): void {
+    // Update character logic (if needed)
   }
 }

@@ -28,7 +28,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   preload(): void {
-    // Preload any assets here
+    this.load.image("character", "src/assets/compass.png");
   }
 
   async create(data?: {
@@ -115,6 +115,9 @@ export class GameScene extends Phaser.Scene {
         // Apply compass direction to camera rotation
         if (this.systems.camera) {
           this.systems.camera.setTargetRotation(-radians);
+        }
+        if (this.character) {
+          this.character.setRotation(-radians);
         }
       });
     } catch (error) {
