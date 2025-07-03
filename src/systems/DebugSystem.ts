@@ -10,7 +10,6 @@ export class DebugSystem {
   private positionMarker: PositionMarker;
   private cameraSystem: CameraSystem | undefined;
   private keys: { [key: string]: Phaser.Input.Keyboard.Key | undefined } = {};
-  private debugGraphics?: Phaser.GameObjects.Graphics;
   private isEnabled: boolean;
 
   constructor(
@@ -27,7 +26,6 @@ export class DebugSystem {
 
     if (this.isEnabled) {
       this.initializeDebugControls();
-      this.createDebugGraphics();
     }
   }
 
@@ -49,15 +47,9 @@ export class DebugSystem {
     });
   }
 
-  private createDebugGraphics(): void {
-    // Create debug graphics for drawing debug info
-    this.debugGraphics = this.scene.add.graphics();
-  }
-
   update(_: number, delta: number): void {
     if (!this.isEnabled) return;
     this.handleDebugMovement(delta);
-    this.updateDebugVisualization();
   }
 
   private handleDebugMovement(delta: number): void {
@@ -104,35 +96,8 @@ export class DebugSystem {
     }
   }
 
-  private updateDebugVisualization(): void {
-    if (!this.debugGraphics) return;
-
-    this.debugGraphics.clear();
-
-    // Draw debug info around character
-    const characterPos = this.character.getPosition();
-    this.debugGraphics.lineStyle(2, 0xff0000, 0.8);
-    this.debugGraphics.strokeCircle(characterPos.x, characterPos.y, 20);
-
-    // Draw debug info around position marker
-    const markerPos = this.positionMarker.getPosition();
-    this.debugGraphics.lineStyle(2, 0x00ff00, 0.8);
-    this.debugGraphics.strokeCircle(markerPos.x, markerPos.y, 15);
-
-    // Draw line between character and marker
-    this.debugGraphics.lineStyle(1, 0xffff00, 0.5);
-    this.debugGraphics.beginPath();
-    this.debugGraphics.moveTo(characterPos.x, characterPos.y);
-    this.debugGraphics.lineTo(markerPos.x, markerPos.y);
-    this.debugGraphics.strokePath();
-  }
-
   private toggleDebugMode(): void {
     this.isEnabled = !this.isEnabled;
-
-    if (this.debugGraphics) {
-      this.debugGraphics.setVisible(this.isEnabled);
-    }
   }
 
   // Public methods for external control
@@ -142,22 +107,10 @@ export class DebugSystem {
 
   setDebugEnabled(enabled: boolean): void {
     this.isEnabled = enabled;
-    if (this.debugGraphics) {
-      this.debugGraphics.setVisible(enabled);
-    }
-  }
-
-  // Method to clear debug graphics
-  clearDebugGraphics(): void {
-    if (this.debugGraphics) {
-      this.debugGraphics.clear();
-    }
   }
 
   // Cleanup method
   destroy(): void {
-    if (this.debugGraphics) {
-      this.debugGraphics.destroy();
-    }
+    // No cleanup needed since we removed debug graphics
   }
 }
