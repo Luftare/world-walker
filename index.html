@@ -77,7 +77,6 @@
       });
 
       const handleResize = () => {
-        console.log("Resizing");
         game.scale.resize(window.innerWidth * dpr, window.innerHeight * dpr);
 
         // Resize UI elements
@@ -94,7 +93,7 @@
       };
 
       // Handle window resize
-      window.addEventListener("resize", handleResize);
+      window.addEventListener("resize", () => setTimeout(handleResize, 200));
     </script>
   </body>
 </html>
