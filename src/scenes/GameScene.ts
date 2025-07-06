@@ -195,7 +195,6 @@ export class GameScene extends Phaser.Scene {
     if (this.character && this.positionMarker && gameConfig.devMode) {
       this.systems.debug = new DebugSystem(
         this,
-        this.character,
         this.positionMarker,
         this.systems.camera
       );

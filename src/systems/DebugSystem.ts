@@ -1,12 +1,10 @@
 import Phaser from "phaser";
 import { gameConfig } from "../config/gameConfig";
-import { Character } from "../entities/Character";
 import { PositionMarker } from "../entities/PositionMarker";
 import { CameraSystem } from "./CameraSystem";
 
 export class DebugSystem {
   private scene: Phaser.Scene;
-  private character: Character;
   private positionMarker: PositionMarker;
   private cameraSystem: CameraSystem | undefined;
   private keys: { [key: string]: Phaser.Input.Keyboard.Key | undefined } = {};
@@ -14,12 +12,10 @@ export class DebugSystem {
 
   constructor(
     scene: Phaser.Scene,
-    character: Character,
     positionMarker: PositionMarker,
     cameraSystem?: CameraSystem
   ) {
     this.scene = scene;
-    this.character = character;
     this.positionMarker = positionMarker;
     this.cameraSystem = cameraSystem || undefined;
     this.isEnabled = gameConfig.devMode;
