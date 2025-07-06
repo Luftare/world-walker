@@ -39,20 +39,15 @@ export class CameraSystem {
     // Calculate distance to character
     const dx = characterPos.x - currentCameraPos.x;
     const dy = characterPos.y - currentCameraPos.y;
-    const distance = Math.sqrt(dx * dx + dy * dy);
 
-    // Only move camera if character is far enough away (dead zone)
-    const deadZone = 20;
-    if (distance > deadZone) {
-      // Smooth camera following with configurable speed
-      const cameraSpeed = 0.05; // Default camera follow speed
-      const lerpFactor = Math.min(cameraSpeed * (delta / 16), 1); // Normalize to 60fps
+    // Smooth camera following with configurable speed
+    const cameraSpeed = 0.5; // Default camera follow speed
+    const lerpFactor = Math.min(cameraSpeed * (delta / 16), 1); // Normalize to 60fps
 
-      const newX = currentCameraPos.x + dx * lerpFactor;
-      const newY = currentCameraPos.y + dy * lerpFactor;
+    const newX = currentCameraPos.x + dx * lerpFactor;
+    const newY = currentCameraPos.y + dy * lerpFactor;
 
-      this.camera.centerOn(newX, newY);
-    }
+    this.camera.centerOn(newX, newY);
   }
 
   private updateCameraRotation(delta: number): void {

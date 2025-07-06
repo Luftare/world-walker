@@ -8,7 +8,6 @@ import { DebugSystem } from "../systems/DebugSystem";
 import { UIScene } from "../scenes/UIScene";
 import { GeolocationService } from "../utils/GeolocationService";
 import { CompassService } from "../utils/CompassService";
-import { HexagonUtils } from "../utils/HexagonUtils";
 
 import compassUrl from "../assets/compass.png";
 import debugCompassSquare from "../assets/debug-compass-square.png";

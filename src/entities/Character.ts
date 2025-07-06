@@ -2,13 +2,14 @@ import { gameConfig } from "../config/gameConfig";
 
 export class Character extends Phaser.Physics.Arcade.Sprite {
   constructor(scene: Phaser.Scene, x: number = 0, y: number = 0) {
-    super(scene, x, y, "character");
+    super(scene, x, y, "compass-circle");
     scene.add.existing(this);
     scene.physics.add.existing(this);
     this.setOrigin(0.5, 0.5);
     this.setPosition(x, y);
     this.setDepth(10);
     if (this.body) {
+      // We use the sprite size for the physics body and later scale it to the correct size
       this.body.setSize(this.width, this.height);
       this.body.setCircle(this.width / 2);
     }

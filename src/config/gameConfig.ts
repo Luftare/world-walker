@@ -39,7 +39,7 @@ export const gameConfig: GameConfig = {
   markerRadius: 2,
   hexagonRadius: 10,
   populateDistance: 70,
-  scale: 10,
+  scale: 8,
   devMode: true,
   rotationSpeed: 2.0,
   movementSpeed: 3,
