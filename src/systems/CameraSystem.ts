@@ -7,10 +7,14 @@ export class CameraSystem {
   private camera: Phaser.Cameras.Scene2D.Camera;
   private targetRotation: number = 0;
   private currentRotation: number = 0;
+  private cameraCenter: Phaser.Math.Vector2;
+  private targetPosition: Phaser.Math.Vector2;
 
   constructor(scene: Phaser.Scene, character: Character) {
     this.character = character;
     this.camera = scene.cameras.main;
+    this.cameraCenter = new Phaser.Math.Vector2();
+    this.targetPosition = new Phaser.Math.Vector2();
 
     this.initializeCamera();
   }
@@ -31,23 +35,27 @@ export class CameraSystem {
 
   private updateCameraPosition(delta: number): void {
     const characterPos = this.character.getPosition();
-    const currentCameraPos = {
-      x: this.camera.scrollX + this.camera.width / 2,
-      y: this.camera.scrollY + this.camera.height / 2,
-    };
 
-    // Calculate distance to character
-    const dx = characterPos.x - currentCameraPos.x;
-    const dy = characterPos.y - currentCameraPos.y;
+    // Get current camera center using Phaser's utility
+    this.camera.getWorldPoint(
+      this.camera.width / 2,
+      this.camera.height / 2,
+      this.cameraCenter
+    );
+
+    // Set target position to character
+    this.targetPosition.set(characterPos.x, characterPos.y);
 
     // Smooth camera following with configurable speed
     const cameraSpeed = 0.5; // Default camera follow speed
     const lerpFactor = Math.min(cameraSpeed * (delta / 16), 1); // Normalize to 60fps
 
-    const newX = currentCameraPos.x + dx * lerpFactor;
-    const newY = currentCameraPos.y + dy * lerpFactor;
+    // Use Phaser's lerp utility for smooth interpolation
+    const newPosition = this.cameraCenter
+      .clone()
+      .lerp(this.targetPosition, lerpFactor);
 
-    this.camera.centerOn(newX, newY);
+    this.camera.centerOn(newPosition.x, newPosition.y);
   }
 
   private updateCameraRotation(delta: number): void {
