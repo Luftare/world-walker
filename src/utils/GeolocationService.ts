@@ -102,7 +102,6 @@ export class GeolocationService {
 
         const gameCoordinates = this.convertToGameCoordinates(currentLocation);
         this.onLocationUpdate?.(gameCoordinates.x, gameCoordinates.y);
-        console.log("Location update", gameCoordinates);
       },
       (error) => {
         this.onError?.(`Location tracking error: ${error.message}`);

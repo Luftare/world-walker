@@ -6,6 +6,7 @@
 export interface GameConfig {
   playerSpeed: number;
   playerRadius: number;
+  markerRadius: number;
   hexagonRadius: number;
   populateDistance: number;
   scale: number;
@@ -14,7 +15,6 @@ export interface GameConfig {
   movementSpeed: number;
   debugMovementSpeed: number;
   featureRadius: number;
-  markerRadius: number;
   markerAlpha: number;
   colors: {
     player: number;
@@ -35,7 +35,8 @@ export interface GameConfig {
 
 export const gameConfig: GameConfig = {
   playerSpeed: 3,
-  playerRadius: 4,
+  playerRadius: 2,
+  markerRadius: 2,
   hexagonRadius: 10,
   populateDistance: 70,
   scale: 10,
@@ -44,7 +45,6 @@ export const gameConfig: GameConfig = {
   movementSpeed: 3,
   debugMovementSpeed: 300,
   featureRadius: 3,
-  markerRadius: 1,
   markerAlpha: 0.6,
   colors: {
     player: 0x666666,

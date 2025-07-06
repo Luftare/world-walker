@@ -184,10 +184,10 @@ export class GameScene extends Phaser.Scene {
 
     // Initialize grid system
     if (this.character) {
-      this.systems.grid = new GridSystem(this, this.character, (hex) => {
-        // Here's where we would populate the hexagon
-        const worldPos = HexagonUtils.hexagonToWorld(hex.q, hex.r);
-        console.log("Populating hexagon:", hex, worldPos);
+      this.systems.grid = new GridSystem(this, this.character, (_) => {
+        // Here's where we would populate the hexagon, replace _ with hex
+        // const worldPos = HexagonUtils.hexagonToWorld(hex.q, hex.r);
+        // console.log("Populating hexagon:", hex, worldPos);
       });
     }
 
