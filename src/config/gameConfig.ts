@@ -35,7 +35,7 @@ export interface GameConfig {
 
 export const gameConfig: GameConfig = {
   playerSpeed: 3,
-  playerRadius: 2,
+  playerRadius: 4,
   hexagonRadius: 10,
   populateDistance: 70,
   scale: 10,

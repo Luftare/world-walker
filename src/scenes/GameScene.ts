@@ -9,7 +9,10 @@ import { UIScene } from "../scenes/UIScene";
 import { GeolocationService } from "../utils/GeolocationService";
 import { CompassService } from "../utils/CompassService";
 import { HexagonUtils } from "../utils/HexagonUtils";
+
 import compassUrl from "../assets/compass.png";
+import debugCompassSquare from "../assets/debug-compass-square.png";
+import debugCompassCircle from "../assets/debug-compass-circle.png";
 
 export class GameScene extends Phaser.Scene {
   private character?: Character;
@@ -30,6 +33,8 @@ export class GameScene extends Phaser.Scene {
 
   preload(): void {
     this.load.image("character", compassUrl);
+    this.load.image("compass-square", debugCompassSquare);
+    this.load.image("compass-circle", debugCompassCircle);
   }
 
   async create(data?: {

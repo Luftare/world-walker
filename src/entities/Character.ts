@@ -2,16 +2,18 @@ import { gameConfig } from "../config/gameConfig";
 
 export class Character extends Phaser.Physics.Arcade.Sprite {
   constructor(scene: Phaser.Scene, x: number = 0, y: number = 0) {
-    super(scene, x, y, "character");
+    super(scene, x, y, "compass-circle");
     scene.add.existing(this);
     scene.physics.add.existing(this);
+    const radius = gameConfig.playerRadius * gameConfig.scale;
+    this.setDisplaySize(radius * 2, radius * 2);
     this.setOrigin(0.5, 0.5);
     this.setPosition(x, y);
-    this.setDisplaySize(
-      gameConfig.playerRadius * 2 * gameConfig.scale,
-      gameConfig.playerRadius * 2 * gameConfig.scale
-    );
     this.setDepth(10);
+    if (this.body) {
+      this.body.setSize(radius * 2, radius * 2);
+      this.body.setCircle(radius);
+    }
   }
 
   override setPosition(x: number, y: number): this {
