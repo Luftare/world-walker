@@ -1,10 +1,16 @@
 import { gameConfig } from "../config/gameConfig";
 
 export class Character extends Phaser.Physics.Arcade.Sprite {
-  constructor(scene: Phaser.Scene, x: number = 0, y: number = 0) {
-    super(scene, x, y, "compass-circle");
+  constructor(
+    scene: Phaser.Scene,
+    x: number = 0,
+    y: number = 0,
+    texture: string = "compass-circle"
+  ) {
+    super(scene, x, y, texture);
     scene.add.existing(this);
     scene.physics.add.existing(this);
+    console.log(scene);
     this.setOrigin(0.5, 0.5);
     this.setPosition(x, y);
     this.setDepth(10);

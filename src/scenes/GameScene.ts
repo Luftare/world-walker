@@ -161,7 +161,8 @@ export class GameScene extends Phaser.Scene {
     this.character = new Character(
       this,
       gameConfig.world.startLocation.x,
-      gameConfig.world.startLocation.y
+      gameConfig.world.startLocation.y,
+      "compass-circle"
     );
 
     // Create position marker using the PositionMarker entity class
