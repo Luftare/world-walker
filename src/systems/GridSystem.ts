@@ -2,8 +2,9 @@ import Phaser from "phaser";
 import { gameConfig } from "../config/gameConfig";
 import { HexagonUtils, HexagonCoord } from "../utils/HexagonUtils";
 import { Character } from "../entities/Character";
+import { BaseSystem } from "./BaseSystem";
 
-export class GridSystem {
+export class GridSystem implements BaseSystem {
   private scene: Phaser.Scene;
   private character: Character;
   private populatedHexagons: Map<string, HexagonCoord> = new Map();

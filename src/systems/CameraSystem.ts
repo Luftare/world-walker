@@ -1,8 +1,9 @@
 import Phaser from "phaser";
 import { gameConfig } from "../config/gameConfig";
 import { Character } from "../entities/Character";
+import { BaseSystem } from "./BaseSystem";
 
-export class CameraSystem {
+export class CameraSystem implements BaseSystem {
   private character: Character;
   private camera: Phaser.Cameras.Scene2D.Camera;
   private targetRotation: number = 0;

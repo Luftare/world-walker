@@ -1,9 +1,10 @@
 import { gameConfig } from "../config/gameConfig";
+import { Point } from "../types/types";
 
-export class PositionMarker {
+export class PositionMarker implements Point {
   private graphics: Phaser.GameObjects.Graphics;
-  private x: number;
-  private y: number;
+  x: number;
+  y: number;
 
   constructor(scene: Phaser.Scene, x: number = 0, y: number = 0) {
     this.x = x;

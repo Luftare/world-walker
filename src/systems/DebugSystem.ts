@@ -2,8 +2,9 @@ import Phaser from "phaser";
 import { gameConfig } from "../config/gameConfig";
 import { PositionMarker } from "../entities/PositionMarker";
 import { CameraSystem } from "./CameraSystem";
+import { BaseSystem } from "./BaseSystem";
 
-export class DebugSystem {
+export class DebugSystem implements BaseSystem {
   private scene: Phaser.Scene;
   private positionMarker: PositionMarker;
   private cameraSystem: CameraSystem | undefined;
