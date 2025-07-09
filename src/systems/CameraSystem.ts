@@ -81,7 +81,7 @@ export class CameraSystem implements BaseSystem {
       this.currentRotation =
         ((this.currentRotation % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
 
-      this.camera.setRotation(this.currentRotation);
+      this.camera.setRotation(this.currentRotation - Math.PI * 0.5);
     }
   }
 
