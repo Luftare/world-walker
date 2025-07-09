@@ -35,7 +35,7 @@ export class Zombie extends Phaser.Physics.Arcade.Sprite {
 
     // Add directional movement behavior
     const movementBehavior = new DirectionalMovementBehavior(this);
-    movementBehavior.setSpeed(gameConfig.movementSpeed * 0.5); // Zombies move slower
+    movementBehavior.setSpeed(gameConfig.movementSpeed * 0.25); // Zombies move slower
     movementBehavior.setDirectionDamp(1); // Enable direction dampening
     this.behaviorManager.addBehavior("movement", movementBehavior);
 
