@@ -1,14 +1,14 @@
 import { Behavior } from "./Behavior";
-import { MovementBehavior } from "./MovementBehavior";
+import { IMovementBehavior } from "./IMovementBehavior";
 
 export class FollowBehavior extends Behavior {
   private targetEntity: Phaser.GameObjects.Sprite | undefined;
   private followDistance: number = 5;
-  private movementBehavior: MovementBehavior;
+  private movementBehavior: IMovementBehavior;
 
   constructor(
     entity: Phaser.GameObjects.Sprite,
-    movementBehavior: MovementBehavior
+    movementBehavior: IMovementBehavior
   ) {
     super(entity);
     this.movementBehavior = movementBehavior;

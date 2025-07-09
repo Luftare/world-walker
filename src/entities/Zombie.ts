@@ -1,8 +1,9 @@
 import { gameConfig } from "../config/gameConfig";
 import { BehaviorManager } from "../behaviors/BehaviorManager";
-import { MovementBehavior } from "../behaviors/MovementBehavior";
+import { DirectionalMovementBehavior } from "../behaviors/DirectionalMovementBehavior";
 import { FollowBehavior } from "../behaviors/FollowBehavior";
 import { RotationBehavior } from "../behaviors/RotationBehavior";
+import { IMovementBehavior } from "../behaviors/IMovementBehavior";
 
 export class Zombie extends Phaser.Physics.Arcade.Sprite {
   private behaviorManager: BehaviorManager;
@@ -32,8 +33,8 @@ export class Zombie extends Phaser.Physics.Arcade.Sprite {
     // Initialize behavior manager
     this.behaviorManager = new BehaviorManager();
 
-    // Add movement behavior
-    const movementBehavior = new MovementBehavior(this);
+    // Add directional movement behavior
+    const movementBehavior = new DirectionalMovementBehavior(this);
     movementBehavior.setSpeed(gameConfig.movementSpeed * 0.5); // Zombies move slower
     this.behaviorManager.addBehavior("movement", movementBehavior);
 
@@ -43,7 +44,7 @@ export class Zombie extends Phaser.Physics.Arcade.Sprite {
     this.behaviorManager.addBehavior("follow", followBehavior);
 
     // Add rotation behavior
-    const rotationBehavior = new RotationBehavior(this);
+    const rotationBehavior = new RotationBehavior(this, 0.5, movementBehavior);
     this.behaviorManager.addBehavior("rotation", rotationBehavior);
   }
 
@@ -55,8 +56,10 @@ export class Zombie extends Phaser.Physics.Arcade.Sprite {
     return this.behaviorManager;
   }
 
-  getMovementBehavior(): MovementBehavior | undefined {
-    return this.behaviorManager.getBehavior<MovementBehavior>("movement");
+  getMovementBehavior(): IMovementBehavior | undefined {
+    return this.behaviorManager.getBehavior<DirectionalMovementBehavior>(
+      "movement"
+    ) as IMovementBehavior;
   }
 
   getFollowBehavior(): FollowBehavior | undefined {

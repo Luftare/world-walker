@@ -1,8 +1,9 @@
 import { Behavior } from "./Behavior";
 import { Point } from "../types/types";
 import { gameConfig } from "../config/gameConfig";
+import { IMovementBehavior } from "./IMovementBehavior";
 
-export class MovementBehavior extends Behavior {
+export class MovementBehavior extends Behavior implements IMovementBehavior {
   private speed: number = gameConfig.movementSpeed;
   private target: Point | undefined;
   private finalTarget: Point | undefined;
