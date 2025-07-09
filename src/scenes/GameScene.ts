@@ -2,6 +2,7 @@ import { gameConfig } from "../config/gameConfig";
 import { Character } from "../entities/Character";
 import { PositionMarker } from "../entities/PositionMarker";
 import { ZombieGroup } from "../entities/ZombieGroup";
+import { ZombieSpawnPoint } from "../entities/ZombieSpawnPoint";
 import { Projectile } from "../entities/Projectile";
 import { GridSystem } from "../systems/GridSystem";
 import { CameraSystem } from "../systems/CameraSystem";
@@ -19,6 +20,7 @@ export class GameScene extends Phaser.Scene {
   private character?: Character;
   private positionMarker?: PositionMarker;
   private zombieGroup?: ZombieGroup;
+  private zombieSpawnPoints: ZombieSpawnPoint[] = [];
   private systems: {
     grid?: GridSystem;
     camera?: CameraSystem;
@@ -151,7 +153,15 @@ export class GameScene extends Phaser.Scene {
     // Update zombie behaviors
     if (this.zombieGroup) {
       this.zombieGroup.update(time, delta);
+      if (this.character) {
+        this.zombieGroup.setAllTargets(this.character);
+      }
     }
+
+    // Update zombie spawn points
+    this.zombieSpawnPoints.forEach((spawnPoint) => {
+      spawnPoint.update(time);
+    });
 
     // Update projectiles
     this.projectiles = this.projectiles.filter((projectile) => {
@@ -207,10 +217,17 @@ export class GameScene extends Phaser.Scene {
     // Create zombie group
     this.zombieGroup = new ZombieGroup(this);
 
-    // Add some test zombies
-    // this.zombieGroup.addZombie(100, 100);
-    // this.zombieGroup.addZombie(200, 200);
-    // this.zombieGroup.addZombie(-100, 150);
+    // Create zombie spawn point at position (200, 200)
+    this.zombieSpawnPoints.push(
+      new ZombieSpawnPoint(
+        this,
+        200,
+        200,
+        100, // spawn radius
+        5000, // spawn interval (5 seconds)
+        this.zombieGroup
+      )
+    );
 
     // Set all zombies to follow the player
     if (this.character) {
@@ -227,9 +244,10 @@ export class GameScene extends Phaser.Scene {
       this.systems.grid = new GridSystem(this, this.character, (hex) => {
         // Here's where we would populate the hexagon, replace _ with hex
         if (!this.zombieGroup || !this.character) return;
-        const worldPos = HexagonUtils.hexagonToWorld(hex.q, hex.r);
-        this.zombieGroup.addZombie(worldPos.x, worldPos.y);
-        this.zombieGroup.setAllTargets(this.character);
+        return; // TODO: remove this
+        // const worldPos = HexagonUtils.hexagonToWorld(hex.q, hex.r);
+        // this.zombieGroup.addZombie(worldPos.x, worldPos.y);
+        // this.zombieGroup.setAllTargets(this.character);
         // console.log("Populating hexagon:", hex, worldPos);
       });
     }
