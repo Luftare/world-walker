@@ -73,8 +73,6 @@ export class Zombie extends Phaser.Physics.Arcade.Sprite {
   }
 
   applyPushback(direction: Phaser.Math.Vector2, strength: number = 100): void {
-    if (this.isDead) return;
-
     // Add pushback velocity in the direction of the projectile
     const pushbackVector = direction.clone().scale(strength);
     this.pushbackVelocity.add(pushbackVector);
@@ -246,9 +244,8 @@ export class Zombie extends Phaser.Physics.Arcade.Sprite {
     // Create death animation tween
     this.scene.tweens.add({
       targets: this,
-      scaleX: 1.5,
-      scaleY: 0.001,
-      duration: 1000,
+      alpha: 0,
+      duration: 300,
       ease: "Power2",
       onComplete: () => {
         this.destroy();
@@ -267,18 +264,22 @@ export class Zombie extends Phaser.Physics.Arcade.Sprite {
     if (this.isDead) return;
 
     this.health = Math.max(0, this.health - damage);
+    const willDie = this.health <= 0;
 
     // Create stain effect
-    this.createStainEffect(projectileDirection);
+    this.createStainEffect(willDie ? 12 : 5, projectileDirection);
 
-    if (this.health <= 0) {
+    if (willDie) {
       this.die();
     }
   }
 
-  private createStainEffect(projectileDirection?: Phaser.Math.Vector2): void {
+  private createStainEffect(
+    amount: number,
+    projectileDirection?: Phaser.Math.Vector2
+  ): void {
     // Create 5 stains that fly in the direction of the projectile
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < amount; i++) {
       this.createStain(projectileDirection);
     }
   }
