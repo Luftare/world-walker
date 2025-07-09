@@ -11,6 +11,10 @@ export class Zombie extends Phaser.Physics.Arcade.Sprite {
   private avoidWeight: number = 2;
   private forwardWeight: number = 1;
 
+  // Pushback properties
+  private pushbackVelocity: Phaser.Math.Vector2 = new Phaser.Math.Vector2(0, 0);
+  private pushbackDecayRate: number = 0.95; // How quickly pushback velocity decays
+
   // Follow properties
   private targetEntity: Phaser.GameObjects.Sprite | undefined;
   private followDistance: number = gameConfig.playerRadius * 2;
@@ -66,6 +70,14 @@ export class Zombie extends Phaser.Physics.Arcade.Sprite {
 
   setFollowDistance(distance: number): void {
     this.followDistance = distance;
+  }
+
+  applyPushback(direction: Phaser.Math.Vector2, strength: number = 100): void {
+    if (this.isDead) return;
+
+    // Add pushback velocity in the direction of the projectile
+    const pushbackVector = direction.clone().scale(strength);
+    this.pushbackVelocity.add(pushbackVector);
   }
 
   private calculateAvoidanceVector(): Phaser.Math.Vector2 {
@@ -158,9 +170,22 @@ export class Zombie extends Phaser.Physics.Arcade.Sprite {
         this.y + movementDirection.y * moveDistance
       );
 
+      // Apply pushback velocity
+      const deltaTime = delta / 1000;
+      const pushbackOffset = this.pushbackVelocity.clone().scale(deltaTime);
+      newPosition.add(pushbackOffset);
+
       this.setPosition(newPosition.x, newPosition.y);
 
       this.target = { x: newPosition.x, y: newPosition.y };
+    }
+
+    // Decay pushback velocity
+    this.pushbackVelocity.scale(this.pushbackDecayRate);
+
+    // Stop pushback if it becomes very small
+    if (this.pushbackVelocity.length() < 1) {
+      this.pushbackVelocity.set(0, 0);
     }
   }
 

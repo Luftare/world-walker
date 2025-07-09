@@ -64,4 +64,14 @@ export class Projectile extends Phaser.Physics.Arcade.Sprite {
   setTimeToLive(ttl: number): void {
     this.timeToLive = ttl;
   }
+
+  getDirection(): Phaser.Math.Vector2 {
+    if (this.body) {
+      return new Phaser.Math.Vector2(
+        this.body.velocity.x,
+        this.body.velocity.y
+      ).normalize();
+    }
+    return new Phaser.Math.Vector2(0, 0);
+  }
 }
