@@ -1,6 +1,5 @@
 import Phaser from "phaser";
 import { gameConfig } from "../config/gameConfig";
-import { PositionMarker } from "../entities/PositionMarker";
 import { CameraSystem } from "./CameraSystem";
 import { BaseSystem } from "./BaseSystem";
 import { Character } from "../entities/Character";
@@ -8,7 +7,6 @@ import { Character } from "../entities/Character";
 export class DebugSystem implements BaseSystem {
   private scene: Phaser.Scene;
   private character: Character;
-  private positionMarker: PositionMarker;
   private cameraSystem: CameraSystem | undefined;
   private keys: { [key: string]: Phaser.Input.Keyboard.Key | undefined } = {};
   private isEnabled: boolean;
@@ -16,14 +14,13 @@ export class DebugSystem implements BaseSystem {
   constructor(
     scene: Phaser.Scene,
     character: Character,
-    positionMarker: PositionMarker,
     cameraSystem?: CameraSystem
   ) {
     this.scene = scene;
     this.character = character;
-    this.positionMarker = positionMarker;
     this.cameraSystem = cameraSystem || undefined;
     this.isEnabled = gameConfig.devMode;
+    this.character.setRotation(-Math.PI * 0.5);
 
     if (this.isEnabled) {
       this.initializeDebugControls();
@@ -33,17 +30,13 @@ export class DebugSystem implements BaseSystem {
   private initializeDebugControls(): void {
     // Initialize keyboard controls for debug movement
     this.keys = {
-      W: this.scene?.input?.keyboard?.addKey("W"),
-      A: this.scene?.input?.keyboard?.addKey("A"),
-      S: this.scene?.input?.keyboard?.addKey("S"),
-      D: this.scene?.input?.keyboard?.addKey("D"),
       Q: this.scene?.input?.keyboard?.addKey("Q"),
       E: this.scene?.input?.keyboard?.addKey("E"),
-      F1: this.scene?.input?.keyboard?.addKey("F1"),
+      X: this.scene?.input?.keyboard?.addKey("X"),
     };
 
     // Set up key event listeners
-    this.keys["F1"]?.on("down", () => {
+    this.keys["X"]?.on("down", () => {
       this.toggleDebugMode();
     });
   }
@@ -54,31 +47,8 @@ export class DebugSystem implements BaseSystem {
   }
 
   private handleDebugMovement(delta: number): void {
-    const debugMoveSpeed = gameConfig.debugMovementSpeed;
     const rotationSpeed = gameConfig.rotationSpeed;
     const deltaSeconds = delta / 1000;
-
-    // WASD movement for position marker
-    if (this.keys["W"]?.isDown) {
-      const currentPos = this.positionMarker.getPosition();
-      const newY = currentPos.y - debugMoveSpeed * deltaSeconds;
-      this.positionMarker.setPosition(currentPos.x, newY);
-    }
-    if (this.keys["S"]?.isDown) {
-      const currentPos = this.positionMarker.getPosition();
-      const newY = currentPos.y + debugMoveSpeed * deltaSeconds;
-      this.positionMarker.setPosition(currentPos.x, newY);
-    }
-    if (this.keys["A"]?.isDown) {
-      const currentPos = this.positionMarker.getPosition();
-      const newX = currentPos.x - debugMoveSpeed * deltaSeconds;
-      this.positionMarker.setPosition(newX, currentPos.y);
-    }
-    if (this.keys["D"]?.isDown) {
-      const currentPos = this.positionMarker.getPosition();
-      const newX = currentPos.x + debugMoveSpeed * deltaSeconds;
-      this.positionMarker.setPosition(newX, currentPos.y);
-    }
 
     // QE rotation for camera
     if (this.cameraSystem) {

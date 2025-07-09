@@ -229,7 +229,6 @@ export class GameScene extends Phaser.Scene {
       this.systems.debug = new DebugSystem(
         this,
         this.character,
-        this.positionMarker,
         this.systems.camera
       );
     }
