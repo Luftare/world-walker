@@ -2,7 +2,6 @@ import { gameConfig } from "../config/gameConfig";
 import { Character } from "../entities/Character";
 import { PositionMarker } from "../entities/PositionMarker";
 import { ZombieGroup } from "../entities/ZombieGroup";
-import { MovementSystem } from "../systems/MovementSystem";
 import { GridSystem } from "../systems/GridSystem";
 import { CameraSystem } from "../systems/CameraSystem";
 import { DebugSystem } from "../systems/DebugSystem";
@@ -19,7 +18,6 @@ export class GameScene extends Phaser.Scene {
   private positionMarker?: PositionMarker;
   private zombieGroup?: ZombieGroup;
   private systems: {
-    movement?: MovementSystem;
     grid?: GridSystem;
     camera?: CameraSystem;
     debug?: DebugSystem;
@@ -202,14 +200,6 @@ export class GameScene extends Phaser.Scene {
   }
 
   private initializeSystems(): void {
-    // Initialize movement system
-    if (this.character && this.positionMarker) {
-      this.systems.movement = new MovementSystem(
-        this.character,
-        this.positionMarker
-      );
-    }
-
     // Initialize grid system
     if (this.character) {
       this.systems.grid = new GridSystem(this, this.character, (_) => {
