@@ -177,8 +177,6 @@ export class Zombie extends Phaser.Physics.Arcade.Sprite {
   }
 
   private updateRotation(delta: number): void {
-    const currentPosition = { x: this.x, y: this.y };
-
     // Calculate rotation based on target direction or movement direction
     if (this.target) {
       // Rotate towards target

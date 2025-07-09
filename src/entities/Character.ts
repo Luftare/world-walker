@@ -250,7 +250,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
     }
   }
 
-  override update(time: number, delta: number): void {
+  override update(_time: number, delta: number): void {
     this.updateFollowBehavior();
     this.updateMovementBehavior(delta);
   }
