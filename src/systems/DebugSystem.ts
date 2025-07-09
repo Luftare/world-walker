@@ -3,9 +3,11 @@ import { gameConfig } from "../config/gameConfig";
 import { PositionMarker } from "../entities/PositionMarker";
 import { CameraSystem } from "./CameraSystem";
 import { BaseSystem } from "./BaseSystem";
+import { Character } from "../entities/Character";
 
 export class DebugSystem implements BaseSystem {
   private scene: Phaser.Scene;
+  private character: Character;
   private positionMarker: PositionMarker;
   private cameraSystem: CameraSystem | undefined;
   private keys: { [key: string]: Phaser.Input.Keyboard.Key | undefined } = {};
@@ -13,10 +15,12 @@ export class DebugSystem implements BaseSystem {
 
   constructor(
     scene: Phaser.Scene,
+    character: Character,
     positionMarker: PositionMarker,
     cameraSystem?: CameraSystem
   ) {
     this.scene = scene;
+    this.character = character;
     this.positionMarker = positionMarker;
     this.cameraSystem = cameraSystem || undefined;
     this.isEnabled = gameConfig.devMode;
@@ -81,13 +85,19 @@ export class DebugSystem implements BaseSystem {
       if (this.keys["Q"]?.isDown) {
         const currentRotation = this.cameraSystem.getRotation();
         this.cameraSystem.setTargetRotation(
-          currentRotation - rotationSpeed * deltaSeconds
+          currentRotation + rotationSpeed * deltaSeconds
+        );
+        this.character.setRotation(
+          this.character.rotation - rotationSpeed * deltaSeconds
         );
       }
       if (this.keys["E"]?.isDown) {
         const currentRotation = this.cameraSystem.getRotation();
         this.cameraSystem.setTargetRotation(
-          currentRotation + rotationSpeed * deltaSeconds
+          currentRotation - rotationSpeed * deltaSeconds
+        );
+        this.character.setRotation(
+          this.character.rotation + rotationSpeed * deltaSeconds
         );
       }
     }

@@ -1,6 +1,7 @@
 import { gameConfig } from "../config/gameConfig";
 import { Character } from "../entities/Character";
 import { PositionMarker } from "../entities/PositionMarker";
+import { ZombieGroup } from "../entities/ZombieGroup";
 import { MovementSystem } from "../systems/MovementSystem";
 import { GridSystem } from "../systems/GridSystem";
 import { CameraSystem } from "../systems/CameraSystem";
@@ -16,6 +17,7 @@ import debugCompassCircle from "../assets/debug-compass-circle.png";
 export class GameScene extends Phaser.Scene {
   private character?: Character;
   private positionMarker?: PositionMarker;
+  private zombieGroup?: ZombieGroup;
   private systems: {
     movement?: MovementSystem;
     grid?: GridSystem;
@@ -34,6 +36,7 @@ export class GameScene extends Phaser.Scene {
     this.load.image("character", compassUrl);
     this.load.image("compass-square", debugCompassSquare);
     this.load.image("compass-circle", debugCompassCircle);
+    this.load.image("zombie", debugCompassCircle); // Using same texture for now
   }
 
   async create(data?: {
@@ -131,6 +134,18 @@ export class GameScene extends Phaser.Scene {
   }
 
   override update(time: number, delta: number): void {
+    // Update character behaviors
+    if (this.character && this.positionMarker) {
+      const markerPos = this.positionMarker.getPosition();
+      this.character.setMovementTarget(markerPos.x, markerPos.y);
+      this.character.update(time, delta);
+    }
+
+    // Update zombie behaviors
+    if (this.zombieGroup) {
+      this.zombieGroup.update(time, delta);
+    }
+
     // Update all systems
     Object.values(this.systems).forEach((system) => {
       if (system && typeof system.update === "function") {
@@ -157,6 +172,13 @@ export class GameScene extends Phaser.Scene {
   }
 
   private createEntities(): void {
+    // Create position marker using the PositionMarker entity class
+    this.positionMarker = new PositionMarker(
+      this,
+      gameConfig.world.startLocation.x,
+      gameConfig.world.startLocation.y
+    );
+
     // Create character using the Character entity class
     this.character = new Character(
       this,
@@ -165,12 +187,18 @@ export class GameScene extends Phaser.Scene {
       "compass-circle"
     );
 
-    // Create position marker using the PositionMarker entity class
-    this.positionMarker = new PositionMarker(
-      this,
-      gameConfig.world.startLocation.x,
-      gameConfig.world.startLocation.y
-    );
+    // Create zombie group
+    this.zombieGroup = new ZombieGroup(this);
+
+    // Add some test zombies
+    this.zombieGroup.addZombie(100, 100);
+    this.zombieGroup.addZombie(200, 200);
+    this.zombieGroup.addZombie(-100, 150);
+
+    // Set all zombies to follow the player
+    if (this.character) {
+      this.zombieGroup.setAllTargets(this.character);
+    }
   }
 
   private initializeSystems(): void {
@@ -200,6 +228,7 @@ export class GameScene extends Phaser.Scene {
     if (this.character && this.positionMarker && gameConfig.devMode) {
       this.systems.debug = new DebugSystem(
         this,
+        this.character,
         this.positionMarker,
         this.systems.camera
       );

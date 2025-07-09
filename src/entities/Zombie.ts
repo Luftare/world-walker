@@ -3,14 +3,14 @@ import { BehaviorManager } from "../behaviors/BehaviorManager";
 import { MovementBehavior } from "../behaviors/MovementBehavior";
 import { FollowBehavior } from "../behaviors/FollowBehavior";
 
-export class Character extends Phaser.Physics.Arcade.Sprite {
+export class Zombie extends Phaser.Physics.Arcade.Sprite {
   private behaviorManager: BehaviorManager;
 
   constructor(
     scene: Phaser.Scene,
     x: number = 0,
     y: number = 0,
-    texture: string = "compass-circle"
+    texture: string = "zombie"
   ) {
     super(scene, x, y, texture);
     scene.add.existing(this);
@@ -18,15 +18,14 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
 
     this.setOrigin(0.5, 0.5);
     this.setPosition(x, y);
-    this.setDepth(10);
+    this.setDepth(5);
 
     if (this.body) {
-      // We use the sprite size for the physics body and later scale it to the correct size
       this.body.setSize(this.width, this.height);
       this.body.setCircle(this.width / 2);
     }
 
-    const radius = gameConfig.playerRadius * gameConfig.scale;
+    const radius = gameConfig.playerRadius * gameConfig.scale * 0.8; // Slightly smaller than player
     this.setDisplaySize(radius * 2, radius * 2);
 
     // Initialize behavior manager
@@ -34,15 +33,13 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
 
     // Add movement behavior
     const movementBehavior = new MovementBehavior(this);
+    movementBehavior.setSpeed(gameConfig.movementSpeed * 0.7); // Zombies move slower
     this.behaviorManager.addBehavior("movement", movementBehavior);
 
+    // Add follow behavior
     const followBehavior = new FollowBehavior(this, movementBehavior);
+    followBehavior.setFollowDistance(gameConfig.playerRadius * 2); // Follow distance in meters
     this.behaviorManager.addBehavior("follow", followBehavior);
-  }
-
-  override setPosition(x: number, y: number): this {
-    super.setPosition(x, y);
-    return this;
   }
 
   getPosition(): { x: number; y: number } {
@@ -57,23 +54,29 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
     return this.behaviorManager.getBehavior<MovementBehavior>("movement");
   }
 
-  setMovementTarget(x: number, y: number): void {
-    const movementBehavior = this.getMovementBehavior();
-    if (movementBehavior) {
-      movementBehavior.setTarget({ x, y });
+  getFollowBehavior(): FollowBehavior | undefined {
+    return this.behaviorManager.getBehavior<FollowBehavior>("follow");
+  }
+
+  setTarget(target: Phaser.GameObjects.Sprite): void {
+    const followBehavior = this.getFollowBehavior();
+    if (followBehavior) {
+      followBehavior.setTarget(target);
     }
   }
 
-  clearMovementTarget(): void {
+  setSpeed(speed: number): void {
     const movementBehavior = this.getMovementBehavior();
     if (movementBehavior) {
-      movementBehavior.clearTarget();
+      movementBehavior.setSpeed(speed);
     }
   }
 
-  isMoving(): boolean {
-    const movementBehavior = this.getMovementBehavior();
-    return movementBehavior ? movementBehavior.isMovingTowardsTarget() : false;
+  setFollowDistance(distance: number): void {
+    const followBehavior = this.getFollowBehavior();
+    if (followBehavior) {
+      followBehavior.setFollowDistance(distance);
+    }
   }
 
   override destroy(): void {
