@@ -289,7 +289,7 @@ export class GameScene extends Phaser.Scene {
         );
         const collisionRadius = 20;
         if (distance < collisionRadius) {
-          zombie.die();
+          zombie.takeDamage();
           projectile.destroy();
           break;
         }

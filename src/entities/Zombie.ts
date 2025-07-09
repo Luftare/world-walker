@@ -19,6 +19,10 @@ export class Zombie extends Phaser.Physics.Arcade.Sprite {
   private targetRotation: number;
   private angularVelocity: number = 0.2;
 
+  // Health properties
+  private health: number = 3;
+  private maxHealth: number = 3;
+
   // Death properties
   private isDead: boolean = false;
 
@@ -229,6 +233,24 @@ export class Zombie extends Phaser.Physics.Arcade.Sprite {
 
   getIsDead(): boolean {
     return this.isDead;
+  }
+
+  takeDamage(damage: number = 1): void {
+    if (this.isDead) return;
+
+    this.health = Math.max(0, this.health - damage);
+
+    if (this.health <= 0) {
+      this.die();
+    }
+  }
+
+  getHealth(): number {
+    return this.health;
+  }
+
+  getMaxHealth(): number {
+    return this.maxHealth;
   }
 
   override update(_: number, delta: number): void {
