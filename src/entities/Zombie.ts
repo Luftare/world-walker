@@ -326,9 +326,9 @@ export class Zombie extends Phaser.Physics.Arcade.Sprite {
         this.scene.tweens.add({
           targets: stain,
           alpha: 0,
-          scaleX: scale * 2,
-          scaleY: scale * 2,
-          duration: (2000 + Math.random() * 1000) * 5,
+          scaleX: scale * 5,
+          scaleY: scale * 5,
+          duration: (10000 + Math.random() * 10000) * 5,
           ease: "Power2",
           onComplete: () => {
             stain.destroy();

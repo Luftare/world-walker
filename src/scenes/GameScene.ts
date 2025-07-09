@@ -310,6 +310,9 @@ export class GameScene extends Phaser.Scene {
       direction
     );
     this.projectiles.push(projectile);
+
+    // Add screen shake effect
+    this.cameras.main.shake(100, 0.003);
   }
 
   private setupInput(): void {
