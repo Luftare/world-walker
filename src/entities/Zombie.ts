@@ -26,7 +26,7 @@ export class Zombie extends Phaser.Physics.Arcade.Sprite {
       this.body.setCircle(this.width / 2);
     }
 
-    const radius = gameConfig.playerRadius * gameConfig.scale * 0.8; // Slightly smaller than player
+    const radius = gameConfig.playerRadius * gameConfig.scale;
     this.setDisplaySize(radius * 2, radius * 2);
 
     // Initialize behavior manager
@@ -34,7 +34,7 @@ export class Zombie extends Phaser.Physics.Arcade.Sprite {
 
     // Add movement behavior
     const movementBehavior = new MovementBehavior(this);
-    movementBehavior.setSpeed(gameConfig.movementSpeed * 0.7); // Zombies move slower
+    movementBehavior.setSpeed(gameConfig.movementSpeed * 0.5); // Zombies move slower
     this.behaviorManager.addBehavior("movement", movementBehavior);
 
     // Add follow behavior

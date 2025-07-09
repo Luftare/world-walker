@@ -41,7 +41,7 @@ export class FollowBehavior extends Behavior {
     );
 
     if (distance > this.followDistance) {
-      this.movementBehavior.setTarget({
+      this.movementBehavior.setFinalTarget({
         x: this.targetEntity.x,
         y: this.targetEntity.y,
       });
