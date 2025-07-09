@@ -1,7 +1,9 @@
 // Projectile class for shooting mechanics
 
+import { gameConfig } from "../config/gameConfig";
+
 export class Projectile extends Phaser.Physics.Arcade.Sprite {
-  private speed: number = 400; // pixels per second
+  private speed: number = gameConfig.scale * 80;
   private timeToLive: number = 5000; // 5 seconds in milliseconds
   private startTime: number;
 

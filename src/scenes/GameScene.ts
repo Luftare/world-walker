@@ -288,9 +288,9 @@ export class GameScene extends Phaser.Scene {
         );
         const collisionRadius = 20;
         if (distance < collisionRadius) {
-          zombie.takeDamage();
           // Apply pushback in the direction of the projectile
           const projectileDirection = projectile.getDirection();
+          zombie.takeDamage(1, projectileDirection);
           zombie.applyPushback(projectileDirection, 150);
           projectile.destroy();
           break;
