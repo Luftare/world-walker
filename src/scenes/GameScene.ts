@@ -125,7 +125,7 @@ export class GameScene extends Phaser.Scene {
           this.systems.camera.setTargetRotation(-radians);
         }
         if (this.character) {
-          this.character.setRotation(radians);
+          this.character.setRotation(radians - Math.PI * 0.5);
         }
       });
     } catch (error) {
