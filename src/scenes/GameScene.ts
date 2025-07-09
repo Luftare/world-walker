@@ -2,7 +2,6 @@ import { gameConfig } from "../config/gameConfig";
 import { Character } from "../entities/Character";
 import { PositionMarker } from "../entities/PositionMarker";
 import { ZombieGroup } from "../entities/ZombieGroup";
-import { Zombie } from "../entities/Zombie";
 import { Projectile } from "../entities/Projectile";
 import { GridSystem } from "../systems/GridSystem";
 import { CameraSystem } from "../systems/CameraSystem";
@@ -14,6 +13,7 @@ import { CompassService } from "../utils/CompassService";
 import compassUrl from "../assets/compass.png";
 import debugCompassSquare from "../assets/debug-compass-square.png";
 import debugCompassCircle from "../assets/debug-compass-circle.png";
+import { HexagonUtils } from "../utils/HexagonUtils";
 
 export class GameScene extends Phaser.Scene {
   private character?: Character;
@@ -208,9 +208,9 @@ export class GameScene extends Phaser.Scene {
     this.zombieGroup = new ZombieGroup(this);
 
     // Add some test zombies
-    this.zombieGroup.addZombie(100, 100);
-    this.zombieGroup.addZombie(200, 200);
-    this.zombieGroup.addZombie(-100, 150);
+    // this.zombieGroup.addZombie(100, 100);
+    // this.zombieGroup.addZombie(200, 200);
+    // this.zombieGroup.addZombie(-100, 150);
 
     // Set all zombies to follow the player
     if (this.character) {
@@ -224,9 +224,12 @@ export class GameScene extends Phaser.Scene {
   private initializeSystems(): void {
     // Initialize grid system
     if (this.character) {
-      this.systems.grid = new GridSystem(this, this.character, (_) => {
+      this.systems.grid = new GridSystem(this, this.character, (hex) => {
         // Here's where we would populate the hexagon, replace _ with hex
-        // const worldPos = HexagonUtils.hexagonToWorld(hex.q, hex.r);
+        if (!this.zombieGroup || !this.character) return;
+        const worldPos = HexagonUtils.hexagonToWorld(hex.q, hex.r);
+        this.zombieGroup.addZombie(worldPos.x, worldPos.y);
+        this.zombieGroup.setAllTargets(this.character);
         // console.log("Populating hexagon:", hex, worldPos);
       });
     }
