@@ -14,6 +14,7 @@ export class DirectionalMovementBehavior
   private avoidRadius: number = gameConfig.playerRadius * gameConfig.scale * 2;
   private avoidWeight: number = 2;
   private forwardWeight: number = 1;
+  private directionDamp: number = 0; // 0 = no slow down, 1 = halted when facing 180deg off
 
   setSpeed(speed: number): void {
     this.speed = speed;
@@ -64,6 +65,14 @@ export class DirectionalMovementBehavior
 
   setForwardWeight(weight: number): void {
     this.forwardWeight = weight;
+  }
+
+  setDirectionDamp(damp: number): void {
+    this.directionDamp = Math.max(0, Math.min(1, damp)); // Clamp between 0 and 1
+  }
+
+  getDirectionDamp(): number {
+    return this.directionDamp;
   }
 
   setTargetWeight(weight: number): void {
@@ -117,6 +126,36 @@ export class DirectionalMovementBehavior
     ).scale(this.forwardWeight);
   }
 
+  private calculateDirectionDampFactor(): number {
+    if (this.directionDamp === 0 || !this.target) {
+      return 1; // No dampening
+    }
+
+    // Calculate forward direction vector
+    const forwardVector = new Phaser.Math.Vector2(
+      Math.cos(this.entity.rotation),
+      Math.sin(this.entity.rotation)
+    );
+
+    // Calculate target direction vector
+    const targetVector = new Phaser.Math.Vector2(
+      this.target.x - this.entity.x,
+      this.target.y - this.entity.y
+    ).normalize();
+
+    // Calculate dot product (1 = aligned, 0 = perpendicular, -1 = opposite)
+    const dotProduct = forwardVector.dot(targetVector);
+
+    // Convert to dampening factor
+    // When directionDamp = 1: dotProduct = -1 (180deg) -> factor = 0, dotProduct = 1 (0deg) -> factor = 1
+    // When directionDamp = 0: factor = 1 (no dampening)
+    const dampFactor = 1 - (this.directionDamp * (1 - dotProduct)) / 2;
+
+    const weightedDampFactor = dampFactor ** 4; // Make the dampening factor more pronounced
+
+    return Math.max(0, weightedDampFactor); // Ensure we don't go negative
+  }
+
   private calculateMovementDirection(): Phaser.Math.Vector2 {
     const forwardVector = this.calculateForwardVector();
 
@@ -143,7 +182,9 @@ export class DirectionalMovementBehavior
     const movementDirection = this.calculateMovementDirection();
 
     if (movementDirection.length() > 0) {
-      const moveDistance = this.speed * gameConfig.scale * (delta / 1000);
+      const dampFactor = this.calculateDirectionDampFactor();
+      const moveDistance =
+        this.speed * gameConfig.scale * (delta / 1000) * dampFactor;
       const newPosition = new Phaser.Math.Vector2(
         this.entity.x + movementDirection.x * moveDistance,
         this.entity.y + movementDirection.y * moveDistance

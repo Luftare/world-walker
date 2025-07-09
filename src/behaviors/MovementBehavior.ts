@@ -67,6 +67,14 @@ export class MovementBehavior extends Behavior implements IMovementBehavior {
     this.targetWeight = weight;
   }
 
+  setDirectionDamp(damp: number): void {
+    // This method is kept for compatibility but not used in regular movement
+  }
+
+  getDirectionDamp(): number {
+    return 0; // Regular movement doesn't use direction dampening
+  }
+
   private calculateAvoidanceVector(): Phaser.Math.Vector2 {
     const avoidanceVector = new Phaser.Math.Vector2(0, 0);
 

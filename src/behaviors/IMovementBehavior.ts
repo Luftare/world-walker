@@ -13,6 +13,8 @@ export interface IMovementBehavior {
   setAvoidRadius(radius: number): void;
   setAvoidWeight(weight: number): void;
   setTargetWeight(weight: number): void;
+  setDirectionDamp(damp: number): void;
+  getDirectionDamp(): number;
   update(time: number, delta: number): void;
   destroy(): void;
 }
