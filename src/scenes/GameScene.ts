@@ -244,11 +244,10 @@ export class GameScene extends Phaser.Scene {
       this.systems.grid = new GridSystem(this, this.character, (hex) => {
         // Here's where we would populate the hexagon, replace _ with hex
         if (!this.zombieGroup || !this.character) return;
-        return; // TODO: remove this
-        // const worldPos = HexagonUtils.hexagonToWorld(hex.q, hex.r);
-        // this.zombieGroup.addZombie(worldPos.x, worldPos.y);
-        // this.zombieGroup.setAllTargets(this.character);
-        // console.log("Populating hexagon:", hex, worldPos);
+        if (Math.random() > 0.5) return;
+        const worldPos = HexagonUtils.hexagonToWorld(hex.q, hex.r);
+        this.zombieGroup.addZombie(worldPos.x, worldPos.y);
+        this.zombieGroup.setAllTargets(this.character);
       });
     }
 

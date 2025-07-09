@@ -265,9 +265,69 @@ export class Zombie extends Phaser.Physics.Arcade.Sprite {
 
     this.health = Math.max(0, this.health - damage);
 
+    // Create stain effect
+    this.createStainEffect();
+
     if (this.health <= 0) {
       this.die();
     }
+  }
+
+  private createStainEffect(): void {
+    // Create 3 stains that fly from the back of the zombie
+    for (let i = 0; i < 5; i++) {
+      this.createStain();
+    }
+  }
+
+  private createStain(): void {
+    // Calculate position behind the zombie (opposite to facing direction)
+    const backOffset = 15;
+    const backX = this.x - Math.cos(this.rotation) * backOffset;
+    const backY = this.y - Math.sin(this.rotation) * backOffset;
+
+    const baseRadius = gameConfig.playerRadius * gameConfig.scale * 0.2;
+    // Create stain as a simple dark green circle
+    const stain = this.scene.add.circle(backX, backY, baseRadius, 0x006400); // Dark green circle with radius 8
+    stain.setDepth(6); // Above zombie to ensure visibility
+
+    // Random direction in a fan pattern (behind the zombie)
+    const baseAngle = this.rotation + Math.PI; // Behind the zombie
+    const fanSpread = Math.PI / 3; // 60 degree spread
+    const randomAngle = baseAngle + (Math.random() - 0.5) * fanSpread;
+
+    // Random distance and scale (0.2x of original sizes)
+    const distance = (3 + Math.random() * 4) * gameConfig.scale;
+    const scale = 0.3 + Math.random() * 0.7;
+
+    stain.setScale(scale);
+
+    // Calculate target position
+    const targetX = backX + Math.cos(randomAngle) * distance;
+    const targetY = backY + Math.sin(randomAngle) * distance;
+
+    // First animation: fast movement to target position
+    this.scene.tweens.add({
+      targets: stain,
+      x: targetX,
+      y: targetY,
+      duration: 200 + Math.random() * 100, // 200-300ms (fast initial movement)
+      ease: "Power2",
+      onComplete: () => {
+        // Second animation: slow scaling and fading after stopping
+        this.scene.tweens.add({
+          targets: stain,
+          alpha: 0,
+          scaleX: scale * 1.5,
+          scaleY: scale * 1.5,
+          duration: (800 + Math.random() * 400) * 5, // 4000-6000ms (5x slower)
+          ease: "Power2",
+          onComplete: () => {
+            stain.destroy();
+          },
+        });
+      },
+    });
   }
 
   getHealth(): number {
