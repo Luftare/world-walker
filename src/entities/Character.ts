@@ -1,10 +1,20 @@
 import { gameConfig } from "../config/gameConfig";
-import { BehaviorManager } from "../behaviors/BehaviorManager";
-import { MovementBehavior } from "../behaviors/MovementBehavior";
-import { FollowBehavior } from "../behaviors/FollowBehavior";
+import { Point } from "../types/types";
 
 export class Character extends Phaser.Physics.Arcade.Sprite {
-  private behaviorManager: BehaviorManager;
+  // Movement properties
+  private speed: number = gameConfig.movementSpeed;
+  private target: Point | undefined;
+  private finalTarget: Point | undefined;
+  private isMovingTowardsTarget: boolean = false;
+  private flockingEnabled: boolean = true;
+  private avoidRadius: number = gameConfig.playerRadius * gameConfig.scale * 2;
+  private avoidWeight: number = 2;
+  private targetWeight: number = 1;
+
+  // Follow properties
+  private followTarget: Phaser.GameObjects.Sprite | undefined;
+  private followDistance: number = 5;
 
   constructor(
     scene: Phaser.Scene,
@@ -28,16 +38,6 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
 
     const radius = gameConfig.playerRadius * gameConfig.scale;
     this.setDisplaySize(radius * 2, radius * 2);
-
-    // Initialize behavior manager
-    this.behaviorManager = new BehaviorManager();
-
-    // Add movement behavior
-    const movementBehavior = new MovementBehavior(this);
-    this.behaviorManager.addBehavior("movement", movementBehavior);
-
-    const followBehavior = new FollowBehavior(this, movementBehavior);
-    this.behaviorManager.addBehavior("follow", followBehavior);
   }
 
   override setPosition(x: number, y: number): this {
@@ -49,39 +49,209 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
     return { x: this.x, y: this.y };
   }
 
-  getBehaviorManager(): BehaviorManager {
-    return this.behaviorManager;
-  }
-
-  getMovementBehavior(): MovementBehavior | undefined {
-    return this.behaviorManager.getBehavior<MovementBehavior>("movement");
-  }
-
+  // Movement methods
   setMovementTarget(x: number, y: number): void {
-    const movementBehavior = this.getMovementBehavior();
-    if (movementBehavior) {
-      movementBehavior.setTarget({ x, y });
-    }
+    this.target = { x, y };
+    this.finalTarget = { x, y };
+    this.isMovingTowardsTarget = true;
   }
 
   clearMovementTarget(): void {
-    const movementBehavior = this.getMovementBehavior();
-    if (movementBehavior) {
-      movementBehavior.clearTarget();
-    }
+    this.target = undefined;
+    this.finalTarget = undefined;
+    this.isMovingTowardsTarget = false;
   }
 
   isMoving(): boolean {
-    const movementBehavior = this.getMovementBehavior();
-    return movementBehavior ? movementBehavior.isMovingTowardsTarget() : false;
+    return this.isMovingTowardsTarget && this.target !== undefined;
   }
 
-  override destroy(): void {
-    this.behaviorManager.destroy();
-    super.destroy();
+  setSpeed(speed: number): void {
+    this.speed = speed;
+  }
+
+  getSpeed(): number {
+    return this.speed;
+  }
+
+  setFlockingEnabled(enabled: boolean): void {
+    this.flockingEnabled = enabled;
+  }
+
+  setAvoidRadius(radius: number): void {
+    this.avoidRadius = radius;
+  }
+
+  setAvoidWeight(weight: number): void {
+    this.avoidWeight = weight;
+  }
+
+  setTargetWeight(weight: number): void {
+    this.targetWeight = weight;
+  }
+
+  // Follow methods
+  setFollowTarget(targetEntity: Phaser.GameObjects.Sprite): void {
+    this.followTarget = targetEntity;
+  }
+
+  getFollowTarget(): Phaser.GameObjects.Sprite | undefined {
+    return this.followTarget;
+  }
+
+  setFollowDistance(distance: number): void {
+    this.followDistance = distance;
+  }
+
+  getFollowDistance(): number {
+    return this.followDistance;
+  }
+
+  // Private behavior methods
+  private updateFollowBehavior(): void {
+    if (!this.followTarget) return;
+
+    const distance = Phaser.Math.Distance.Between(
+      this.x,
+      this.y,
+      this.followTarget.x,
+      this.followTarget.y
+    );
+
+    if (distance > this.followDistance) {
+      this.setMovementTarget(this.followTarget.x, this.followTarget.y);
+    } else {
+      this.clearMovementTarget();
+    }
+  }
+
+  private calculateAvoidanceVector(): Phaser.Math.Vector2 {
+    const avoidanceVector = new Phaser.Math.Vector2(0, 0);
+
+    // Get all entities in the scene that need to be avoided
+    const entities = this.scene.children.list.filter(
+      (child) =>
+        child instanceof Phaser.Physics.Arcade.Sprite &&
+        child !== this &&
+        child.active
+    ) as Phaser.Physics.Arcade.Sprite[];
+
+    for (const otherEntity of entities) {
+      const distance = Phaser.Math.Distance.Between(
+        this.x,
+        this.y,
+        otherEntity.x,
+        otherEntity.y
+      );
+
+      if (distance < this.avoidRadius && distance > 0) {
+        // Calculate vector pointing away from the other entity
+        const awayVector = new Phaser.Math.Vector2(
+          this.x - otherEntity.x,
+          this.y - otherEntity.y
+        ).normalize();
+
+        // Weight by distance (closer entities have stronger avoidance)
+        const weight = (this.avoidRadius - distance) / this.avoidRadius;
+        awayVector.scale(weight * this.avoidWeight);
+
+        avoidanceVector.add(awayVector);
+      }
+    }
+
+    return avoidanceVector;
+  }
+
+  private calculateFlockingDirection(): Phaser.Math.Vector2 {
+    if (!this.finalTarget) {
+      return new Phaser.Math.Vector2(0, 0);
+    }
+
+    const avoidanceVector = this.calculateAvoidanceVector();
+
+    // Vector pointing towards the final target
+    const targetVector = new Phaser.Math.Vector2(
+      this.finalTarget.x - this.x,
+      this.finalTarget.y - this.y
+    )
+      .normalize()
+      .scale(this.targetWeight);
+
+    // Combine avoidance and target vectors
+    const combinedVector = avoidanceVector.add(targetVector);
+
+    // Normalize the result
+    if (combinedVector.length() > 0) {
+      combinedVector.normalize();
+    }
+
+    return combinedVector;
+  }
+
+  private updateMovementBehavior(delta: number): void {
+    if (!this.isMovingTowardsTarget || !this.finalTarget) return;
+
+    if (this.flockingEnabled) {
+      // Use flocking to calculate adjusted target
+      const flockingDirection = this.calculateFlockingDirection();
+
+      if (flockingDirection.length() > 0) {
+        const moveDistance = this.speed * gameConfig.scale * (delta / 1000);
+        const newPosition = new Phaser.Math.Vector2(
+          this.x + flockingDirection.x * moveDistance,
+          this.y + flockingDirection.y * moveDistance
+        );
+
+        this.setPosition(newPosition.x, newPosition.y);
+
+        // Update current target to the adjusted position for next frame
+        this.target = { x: newPosition.x, y: newPosition.y };
+      }
+    } else {
+      // Original movement logic without flocking
+      const distance = Phaser.Math.Distance.Between(
+        this.x,
+        this.y,
+        this.finalTarget.x,
+        this.finalTarget.y
+      );
+
+      if (distance <= 0.1) {
+        this.clearMovementTarget();
+        return;
+      }
+
+      const moveDistance = this.speed * gameConfig.scale * (delta / 1000);
+
+      if (distance > 0) {
+        const direction = new Phaser.Math.Vector2(
+          this.finalTarget.x - this.x,
+          this.finalTarget.y - this.y
+        ).normalize();
+
+        const newPosition = new Phaser.Math.Vector2(
+          this.x + direction.x * moveDistance,
+          this.y + direction.y * moveDistance
+        );
+
+        const newDistance = Phaser.Math.Distance.Between(
+          newPosition.x,
+          newPosition.y,
+          this.finalTarget.x,
+          this.finalTarget.y
+        );
+
+        if (newDistance > distance) {
+          this.setPosition(this.finalTarget.x, this.finalTarget.y);
+        } else {
+          this.setPosition(newPosition.x, newPosition.y);
+        }
+      }
+    }
   }
 
   override update(time: number, delta: number): void {
-    this.behaviorManager.update(time, delta);
+    this.updateFollowBehavior();
+    this.updateMovementBehavior(delta);
   }
 }
