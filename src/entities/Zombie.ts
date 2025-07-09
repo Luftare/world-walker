@@ -2,6 +2,7 @@ import { gameConfig } from "../config/gameConfig";
 import { BehaviorManager } from "../behaviors/BehaviorManager";
 import { MovementBehavior } from "../behaviors/MovementBehavior";
 import { FollowBehavior } from "../behaviors/FollowBehavior";
+import { RotationBehavior } from "../behaviors/RotationBehavior";
 
 export class Zombie extends Phaser.Physics.Arcade.Sprite {
   private behaviorManager: BehaviorManager;
@@ -40,6 +41,10 @@ export class Zombie extends Phaser.Physics.Arcade.Sprite {
     const followBehavior = new FollowBehavior(this, movementBehavior);
     followBehavior.setFollowDistance(gameConfig.playerRadius * 2); // Follow distance in meters
     this.behaviorManager.addBehavior("follow", followBehavior);
+
+    // Add rotation behavior
+    const rotationBehavior = new RotationBehavior(this);
+    this.behaviorManager.addBehavior("rotation", rotationBehavior);
   }
 
   getPosition(): { x: number; y: number } {
