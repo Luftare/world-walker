@@ -1,6 +1,5 @@
 import { gameConfig } from "../config/gameConfig";
 import { Point } from "../types/types";
-import { Projectile } from "./Projectile";
 
 export class Character extends Phaser.Physics.Arcade.Sprite {
   // Movement properties
@@ -16,9 +15,6 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
   // Follow properties
   private followTarget: Phaser.GameObjects.Sprite | undefined;
   private followDistance: number = 5;
-
-  // Shooting properties
-  private projectiles: Projectile[] = [];
 
   constructor(
     scene: Phaser.Scene,
@@ -109,22 +105,6 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
 
   getFollowDistance(): number {
     return this.followDistance;
-  }
-
-  shoot(direction: { x: number; y: number }): void {
-    const projectile = new Projectile(this.scene, this.x, this.y, direction);
-    this.projectiles.push(projectile);
-  }
-
-  getProjectiles(): Projectile[] {
-    return this.projectiles;
-  }
-
-  removeProjectile(projectile: Projectile): void {
-    const index = this.projectiles.indexOf(projectile);
-    if (index > -1) {
-      this.projectiles.splice(index, 1);
-    }
   }
 
   // Private behavior methods
@@ -273,17 +253,6 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
   override update(_time: number, delta: number): void {
     this.updateFollowBehavior();
     this.updateMovementBehavior(delta);
-    this.updateProjectiles();
-  }
-
-  private updateProjectiles(): void {
-    // Update and clean up projectiles
-    this.projectiles = this.projectiles.filter((projectile) => {
-      if (!projectile.active) {
-        return false;
-      }
-      projectile.update(this.scene.time.now);
-      return projectile.active;
-    });
+    // Remove updateProjectiles();
   }
 }

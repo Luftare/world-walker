@@ -27,6 +27,7 @@ export class GameScene extends Phaser.Scene {
   private uiScene?: UIScene;
   private geolocationService?: GeolocationService;
   private compassService?: CompassService;
+  private projectiles: Projectile[] = [];
 
   constructor() {
     super({ key: "GameScene" });
@@ -152,6 +153,13 @@ export class GameScene extends Phaser.Scene {
       this.zombieGroup.update(time, delta);
     }
 
+    // Update projectiles
+    this.projectiles = this.projectiles.filter((projectile) => {
+      if (!projectile.active) return false;
+      projectile.update(this.time.now);
+      return projectile.active;
+    });
+
     // Check for projectile-zombie collisions
     this.checkProjectileCollisions();
 
@@ -246,37 +254,22 @@ export class GameScene extends Phaser.Scene {
   }
 
   private checkProjectileCollisions(): void {
-    if (!this.character || !this.zombieGroup) return;
-
-    const projectiles = this.character.getProjectiles();
+    if (!this.zombieGroup) return;
     const zombies = this.zombieGroup.getZombies();
-
-    for (const projectile of projectiles) {
+    for (const projectile of this.projectiles) {
       if (!projectile.active) continue;
-
       for (const zombie of zombies) {
         if (!zombie.active || zombie.getIsDead()) continue;
-
         const distance = Phaser.Math.Distance.Between(
           projectile.x,
           projectile.y,
           zombie.x,
           zombie.y
         );
-
-        // Check if projectile hits zombie (using collision radius)
-        const collisionRadius = 20; // Adjust based on your needs
+        const collisionRadius = 20;
         if (distance < collisionRadius) {
-          // Kill the zombie
           zombie.die();
-
-          // Destroy the projectile
           projectile.destroy();
-
-          // Remove projectile from character's list
-          this.character.removeProjectile(projectile);
-
-          // Break out of zombie loop since projectile is destroyed
           break;
         }
       }
@@ -285,18 +278,15 @@ export class GameScene extends Phaser.Scene {
 
   private handleShoot(): void {
     if (!this.character) return;
-
-    // Get character's current rotation to determine shooting direction
     const rotation = this.character.rotation;
-
-    // Calculate direction vector based on rotation
-    const direction = {
-      x: Math.cos(rotation),
-      y: Math.sin(rotation),
-    };
-
-    // Shoot projectile
-    this.character.shoot(direction);
+    const direction = { x: Math.cos(rotation), y: Math.sin(rotation) };
+    const projectile = new Projectile(
+      this,
+      this.character.x,
+      this.character.y,
+      direction
+    );
+    this.projectiles.push(projectile);
   }
 
   private setupInput(): void {

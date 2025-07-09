@@ -46,12 +46,7 @@ export class Projectile extends Phaser.Physics.Arcade.Sprite {
     if (time - this.startTime > this.timeToLive) {
       this.destroy();
     }
-  }
-
-  isAlive(): boolean {
-    return (
-      this.active && this.scene.time.now - this.startTime <= this.timeToLive
-    );
+    // Any additional per-frame logic can go here
   }
 
   getSpeed(): number {
