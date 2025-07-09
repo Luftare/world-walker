@@ -3,8 +3,10 @@ import { gameConfig } from "../config/gameConfig";
 
 export class UIScene extends Phaser.Scene {
   private debugButton?: Phaser.GameObjects.Text;
+  private shootButton?: Phaser.GameObjects.Text;
   private isVisible: boolean = true;
   private onDebugToggle?: () => void;
+  private onShoot?: () => void;
   private devicePixelRatio: number;
 
   constructor() {
@@ -47,15 +49,48 @@ export class UIScene extends Phaser.Scene {
     this.debugButton.on("pointerdown", () => {
       this.toggleDebug();
     });
+
+    // Create shoot button (bottom-right)
+    this.shootButton = this.add.text(
+      gameWidth - padding,
+      this.cameras.main.height - padding - 40 * this.devicePixelRatio,
+      "SHOOT",
+      {
+        fontSize: fontSize.button,
+        color: "#ffffff",
+        backgroundColor: "#cc0000",
+        padding: {
+          x: 12 * this.devicePixelRatio,
+          y: 8 * this.devicePixelRatio,
+        },
+      }
+    );
+    this.shootButton.setOrigin(1, 1); // Bottom-right align
+    this.shootButton.setScrollFactor(0);
+    this.shootButton.setDepth(1000);
+    this.shootButton.setInteractive({ useHandCursor: true });
+    this.shootButton.on("pointerdown", () => {
+      this.shoot();
+    });
   }
 
   setDebugToggleCallback(callback: () => void): void {
     this.onDebugToggle = callback;
   }
 
+  setShootCallback(callback: () => void): void {
+    this.onShoot = callback;
+  }
+
   private toggleDebug(): void {
     if (this.onDebugToggle) {
       this.onDebugToggle();
+    }
+  }
+
+  private shoot(): void {
+    if (this.onShoot) {
+      this.onShoot();
     }
   }
 
@@ -71,6 +106,7 @@ export class UIScene extends Phaser.Scene {
   setVisible(visible: boolean): void {
     this.isVisible = visible;
     if (this.debugButton) this.debugButton.setVisible(visible);
+    if (this.shootButton) this.shootButton.setVisible(visible);
   }
 
   toggleVisibility(): void {
@@ -87,9 +123,17 @@ export class UIScene extends Phaser.Scene {
         padding + 40 * this.devicePixelRatio
       );
     }
+
+    if (this.shootButton) {
+      this.shootButton.setPosition(
+        gameWidth - padding,
+        this.cameras.main.height - padding - 40 * this.devicePixelRatio
+      );
+    }
   }
 
   destroy(): void {
     if (this.debugButton) this.debugButton.destroy();
+    if (this.shootButton) this.shootButton.destroy();
   }
 }

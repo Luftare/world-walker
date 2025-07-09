@@ -19,6 +19,9 @@ export class Zombie extends Phaser.Physics.Arcade.Sprite {
   private targetRotation: number;
   private angularVelocity: number = 0.2;
 
+  // Death properties
+  private isDead: boolean = false;
+
   constructor(
     scene: Phaser.Scene,
     x: number = 0,
@@ -198,7 +201,39 @@ export class Zombie extends Phaser.Physics.Arcade.Sprite {
     this.setRotation(newRotation);
   }
 
+  die(): void {
+    if (this.isDead) return;
+
+    this.isDead = true;
+
+    // Disable physics and movement
+    if (this.body) {
+      this.body.enable = false;
+    }
+    this.isMoving = false;
+    this.targetEntity = undefined;
+    this.target = undefined;
+
+    // Create death animation tween
+    this.scene.tweens.add({
+      targets: this,
+      scaleX: 1.5,
+      scaleY: 0.001,
+      duration: 1000,
+      ease: "Power2",
+      onComplete: () => {
+        this.destroy();
+      },
+    });
+  }
+
+  getIsDead(): boolean {
+    return this.isDead;
+  }
+
   override update(_: number, delta: number): void {
+    if (this.isDead) return;
+
     this.updateFollow();
     this.updateRotation(delta);
     this.updateMovement(delta);

@@ -1,0 +1,72 @@
+// Projectile class for shooting mechanics
+
+export class Projectile extends Phaser.Physics.Arcade.Sprite {
+  private speed: number = 400; // pixels per second
+  private timeToLive: number = 5000; // 5 seconds in milliseconds
+  private startTime: number;
+
+  constructor(
+    scene: Phaser.Scene,
+    x: number,
+    y: number,
+    direction: { x: number; y: number }
+  ) {
+    super(scene, x, y, "projectile");
+    scene.add.existing(this);
+    scene.physics.add.existing(this);
+
+    this.setOrigin(0.5, 0.5);
+    this.setPosition(x, y);
+    this.setDepth(15); // Higher than character and zombies
+
+    // Set up physics body
+    if (this.body) {
+      this.body.setSize(8, 8); // Small collision box
+      this.body.setCircle(4);
+    }
+
+    // Set display size
+    this.setDisplaySize(8, 8);
+
+    // Set velocity based on direction
+    const normalizedDirection = new Phaser.Math.Vector2(
+      direction.x,
+      direction.y
+    ).normalize();
+    this.setVelocity(
+      normalizedDirection.x * this.speed,
+      normalizedDirection.y * this.speed
+    );
+
+    this.startTime = scene.time.now;
+  }
+
+  override update(time: number): void {
+    // Check if projectile has exceeded time to live
+    if (time - this.startTime > this.timeToLive) {
+      this.destroy();
+    }
+  }
+
+  isAlive(): boolean {
+    return (
+      this.active && this.scene.time.now - this.startTime <= this.timeToLive
+    );
+  }
+
+  getSpeed(): number {
+    return this.speed;
+  }
+
+  setSpeed(speed: number): void {
+    this.speed = speed;
+  }
+
+  getTimeToLive(): number {
+    return this.timeToLive;
+  }
+
+  setTimeToLive(ttl: number): void {
+    this.timeToLive = ttl;
+  }
+}

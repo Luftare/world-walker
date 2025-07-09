@@ -2,6 +2,8 @@ import { gameConfig } from "../config/gameConfig";
 import { Character } from "../entities/Character";
 import { PositionMarker } from "../entities/PositionMarker";
 import { ZombieGroup } from "../entities/ZombieGroup";
+import { Zombie } from "../entities/Zombie";
+import { Projectile } from "../entities/Projectile";
 import { GridSystem } from "../systems/GridSystem";
 import { CameraSystem } from "../systems/CameraSystem";
 import { DebugSystem } from "../systems/DebugSystem";
@@ -35,6 +37,7 @@ export class GameScene extends Phaser.Scene {
     this.load.image("compass-square", debugCompassSquare);
     this.load.image("compass-circle", debugCompassCircle);
     this.load.image("zombie", debugCompassCircle); // Using same texture for now
+    this.load.image("projectile", debugCompassCircle); // Using same texture for now
   }
 
   async create(data?: {
@@ -73,6 +76,11 @@ export class GameScene extends Phaser.Scene {
           this.systems.debug.setDebugEnabled(newState);
           this.uiScene?.updateDebugButtonText(newState);
         }
+      });
+
+      // Set up shoot callback
+      this.uiScene.setShootCallback(() => {
+        this.handleShoot();
       });
     }
   }
@@ -144,6 +152,9 @@ export class GameScene extends Phaser.Scene {
       this.zombieGroup.update(time, delta);
     }
 
+    // Check for projectile-zombie collisions
+    this.checkProjectileCollisions();
+
     // Update all systems
     Object.values(this.systems).forEach((system) => {
       if (system && typeof system.update === "function") {
@@ -197,6 +208,9 @@ export class GameScene extends Phaser.Scene {
     if (this.character) {
       this.zombieGroup.setAllTargets(this.character);
     }
+
+    // Set up collision detection
+    this.setupCollisions();
   }
 
   private initializeSystems(): void {
@@ -222,6 +236,67 @@ export class GameScene extends Phaser.Scene {
         this.systems.camera
       );
     }
+  }
+
+  private setupCollisions(): void {
+    if (!this.character || !this.zombieGroup) return;
+
+    // We'll handle collision detection in the update loop
+    // since we need to check projectiles dynamically
+  }
+
+  private checkProjectileCollisions(): void {
+    if (!this.character || !this.zombieGroup) return;
+
+    const projectiles = this.character.getProjectiles();
+    const zombies = this.zombieGroup.getZombies();
+
+    for (const projectile of projectiles) {
+      if (!projectile.active) continue;
+
+      for (const zombie of zombies) {
+        if (!zombie.active || zombie.getIsDead()) continue;
+
+        const distance = Phaser.Math.Distance.Between(
+          projectile.x,
+          projectile.y,
+          zombie.x,
+          zombie.y
+        );
+
+        // Check if projectile hits zombie (using collision radius)
+        const collisionRadius = 20; // Adjust based on your needs
+        if (distance < collisionRadius) {
+          // Kill the zombie
+          zombie.die();
+
+          // Destroy the projectile
+          projectile.destroy();
+
+          // Remove projectile from character's list
+          this.character.removeProjectile(projectile);
+
+          // Break out of zombie loop since projectile is destroyed
+          break;
+        }
+      }
+    }
+  }
+
+  private handleShoot(): void {
+    if (!this.character) return;
+
+    // Get character's current rotation to determine shooting direction
+    const rotation = this.character.rotation;
+
+    // Calculate direction vector based on rotation
+    const direction = {
+      x: Math.cos(rotation),
+      y: Math.sin(rotation),
+    };
+
+    // Shoot projectile
+    this.character.shoot(direction);
   }
 
   private setupInput(): void {
