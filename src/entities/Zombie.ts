@@ -3,7 +3,7 @@ import { Point } from "../types/types";
 
 export class Zombie extends Phaser.Physics.Arcade.Sprite {
   // Movement properties
-  private speed: number = gameConfig.movementSpeed * 0.25; // Zombies move slower
+  private speed: number = gameConfig.movementSpeed * 0.4; // Zombies move slower
   private target: Point | undefined;
   private isMoving: boolean = false;
   private directionDamp: number = 1; // Enable direction dampening
@@ -13,7 +13,7 @@ export class Zombie extends Phaser.Physics.Arcade.Sprite {
 
   // Pushback properties
   private pushbackVelocity: Phaser.Math.Vector2 = new Phaser.Math.Vector2(0, 0);
-  private pushbackDecayRate: number = 0.95; // How quickly pushback velocity decays
+  private pushbackDecayRate: number = 0.9; // How quickly pushback velocity decays
 
   // Follow properties
   private targetEntity: Phaser.GameObjects.Sprite | undefined;
@@ -21,7 +21,7 @@ export class Zombie extends Phaser.Physics.Arcade.Sprite {
 
   // Rotation properties
   private targetRotation: number;
-  private angularVelocity: number = 0.2;
+  private angularVelocity: number = 0.4;
 
   // Health properties
   private health: number = 3;
@@ -72,7 +72,7 @@ export class Zombie extends Phaser.Physics.Arcade.Sprite {
     this.followDistance = distance;
   }
 
-  applyPushback(direction: Phaser.Math.Vector2, strength: number = 100): void {
+  applyPushback(direction: Phaser.Math.Vector2, strength: number = 30): void {
     // Add pushback velocity in the direction of the projectile
     const pushbackVector = direction.clone().scale(strength);
     this.pushbackVelocity.add(pushbackVector);

@@ -1,3 +1,4 @@
+import { gameConfig } from "../config/gameConfig";
 import { Zombie } from "./Zombie";
 
 export class ZombieSpawnPoint extends Phaser.GameObjects.GameObject {
@@ -13,7 +14,7 @@ export class ZombieSpawnPoint extends Phaser.GameObjects.GameObject {
     scene: Phaser.Scene,
     x: number,
     y: number,
-    spawnRadius: number = 100,
+    spawnRadius: number = gameConfig.hexagonRadius * gameConfig.scale,
     spawnInterval: number = 5000,
     zombieGroup: Phaser.GameObjects.Group
   ) {

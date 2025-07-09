@@ -221,10 +221,43 @@ export class GameScene extends Phaser.Scene {
     this.zombieSpawnPoints.push(
       new ZombieSpawnPoint(
         this,
-        200,
-        200,
-        100, // spawn radius
-        5000, // spawn interval (5 seconds)
+        50 * gameConfig.scale,
+        50 * gameConfig.scale,
+        gameConfig.hexagonRadius * gameConfig.scale * 2, // spawn radius
+        4000,
+        this.zombieGroup
+      )
+    );
+
+    this.zombieSpawnPoints.push(
+      new ZombieSpawnPoint(
+        this,
+        -50 * gameConfig.scale,
+        -50 * gameConfig.scale,
+        gameConfig.hexagonRadius * gameConfig.scale * 2, // spawn radius
+        4000,
+        this.zombieGroup
+      )
+    );
+
+    this.zombieSpawnPoints.push(
+      new ZombieSpawnPoint(
+        this,
+        50 * gameConfig.scale,
+        -50 * gameConfig.scale,
+        gameConfig.hexagonRadius * gameConfig.scale * 2, // spawn radius
+        4000,
+        this.zombieGroup
+      )
+    );
+
+    this.zombieSpawnPoints.push(
+      new ZombieSpawnPoint(
+        this,
+        -50 * gameConfig.scale,
+        50 * gameConfig.scale,
+        gameConfig.hexagonRadius * gameConfig.scale * 2, // spawn radius
+        4000,
         this.zombieGroup
       )
     );
@@ -291,7 +324,7 @@ export class GameScene extends Phaser.Scene {
           // Apply pushback in the direction of the projectile
           const projectileDirection = projectile.getDirection();
           zombie.takeDamage(1, projectileDirection);
-          zombie.applyPushback(projectileDirection, 150);
+          zombie.applyPushback(projectileDirection, 40 * gameConfig.scale);
           projectile.destroy();
           break;
         }
