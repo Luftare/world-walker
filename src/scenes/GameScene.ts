@@ -341,7 +341,7 @@ export class GameScene extends Phaser.Scene {
         if (distance < collisionRadius) {
           // Apply pushback in the direction of the projectile
           const projectileDirection = projectile.getDirection();
-          zombie.takeDamage(1, projectileDirection);
+          zombie.takeDamage(projectile.getDamage(), projectileDirection);
           zombie.applyPushback(projectileDirection, 40 * gameConfig.scale);
           projectile.destroy();
           break;
@@ -356,17 +356,19 @@ export class GameScene extends Phaser.Scene {
     const rotation = this.character.rotation;
     const direction = { x: Math.cos(rotation), y: Math.sin(rotation) };
 
-    // Use the new weapon system
-    this.character.shoot(this, direction, this.time.now);
+    // Use the new weapon system and check if it actually fired
+    const didFire = this.character.shoot(this, direction, this.time.now);
 
-    // Add screen shake effect based on weapon properties
-    const currentWeapon = this.character
-      .getWeaponInventory()
-      .getCurrentWeapon();
-    this.cameras.main.shake(
-      currentWeapon.getShakeDuration(),
-      currentWeapon.getShakeIntensity()
-    );
+    // Only add screen shake if the weapon actually fired
+    if (didFire) {
+      const currentWeapon = this.character
+        .getWeaponInventory()
+        .getCurrentWeapon();
+      this.cameras.main.shake(
+        currentWeapon.getShakeDuration(),
+        currentWeapon.getShakeIntensity()
+      );
+    }
   }
 
   private handleContinuousFiring(): void {
@@ -377,17 +379,19 @@ export class GameScene extends Phaser.Scene {
       const rotation = this.character.rotation;
       const direction = { x: Math.cos(rotation), y: Math.sin(rotation) };
 
-      // Use the new weapon system
-      this.character.shoot(this, direction, this.time.now);
+      // Use the new weapon system and check if it actually fired
+      const didFire = this.character.shoot(this, direction, this.time.now);
 
-      // Add screen shake effect based on weapon properties
-      const currentWeapon = this.character
-        .getWeaponInventory()
-        .getCurrentWeapon();
-      this.cameras.main.shake(
-        currentWeapon.getShakeDuration(),
-        currentWeapon.getShakeIntensity()
-      );
+      // Only add screen shake if the weapon actually fired
+      if (didFire) {
+        const currentWeapon = this.character
+          .getWeaponInventory()
+          .getCurrentWeapon();
+        this.cameras.main.shake(
+          currentWeapon.getShakeDuration(),
+          currentWeapon.getShakeIntensity()
+        );
+      }
     }
   }
 

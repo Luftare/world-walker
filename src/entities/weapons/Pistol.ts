@@ -12,8 +12,8 @@ export class Pistol extends Weapon {
     y: number,
     direction: { x: number; y: number }
   ): void {
-    // Create a single projectile
-    const projectile = new Projectile(scene, x, y, direction);
+    // Create a single projectile with weapon damage
+    const projectile = new Projectile(scene, x, y, direction, this.damage);
 
     // Add to scene's projectile array
     const gameScene = scene as any;

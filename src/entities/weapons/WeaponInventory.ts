@@ -1,15 +1,17 @@
 import { Weapon } from "./Weapon";
 import { Pistol } from "./Pistol";
 import { FullAutoGun } from "./FullAutoGun";
+import { Sniper } from "./Sniper";
 
 export class WeaponInventory {
   private currentWeapon: Weapon;
   private weapons: Map<string, Weapon> = new Map();
 
   constructor() {
-    // Start with a full auto gun
-    this.currentWeapon = new FullAutoGun();
-    this.weapons.set("fullautogun", this.currentWeapon);
+    // Start with a sniper
+    this.currentWeapon = new Sniper();
+    this.weapons.set("sniper", this.currentWeapon);
+    this.weapons.set("fullautogun", new FullAutoGun());
     this.weapons.set("pistol", new Pistol());
   }
 
@@ -59,10 +61,12 @@ export class WeaponInventory {
     y: number,
     direction: { x: number; y: number },
     currentTime: number
-  ): void {
+  ): boolean {
     if (this.canShoot(currentTime)) {
       this.currentWeapon.fire(currentTime);
       this.currentWeapon.shoot(scene, x, y, direction);
+      return true;
     }
+    return false;
   }
 }

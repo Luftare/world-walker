@@ -127,8 +127,14 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
     scene: Phaser.Scene,
     direction: { x: number; y: number },
     currentTime: number
-  ): void {
-    this.weaponInventory.shoot(scene, this.x, this.y, direction, currentTime);
+  ): boolean {
+    return this.weaponInventory.shoot(
+      scene,
+      this.x,
+      this.y,
+      direction,
+      currentTime
+    );
   }
 
   // Private behavior methods

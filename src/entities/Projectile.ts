@@ -6,12 +6,14 @@ export class Projectile extends Phaser.Physics.Arcade.Sprite {
   private speed: number = gameConfig.scale * 100;
   private timeToLive: number = 5000; // 5 seconds in milliseconds
   private startTime: number;
+  private damage: number = 1;
 
   constructor(
     scene: Phaser.Scene,
     x: number,
     y: number,
-    direction: { x: number; y: number }
+    direction: { x: number; y: number },
+    damage: number = 1
   ) {
     super(scene, x, y, "projectile");
     scene.add.existing(this);
@@ -44,6 +46,7 @@ export class Projectile extends Phaser.Physics.Arcade.Sprite {
     // Rotate projectile to face movement direction
     this.setRotation(Math.atan2(normalizedDirection.y, normalizedDirection.x));
 
+    this.damage = damage;
     this.startTime = scene.time.now;
   }
 
@@ -79,5 +82,9 @@ export class Projectile extends Phaser.Physics.Arcade.Sprite {
       ).normalize();
     }
     return new Phaser.Math.Vector2(0, 0);
+  }
+
+  getDamage(): number {
+    return this.damage;
   }
 }
