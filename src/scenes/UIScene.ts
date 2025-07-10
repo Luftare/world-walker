@@ -7,9 +7,9 @@ export class UIScene extends Phaser.Scene {
   private weaponInfoText?: Phaser.GameObjects.Text;
   private isVisible: boolean = true;
   private onDebugToggle?: () => void;
-  private onShoot?: () => void;
   private onShootStart?: () => void;
   private onShootEnd?: () => void;
+  private onWeaponSwitch?: () => void;
   private devicePixelRatio: number;
   private isShooting: boolean = false;
 
@@ -93,14 +93,14 @@ export class UIScene extends Phaser.Scene {
     this.weaponInfoText.setOrigin(0, 0); // Left-align
     this.weaponInfoText.setScrollFactor(0);
     this.weaponInfoText.setDepth(1000);
+    this.weaponInfoText.setInteractive({ useHandCursor: true });
+    this.weaponInfoText.on("pointerdown", () => {
+      this.switchWeapon();
+    });
   }
 
   setDebugToggleCallback(callback: () => void): void {
     this.onDebugToggle = callback;
-  }
-
-  setShootCallback(callback: () => void): void {
-    this.onShoot = callback;
   }
 
   setShootStartCallback(callback: () => void): void {
@@ -111,15 +111,13 @@ export class UIScene extends Phaser.Scene {
     this.onShootEnd = callback;
   }
 
+  setWeaponSwitchCallback(callback: () => void): void {
+    this.onWeaponSwitch = callback;
+  }
+
   private toggleDebug(): void {
     if (this.onDebugToggle) {
       this.onDebugToggle();
-    }
-  }
-
-  private shoot(): void {
-    if (this.onShoot) {
-      this.onShoot();
     }
   }
 
@@ -134,6 +132,12 @@ export class UIScene extends Phaser.Scene {
     this.isShooting = false;
     if (this.onShootEnd) {
       this.onShootEnd();
+    }
+  }
+
+  private switchWeapon(): void {
+    if (this.onWeaponSwitch) {
+      this.onWeaponSwitch();
     }
   }
 

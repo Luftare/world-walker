@@ -15,7 +15,6 @@ export class WeaponInventory {
     this.weapons.set("fullautogun", new FullAutoGun());
     this.weapons.set("pistol", new Pistol());
     this.weapons.set("shotgun", new Shotgun());
-    this.setCurrentWeapon("shotgun");
   }
 
   getCurrentWeapon(): Weapon {
@@ -52,6 +51,20 @@ export class WeaponInventory {
 
   getAllWeapons(): Weapon[] {
     return Array.from(this.weapons.values());
+  }
+
+  cycleToNextWeapon(): void {
+    const weapons = this.getAllWeapons();
+    if (weapons.length <= 1) return;
+
+    const currentIndex = weapons.findIndex(
+      (weapon) => weapon === this.currentWeapon
+    );
+    const nextIndex = (currentIndex + 1) % weapons.length;
+    const nextWeapon = weapons[nextIndex];
+    if (nextWeapon) {
+      this.currentWeapon = nextWeapon;
+    }
   }
 
   canShoot(currentTime: number): boolean {

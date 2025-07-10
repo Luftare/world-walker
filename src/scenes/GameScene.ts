@@ -90,6 +90,21 @@ export class GameScene extends Phaser.Scene {
       this.uiScene.setShootEndCallback(() => {
         // Stop continuous firing
       });
+
+      // Set up weapon switch callback
+      this.uiScene.setWeaponSwitchCallback(() => {
+        if (this.character) {
+          this.character.getWeaponInventory().cycleToNextWeapon();
+          // Update UI immediately after switching
+          const currentWeapon = this.character
+            .getWeaponInventory()
+            .getCurrentWeapon();
+          this.uiScene?.updateWeaponInfo(
+            currentWeapon.getWeaponName(),
+            currentWeapon.getAmmo()
+          );
+        }
+      });
     }
   }
 
