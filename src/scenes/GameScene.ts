@@ -255,43 +255,10 @@ export class GameScene extends Phaser.Scene {
     this.zombieSpawnPoints.push(
       new ZombieSpawnPoint(
         this,
-        50 * gameConfig.scale,
-        50 * gameConfig.scale,
-        gameConfig.hexagonRadius * gameConfig.scale * 2, // spawn radius
-        4000,
-        this.zombieGroup
-      )
-    );
-
-    this.zombieSpawnPoints.push(
-      new ZombieSpawnPoint(
-        this,
-        -50 * gameConfig.scale,
-        -50 * gameConfig.scale,
-        gameConfig.hexagonRadius * gameConfig.scale * 2, // spawn radius
-        4000,
-        this.zombieGroup
-      )
-    );
-
-    this.zombieSpawnPoints.push(
-      new ZombieSpawnPoint(
-        this,
-        50 * gameConfig.scale,
-        -50 * gameConfig.scale,
-        gameConfig.hexagonRadius * gameConfig.scale * 2, // spawn radius
-        4000,
-        this.zombieGroup
-      )
-    );
-
-    this.zombieSpawnPoints.push(
-      new ZombieSpawnPoint(
-        this,
-        -50 * gameConfig.scale,
-        50 * gameConfig.scale,
-        gameConfig.hexagonRadius * gameConfig.scale * 2, // spawn radius
-        4000,
+        100 * gameConfig.scale,
+        100 * gameConfig.scale,
+        gameConfig.hexagonRadius * gameConfig.scale * 2,
+        10000,
         this.zombieGroup
       )
     );

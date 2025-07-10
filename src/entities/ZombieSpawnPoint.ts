@@ -15,7 +15,7 @@ export class ZombieSpawnPoint extends Phaser.GameObjects.GameObject {
     x: number,
     y: number,
     spawnRadius: number = gameConfig.hexagonRadius * gameConfig.scale,
-    spawnInterval: number = 5000,
+    spawnInterval: number = 20000,
     zombieGroup: Phaser.GameObjects.Group
   ) {
     super(scene, "ZombieSpawnPoint");
