@@ -4,6 +4,7 @@ import { gameConfig } from "../config/gameConfig";
 export class UIScene extends Phaser.Scene {
   private debugButton?: Phaser.GameObjects.Text;
   private shootButton?: Phaser.GameObjects.Text;
+  private weaponInfoText?: Phaser.GameObjects.Text;
   private isVisible: boolean = true;
   private onDebugToggle?: () => void;
   private onShoot?: () => void;
@@ -72,6 +73,17 @@ export class UIScene extends Phaser.Scene {
     this.shootButton.on("pointerdown", () => {
       this.shoot();
     });
+
+    // Create weapon info text (top-left)
+    this.weaponInfoText = this.add.text(padding, padding, "Pistol - ∞", {
+      fontSize: fontSize.button,
+      color: "#ffffff",
+      backgroundColor: "#333333",
+      padding: { x: 8 * this.devicePixelRatio, y: 4 * this.devicePixelRatio },
+    });
+    this.weaponInfoText.setOrigin(0, 0); // Left-align
+    this.weaponInfoText.setScrollFactor(0);
+    this.weaponInfoText.setDepth(1000);
   }
 
   setDebugToggleCallback(callback: () => void): void {
@@ -103,10 +115,18 @@ export class UIScene extends Phaser.Scene {
     }
   }
 
+  updateWeaponInfo(weaponName: string, ammo: number): void {
+    if (this.weaponInfoText && this.isVisible) {
+      const ammoText = ammo === -1 ? "∞" : ammo.toString();
+      this.weaponInfoText.setText(`${weaponName} - ${ammoText}`);
+    }
+  }
+
   setVisible(visible: boolean): void {
     this.isVisible = visible;
     if (this.debugButton) this.debugButton.setVisible(visible);
     if (this.shootButton) this.shootButton.setVisible(visible);
+    if (this.weaponInfoText) this.weaponInfoText.setVisible(visible);
   }
 
   toggleVisibility(): void {
@@ -135,5 +155,6 @@ export class UIScene extends Phaser.Scene {
   destroy(): void {
     if (this.debugButton) this.debugButton.destroy();
     if (this.shootButton) this.shootButton.destroy();
+    if (this.weaponInfoText) this.weaponInfoText.destroy();
   }
 }

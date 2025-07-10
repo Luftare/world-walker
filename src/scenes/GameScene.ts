@@ -189,6 +189,17 @@ export class GameScene extends Phaser.Scene {
 
     const isDebugEnabled = this.systems.debug?.isDebugEnabled() || false;
     this.uiScene.updateDebugButtonText(isDebugEnabled);
+
+    // Update weapon info
+    if (this.character) {
+      const currentWeapon = this.character
+        .getWeaponInventory()
+        .getCurrentWeapon();
+      this.uiScene.updateWeaponInfo(
+        currentWeapon.getWeaponName(),
+        currentWeapon.getAmmo()
+      );
+    }
   }
 
   private setupWorld(): void {
@@ -335,15 +346,12 @@ export class GameScene extends Phaser.Scene {
 
   private handleShoot(): void {
     if (!this.character) return;
+
     const rotation = this.character.rotation;
     const direction = { x: Math.cos(rotation), y: Math.sin(rotation) };
-    const projectile = new Projectile(
-      this,
-      this.character.x,
-      this.character.y,
-      direction
-    );
-    this.projectiles.push(projectile);
+
+    // Use the new weapon system
+    this.character.shoot(this, direction, this.time.now);
 
     // Add screen shake effect
     this.cameras.main.shake(100, 0.003);

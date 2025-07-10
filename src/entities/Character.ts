@@ -1,5 +1,6 @@
 import { gameConfig } from "../config/gameConfig";
 import { Point } from "../types/types";
+import { WeaponInventory } from "./weapons/WeaponInventory";
 
 export class Character extends Phaser.Physics.Arcade.Sprite {
   // Movement properties
@@ -15,6 +16,9 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
   // Follow properties
   private followTarget: Phaser.GameObjects.Sprite | undefined;
   private followDistance: number = 5;
+
+  // Weapon properties
+  private weaponInventory: WeaponInventory;
 
   constructor(
     scene: Phaser.Scene,
@@ -38,6 +42,9 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
 
     const radius = gameConfig.playerRadius * gameConfig.scale;
     this.setDisplaySize(radius * 2, radius * 2);
+
+    // Initialize weapon inventory
+    this.weaponInventory = new WeaponInventory();
   }
 
   override setPosition(x: number, y: number): this {
@@ -105,6 +112,23 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
 
   getFollowDistance(): number {
     return this.followDistance;
+  }
+
+  // Weapon methods
+  getWeaponInventory(): WeaponInventory {
+    return this.weaponInventory;
+  }
+
+  canShoot(currentTime: number): boolean {
+    return this.weaponInventory.canShoot(currentTime);
+  }
+
+  shoot(
+    scene: Phaser.Scene,
+    direction: { x: number; y: number },
+    currentTime: number
+  ): void {
+    this.weaponInventory.shoot(scene, this.x, this.y, direction, currentTime);
   }
 
   // Private behavior methods
