@@ -279,14 +279,13 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
     if (this.body) {
       this.body.enable = false;
     }
-    this.isMoving = false;
     this.targetEntity = undefined;
     this.target = undefined;
 
     this.scene.tweens.add({
       targets: this,
-      alpha: 0,
-      duration: 300,
+      alpha: 0.001,
+      duration: 500,
       ease: "Power2",
       onComplete: () => {
         this.destroy();
@@ -380,11 +379,10 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
   }
 
   override update(_time: number, delta: number): void {
-    if (this.isDead) return;
-
     this.updateFollow();
     this.updateRotation(delta);
     this.updateMovement(delta);
+    if (this.isDead) return;
     this.updateAttack();
   }
 }
