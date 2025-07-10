@@ -35,8 +35,6 @@ export class Zombie extends Phaser.Physics.Arcade.Sprite {
   private attackCooldown: number = 1000; // 1 second cooldown
   private attackRange: number = gameConfig.playerRadius * gameConfig.scale * 2; // Attack range based on actual sprite size
   private isAttacking: boolean = false;
-  private originalScaleX: number = 1;
-  private originalScaleY: number = 1;
 
   constructor(
     scene: Phaser.Scene,
@@ -59,10 +57,6 @@ export class Zombie extends Phaser.Physics.Arcade.Sprite {
 
     const radius = gameConfig.playerRadius * gameConfig.scale;
     this.setDisplaySize(radius * 2, radius * 2);
-
-    // Store original scale for attack animation
-    this.originalScaleX = this.scaleX;
-    this.originalScaleY = this.scaleY;
 
     // Initialize rotation properties
     this.targetRotation = this.rotation;
@@ -243,21 +237,48 @@ export class Zombie extends Phaser.Physics.Arcade.Sprite {
 
     this.isAttacking = true;
     this.lastAttackTime = this.scene.time.now;
-    const originalRotation = this.rotation;
-    const rotaionOffset = Math.PI / 4;
-    this.rotation = originalRotation + rotaionOffset;
-    this.setScale(this.originalScaleX * 1.5, this.originalScaleY * 1.5);
 
-    // Create bounce animation
+    const originalX = this.x;
+    const originalY = this.y;
+    const originalScaleX = this.scaleX;
+    const originalScaleY = this.scaleY;
+
+    // Calculate jump direction towards target
+    let jumpDirectionX = 0;
+    let jumpDirectionY = 0;
+    if (this.targetEntity) {
+      const dx = this.targetEntity.x - this.x;
+      const dy = this.targetEntity.y - this.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      if (distance > 0) {
+        jumpDirectionX = (dx / distance) * 2 * gameConfig.scale;
+        jumpDirectionY = (dy / distance) * 2 * gameConfig.scale;
+      }
+    }
+
+    // Create jump attack animation
     this.scene.tweens.add({
       targets: this,
-      scaleX: this.originalScaleX,
-      scaleY: this.originalScaleY,
-      rotation: originalRotation,
-      duration: 300,
+      x: originalX + jumpDirectionX,
+      y: originalY + jumpDirectionY,
+      scaleX: originalScaleX * 1.2,
+      scaleY: originalScaleY * 1.2,
+      duration: 50, // First half: jump forward and scale up
       ease: "Power2",
       onComplete: () => {
-        this.isAttacking = false;
+        // Second half: jump back and scale down
+        this.scene.tweens.add({
+          targets: this,
+          x: originalX,
+          y: originalY,
+          scaleX: originalScaleX,
+          scaleY: originalScaleY,
+          duration: 200, // Second half: jump back and scale down
+          ease: "Power2",
+          onComplete: () => {
+            this.isAttacking = false;
+          },
+        });
       },
     });
 
