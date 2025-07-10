@@ -3,7 +3,7 @@
 import { gameConfig } from "../config/gameConfig";
 
 export class Projectile extends Phaser.Physics.Arcade.Sprite {
-  private speed: number = gameConfig.scale * 80;
+  private speed: number = gameConfig.scale * 8;
   private timeToLive: number = 5000; // 5 seconds in milliseconds
   private startTime: number;
 
@@ -22,13 +22,14 @@ export class Projectile extends Phaser.Physics.Arcade.Sprite {
     this.setDepth(15); // Higher than character and zombies
 
     // Set up physics body
+    const size = gameConfig.scale * 2;
     if (this.body) {
-      this.body.setSize(8, 8); // Small collision box
-      this.body.setCircle(4);
+      this.body.setSize(size, size); // Small collision box
+      this.body.setCircle(size * 0.5);
     }
 
     // Set display size
-    this.setDisplaySize(8, 8);
+    this.setDisplaySize(size, size);
 
     // Set velocity based on direction
     const normalizedDirection = new Phaser.Math.Vector2(

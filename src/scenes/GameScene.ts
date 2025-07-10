@@ -290,7 +290,7 @@ export class GameScene extends Phaser.Scene {
     }
 
     // Initialize debug system
-    if (this.character && this.positionMarker && gameConfig.devMode) {
+    if (this.character && this.positionMarker) {
       this.systems.debug = new DebugSystem(
         this,
         this.character,

@@ -40,7 +40,7 @@ export const gameConfig: GameConfig = {
   hexagonRadius: 10,
   populateDistance: 70,
   scale: 8,
-  devMode: true,
+  devMode: false,
   rotationSpeed: 2.0,
   movementSpeed: 3,
   debugMovementSpeed: 300,

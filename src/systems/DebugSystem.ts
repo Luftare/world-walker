@@ -42,7 +42,6 @@ export class DebugSystem implements BaseSystem {
   }
 
   update(_: number, delta: number): void {
-    if (!this.isEnabled) return;
     this.handleDebugMovement(delta);
   }
 
