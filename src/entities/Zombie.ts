@@ -246,7 +246,7 @@ export class Zombie extends Phaser.Physics.Arcade.Sprite {
     const originalRotation = this.rotation;
     const rotaionOffset = Math.PI / 4;
     this.rotation = originalRotation + rotaionOffset;
-    this.setScale(this.originalScaleX * 1.25, this.originalScaleY * 1.25);
+    this.setScale(this.originalScaleX * 1.5, this.originalScaleY * 1.5);
 
     // Create bounce animation
     this.scene.tweens.add({
@@ -254,7 +254,7 @@ export class Zombie extends Phaser.Physics.Arcade.Sprite {
       scaleX: this.originalScaleX,
       scaleY: this.originalScaleY,
       rotation: originalRotation,
-      duration: 150,
+      duration: 300,
       ease: "Power2",
       onComplete: () => {
         this.isAttacking = false;

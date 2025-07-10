@@ -335,7 +335,7 @@ export class GameScene extends Phaser.Scene {
     this.character.takeDamage(1);
 
     // Add screen shake for feedback
-    this.cameras.main.shake(200, 0.005);
+    this.cameras.main.shake(100, 0.002);
 
     // Create hit effect on player
     this.createPlayerHitEffect();
@@ -345,18 +345,15 @@ export class GameScene extends Phaser.Scene {
     if (!this.character) return;
 
     // Create a red flash effect on the player
-    const originalTint = this.character.tint;
     this.character.setTint(0xff0000);
 
     this.tweens.add({
       targets: this.character,
-      alpha: 0.5,
-      duration: 100,
+      duration: 200,
       yoyo: true,
       ease: "Power2",
       onComplete: () => {
-        this.character?.setTint(originalTint);
-        this.character?.setAlpha(1);
+        this.character?.clearTint(); // Always clear tint to ensure it returns to normal
       },
     });
   }

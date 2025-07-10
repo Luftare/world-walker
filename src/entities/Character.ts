@@ -146,7 +146,6 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
     if (this.isDead) return;
 
     this.health = Math.max(0, this.health - damage);
-    console.log("Player taking damage!", this.health);
     if (this.health <= 0) {
       this.die();
     }
