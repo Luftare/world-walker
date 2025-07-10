@@ -27,6 +27,8 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
   // Follow properties
   protected targetEntity: Phaser.GameObjects.Sprite | undefined;
   protected followDistance: number = gameConfig.playerRadius * 2;
+  protected aggroRange: number = 20 * gameConfig.scale;
+  protected isAggroed: boolean = false;
 
   // Rotation properties
   protected targetRotation: number;
@@ -207,9 +209,20 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
       this.targetEntity.y
     );
 
-    if (distance > this.followDistance) {
-      this.target = { x: this.targetEntity.x, y: this.targetEntity.y };
-      this.isMoving = true;
+    // Check if player is within aggro range
+    if (!this.isAggroed && distance <= this.aggroRange) {
+      this.isAggroed = true;
+    }
+
+    // Only follow if aggroed
+    if (this.isAggroed) {
+      if (distance > this.followDistance) {
+        this.target = { x: this.targetEntity.x, y: this.targetEntity.y };
+        this.isMoving = true;
+      } else {
+        this.target = undefined;
+        this.isMoving = false;
+      }
     } else {
       this.target = undefined;
       this.isMoving = false;
@@ -217,7 +230,8 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
   }
 
   protected updateRotation(delta: number): void {
-    if (this.target) {
+    // Only rotate towards target if aggroed
+    if (this.target && this.isAggroed) {
       this.targetRotation = Math.atan2(
         this.target.y - this.y,
         this.target.x - this.x
@@ -237,7 +251,7 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
   }
 
   protected updateAttack(): void {
-    if (!this.targetEntity || this.isDead) return;
+    if (!this.targetEntity || this.isDead || !this.isAggroed) return;
 
     const distance = Phaser.Math.Distance.Between(
       this.x,
@@ -259,7 +273,7 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
   protected abstract performAttack(): void;
 
   isInAttackRange(): boolean {
-    if (!this.targetEntity) return false;
+    if (!this.targetEntity || !this.isAggroed) return false;
 
     const distance = Phaser.Math.Distance.Between(
       this.x,
@@ -376,6 +390,14 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
 
   getMaxHealth(): number {
     return this.maxHealth;
+  }
+
+  getIsAggroed(): boolean {
+    return this.isAggroed;
+  }
+
+  resetAggro(): void {
+    this.isAggroed = false;
   }
 
   override update(_time: number, delta: number): void {
