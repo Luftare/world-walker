@@ -5,18 +5,24 @@ export abstract class Weapon {
   protected lastFireTime: number = 0;
   protected damage: number = 1;
   protected weaponName: string = "Unknown Weapon";
+  protected shakeIntensity: number = 0.003; // Screen shake intensity
+  protected shakeDuration: number = 100; // Screen shake duration in milliseconds
 
   constructor(
     ammo: number = -1,
     fireRate: number = 1000,
     damage: number = 1,
-    weaponName: string = "Unknown Weapon"
+    weaponName: string = "Unknown Weapon",
+    shakeIntensity: number = 0.003,
+    shakeDuration: number = 100
   ) {
     this.ammo = ammo;
     this.maxAmmo = ammo;
     this.fireRate = fireRate;
     this.damage = damage;
     this.weaponName = weaponName;
+    this.shakeIntensity = shakeIntensity;
+    this.shakeDuration = shakeDuration;
   }
 
   abstract shoot(
@@ -60,5 +66,13 @@ export abstract class Weapon {
 
   isUnlimitedAmmo(): boolean {
     return this.ammo === -1;
+  }
+
+  getShakeIntensity(): number {
+    return this.shakeIntensity;
+  }
+
+  getShakeDuration(): number {
+    return this.shakeDuration;
   }
 }

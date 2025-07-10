@@ -82,9 +82,12 @@ export class GameScene extends Phaser.Scene {
         }
       });
 
-      // Set up shoot callback
-      this.uiScene.setShootCallback(() => {
-        this.handleShoot();
+      // Set up shoot callbacks for continuous firing
+      this.uiScene.setShootStartCallback(() => {
+        // Start continuous firing
+      });
+      this.uiScene.setShootEndCallback(() => {
+        // Stop continuous firing
       });
     }
   }
@@ -182,6 +185,9 @@ export class GameScene extends Phaser.Scene {
     });
 
     this.updateUI();
+
+    // Handle continuous firing
+    this.handleContinuousFiring();
   }
 
   private updateUI(): void {
@@ -353,8 +359,36 @@ export class GameScene extends Phaser.Scene {
     // Use the new weapon system
     this.character.shoot(this, direction, this.time.now);
 
-    // Add screen shake effect
-    this.cameras.main.shake(100, 0.003);
+    // Add screen shake effect based on weapon properties
+    const currentWeapon = this.character
+      .getWeaponInventory()
+      .getCurrentWeapon();
+    this.cameras.main.shake(
+      currentWeapon.getShakeDuration(),
+      currentWeapon.getShakeIntensity()
+    );
+  }
+
+  private handleContinuousFiring(): void {
+    if (!this.character || !this.uiScene) return;
+
+    // Check if shooting button is being held down
+    if (this.uiScene.isShootingActive()) {
+      const rotation = this.character.rotation;
+      const direction = { x: Math.cos(rotation), y: Math.sin(rotation) };
+
+      // Use the new weapon system
+      this.character.shoot(this, direction, this.time.now);
+
+      // Add screen shake effect based on weapon properties
+      const currentWeapon = this.character
+        .getWeaponInventory()
+        .getCurrentWeapon();
+      this.cameras.main.shake(
+        currentWeapon.getShakeDuration(),
+        currentWeapon.getShakeIntensity()
+      );
+    }
   }
 
   private setupInput(): void {

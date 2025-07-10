@@ -1,14 +1,16 @@
 import { Weapon } from "./Weapon";
 import { Pistol } from "./Pistol";
+import { FullAutoGun } from "./FullAutoGun";
 
 export class WeaponInventory {
   private currentWeapon: Weapon;
   private weapons: Map<string, Weapon> = new Map();
 
   constructor() {
-    // Start with a pistol
-    this.currentWeapon = new Pistol();
-    this.weapons.set("pistol", this.currentWeapon);
+    // Start with a full auto gun
+    this.currentWeapon = new FullAutoGun();
+    this.weapons.set("fullautogun", this.currentWeapon);
+    this.weapons.set("pistol", new Pistol());
   }
 
   getCurrentWeapon(): Weapon {

@@ -8,7 +8,10 @@ export class UIScene extends Phaser.Scene {
   private isVisible: boolean = true;
   private onDebugToggle?: () => void;
   private onShoot?: () => void;
+  private onShootStart?: () => void;
+  private onShootEnd?: () => void;
   private devicePixelRatio: number;
+  private isShooting: boolean = false;
 
   constructor() {
     super({ key: "UIScene" });
@@ -71,7 +74,13 @@ export class UIScene extends Phaser.Scene {
     this.shootButton.setDepth(1000);
     this.shootButton.setInteractive({ useHandCursor: true });
     this.shootButton.on("pointerdown", () => {
-      this.shoot();
+      this.startShooting();
+    });
+    this.shootButton.on("pointerup", () => {
+      this.stopShooting();
+    });
+    this.shootButton.on("pointerout", () => {
+      this.stopShooting();
     });
 
     // Create weapon info text (top-left)
@@ -94,6 +103,14 @@ export class UIScene extends Phaser.Scene {
     this.onShoot = callback;
   }
 
+  setShootStartCallback(callback: () => void): void {
+    this.onShootStart = callback;
+  }
+
+  setShootEndCallback(callback: () => void): void {
+    this.onShootEnd = callback;
+  }
+
   private toggleDebug(): void {
     if (this.onDebugToggle) {
       this.onDebugToggle();
@@ -104,6 +121,24 @@ export class UIScene extends Phaser.Scene {
     if (this.onShoot) {
       this.onShoot();
     }
+  }
+
+  private startShooting(): void {
+    this.isShooting = true;
+    if (this.onShootStart) {
+      this.onShootStart();
+    }
+  }
+
+  private stopShooting(): void {
+    this.isShooting = false;
+    if (this.onShootEnd) {
+      this.onShootEnd();
+    }
+  }
+
+  isShootingActive(): boolean {
+    return this.isShooting;
   }
 
   updateDebugButtonText(isEnabled: boolean): void {

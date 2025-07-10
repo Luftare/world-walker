@@ -1,9 +1,9 @@
 import { Weapon } from "./Weapon";
 import { Projectile } from "../Projectile";
 
-export class Pistol extends Weapon {
+export class FullAutoGun extends Weapon {
   constructor() {
-    super(-1, 500, 1, "Pistol", 0.002, 80); // Light shake for pistol
+    super(-1, 150, 1, "Full Auto Gun", 0.002, 60); // Medium shake for full auto
   }
 
   shoot(
