@@ -350,27 +350,6 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
-  private handleShoot(): void {
-    if (!this.character) return;
-
-    const rotation = this.character.rotation;
-    const direction = { x: Math.cos(rotation), y: Math.sin(rotation) };
-
-    // Use the new weapon system and check if it actually fired
-    const didFire = this.character.shoot(this, direction, this.time.now);
-
-    // Only add screen shake if the weapon actually fired
-    if (didFire) {
-      const currentWeapon = this.character
-        .getWeaponInventory()
-        .getCurrentWeapon();
-      this.cameras.main.shake(
-        currentWeapon.getShakeDuration(),
-        currentWeapon.getShakeIntensity()
-      );
-    }
-  }
-
   private handleContinuousFiring(): void {
     if (!this.character || !this.uiScene) return;
 
