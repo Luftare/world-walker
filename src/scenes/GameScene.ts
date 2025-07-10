@@ -2,7 +2,7 @@ import { gameConfig } from "../config/gameConfig";
 import { Character } from "../entities/Character";
 import { PositionMarker } from "../entities/PositionMarker";
 import { ZombieGroup } from "../entities/ZombieGroup";
-import { Zombie } from "../entities/Zombie";
+import { WalkingZombie } from "../entities/WalkingZombie";
 import { ZombieSpawnPoint } from "../entities/ZombieSpawnPoint";
 import { Projectile } from "../entities/Projectile";
 import { GridSystem } from "../systems/GridSystem";
@@ -325,7 +325,7 @@ export class GameScene extends Phaser.Scene {
     this.events.on("zombieMeleeAttack", this.handleZombieMeleeAttack, this);
   }
 
-  private handleZombieMeleeAttack(zombie: Zombie): void {
+  private handleZombieMeleeAttack(zombie: WalkingZombie): void {
     if (!this.character || this.character.getIsDead()) return;
 
     // Check if zombie is actually in attack range

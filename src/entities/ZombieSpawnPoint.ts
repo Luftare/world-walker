@@ -1,5 +1,5 @@
 import { gameConfig } from "../config/gameConfig";
-import { Zombie } from "./Zombie";
+import { WalkingZombie } from "./WalkingZombie";
 
 export class ZombieSpawnPoint extends Phaser.GameObjects.GameObject {
   private x: number;
@@ -45,13 +45,13 @@ export class ZombieSpawnPoint extends Phaser.GameObjects.GameObject {
     return Math.random() * 2 * Math.PI;
   }
 
-  spawnZombie(): Zombie | null {
+  spawnZombie(): WalkingZombie | null {
     if (!this.isActive) return null;
 
     const position = this.generateRandomPosition();
     const direction = this.generateRandomDirection();
 
-    const zombie = new Zombie(this.scene, position.x, position.y);
+    const zombie = new WalkingZombie(this.scene, position.x, position.y);
 
     // Set initial rotation to random direction
     zombie.setRotation(direction);
