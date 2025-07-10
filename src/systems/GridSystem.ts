@@ -24,10 +24,7 @@ export class GridSystem implements BaseSystem {
   }
 
   private initializeGrid(): void {
-    // Create graphics object for grid visualization (debug mode)
-    if (gameConfig.devMode) {
-      this.gridGraphics = this.scene.add.graphics();
-    }
+    this.gridGraphics = this.scene.add.graphics();
 
     // Populate initial hexagons around character's starting position
     const characterPos = this.character.getPosition();
@@ -56,8 +53,7 @@ export class GridSystem implements BaseSystem {
       this.populateHexagonsAroundPosition(currentHex);
     }
 
-    // Update grid visualization if in dev mode
-    if (gameConfig.devMode && this.gridGraphics) {
+    if (this.gridGraphics) {
       this.updateGridVisualization();
     }
   }

@@ -3,7 +3,7 @@
 import { gameConfig } from "../config/gameConfig";
 
 export class Projectile extends Phaser.Physics.Arcade.Sprite {
-  private speed: number = gameConfig.scale * 8;
+  private speed: number = gameConfig.scale * 100;
   private timeToLive: number = 5000; // 5 seconds in milliseconds
   private startTime: number;
 
@@ -40,6 +40,9 @@ export class Projectile extends Phaser.Physics.Arcade.Sprite {
       normalizedDirection.x * this.speed,
       normalizedDirection.y * this.speed
     );
+
+    // Rotate projectile to face movement direction
+    this.setRotation(Math.atan2(normalizedDirection.y, normalizedDirection.x));
 
     this.startTime = scene.time.now;
   }

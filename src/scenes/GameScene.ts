@@ -14,6 +14,7 @@ import { CompassService } from "../utils/CompassService";
 import compassUrl from "../assets/compass.png";
 import debugCompassSquare from "../assets/debug-compass-square.png";
 import debugCompassCircle from "../assets/debug-compass-circle.png";
+import debugZombie from "../assets/debug-zombie.png";
 import { HexagonUtils } from "../utils/HexagonUtils";
 
 export class GameScene extends Phaser.Scene {
@@ -39,7 +40,7 @@ export class GameScene extends Phaser.Scene {
     this.load.image("character", compassUrl);
     this.load.image("compass-square", debugCompassSquare);
     this.load.image("compass-circle", debugCompassCircle);
-    this.load.image("zombie", debugCompassCircle); // Using same texture for now
+    this.load.image("zombie", debugZombie);
     this.load.image("projectile", debugCompassCircle); // Using same texture for now
   }
 
