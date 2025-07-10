@@ -2,6 +2,7 @@ import { gameConfig } from "../config/gameConfig";
 import { Character } from "../entities/Character";
 import { PositionMarker } from "../entities/PositionMarker";
 import { ZombieGroup } from "../entities/ZombieGroup";
+import { Zombie } from "../entities/Zombie";
 import { ZombieSpawnPoint } from "../entities/ZombieSpawnPoint";
 import { Projectile } from "../entities/Projectile";
 import { GridSystem } from "../systems/GridSystem";
@@ -320,8 +321,44 @@ export class GameScene extends Phaser.Scene {
   private setupCollisions(): void {
     if (!this.character || !this.zombieGroup) return;
 
-    // We'll handle collision detection in the update loop
-    // since we need to check projectiles dynamically
+    // Set up melee attack event listener for the scene
+    this.events.on("zombieMeleeAttack", this.handleZombieMeleeAttack, this);
+  }
+
+  private handleZombieMeleeAttack(zombie: Zombie): void {
+    if (!this.character || this.character.getIsDead()) return;
+
+    // Check if zombie is actually in attack range
+    if (!zombie.isInAttackRange()) return;
+
+    // Deal damage to player
+    this.character.takeDamage(1);
+
+    // Add screen shake for feedback
+    this.cameras.main.shake(200, 0.005);
+
+    // Create hit effect on player
+    this.createPlayerHitEffect();
+  }
+
+  private createPlayerHitEffect(): void {
+    if (!this.character) return;
+
+    // Create a red flash effect on the player
+    const originalTint = this.character.tint;
+    this.character.setTint(0xff0000);
+
+    this.tweens.add({
+      targets: this.character,
+      alpha: 0.5,
+      duration: 100,
+      yoyo: true,
+      ease: "Power2",
+      onComplete: () => {
+        this.character?.setTint(originalTint);
+        this.character?.setAlpha(1);
+      },
+    });
   }
 
   private checkProjectileCollisions(): void {

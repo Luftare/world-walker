@@ -30,6 +30,14 @@ export class Zombie extends Phaser.Physics.Arcade.Sprite {
   // Death properties
   private isDead: boolean = false;
 
+  // Melee attack properties
+  private lastAttackTime: number = 0;
+  private attackCooldown: number = 1000; // 1 second cooldown
+  private attackRange: number = gameConfig.playerRadius * gameConfig.scale * 2; // Attack range based on actual sprite size
+  private isAttacking: boolean = false;
+  private originalScaleX: number = 1;
+  private originalScaleY: number = 1;
+
   constructor(
     scene: Phaser.Scene,
     x: number = 0,
@@ -51,6 +59,10 @@ export class Zombie extends Phaser.Physics.Arcade.Sprite {
 
     const radius = gameConfig.playerRadius * gameConfig.scale;
     this.setDisplaySize(radius * 2, radius * 2);
+
+    // Store original scale for attack animation
+    this.originalScaleX = this.scaleX;
+    this.originalScaleY = this.scaleY;
 
     // Initialize rotation properties
     this.targetRotation = this.rotation;
@@ -206,6 +218,66 @@ export class Zombie extends Phaser.Physics.Arcade.Sprite {
     }
   }
 
+  private updateMeleeAttack(): void {
+    if (!this.targetEntity || this.isDead) return;
+
+    const distance = Phaser.Math.Distance.Between(
+      this.x,
+      this.y,
+      this.targetEntity.x,
+      this.targetEntity.y
+    );
+
+    const currentTime = this.scene.time.now;
+
+    if (
+      distance <= this.attackRange &&
+      currentTime - this.lastAttackTime >= this.attackCooldown
+    ) {
+      this.performMeleeAttack();
+    }
+  }
+
+  private performMeleeAttack(): void {
+    if (this.isAttacking) return;
+
+    this.isAttacking = true;
+    this.lastAttackTime = this.scene.time.now;
+    const originalRotation = this.rotation;
+    const rotaionOffset = Math.PI / 4;
+    this.rotation = originalRotation + rotaionOffset;
+    this.setScale(this.originalScaleX * 1.25, this.originalScaleY * 1.25);
+
+    // Create bounce animation
+    this.scene.tweens.add({
+      targets: this,
+      scaleX: this.originalScaleX,
+      scaleY: this.originalScaleY,
+      rotation: originalRotation,
+      duration: 150,
+      ease: "Power2",
+      onComplete: () => {
+        this.isAttacking = false;
+      },
+    });
+
+    // Emit attack event for the game scene to handle player damage
+    this.emit("meleeAttack", this);
+  }
+
+  isInAttackRange(): boolean {
+    if (!this.targetEntity) return false;
+
+    const distance = Phaser.Math.Distance.Between(
+      this.x,
+      this.y,
+      this.targetEntity.x,
+      this.targetEntity.y
+    );
+
+    return distance <= this.attackRange;
+  }
+
   private updateRotation(delta: number): void {
     // Calculate rotation based on target direction or movement direction
     if (this.target) {
@@ -353,5 +425,6 @@ export class Zombie extends Phaser.Physics.Arcade.Sprite {
     this.updateFollow();
     this.updateRotation(delta);
     this.updateMovement(delta);
+    this.updateMeleeAttack();
   }
 }

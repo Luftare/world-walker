@@ -20,6 +20,11 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
   // Weapon properties
   private weaponInventory: WeaponInventory;
 
+  // Health properties
+  private health: number = 100;
+  private maxHealth: number = 100;
+  private isDead: boolean = false;
+
   constructor(
     scene: Phaser.Scene,
     x: number = 0,
@@ -135,6 +140,51 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
       direction,
       currentTime
     );
+  }
+
+  takeDamage(damage: number = 1): void {
+    if (this.isDead) return;
+
+    this.health = Math.max(0, this.health - damage);
+    console.log("Player taking damage!", this.health);
+    if (this.health <= 0) {
+      this.die();
+    }
+  }
+
+  die(): void {
+    if (this.isDead) return;
+
+    this.isDead = true;
+
+    // Disable movement and interactions
+    this.isMovingTowardsTarget = false;
+    this.target = undefined;
+    this.finalTarget = undefined;
+
+    // Create death animation
+    this.scene.tweens.add({
+      targets: this,
+      alpha: 0,
+      duration: 1000,
+      ease: "Power2",
+      onComplete: () => {
+        // Game over logic could go here
+        console.log("Player died!");
+      },
+    });
+  }
+
+  getHealth(): number {
+    return this.health;
+  }
+
+  getMaxHealth(): number {
+    return this.maxHealth;
+  }
+
+  getIsDead(): boolean {
+    return this.isDead;
   }
 
   // Private behavior methods

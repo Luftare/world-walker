@@ -9,6 +9,14 @@ export class ZombieGroup extends Phaser.GameObjects.Group {
   addZombie(x: number, y: number): Zombie {
     const zombie = new Zombie(this.scene, x, y);
     this.add(zombie);
+
+    // Set up melee attack event listener for the new zombie
+    zombie.on("meleeAttack", (zombie: Zombie) => {
+      console.log("Zombie attacka!");
+      // Emit the event to the scene
+      this.scene.events.emit("zombieMeleeAttack", zombie);
+    });
+
     return zombie;
   }
 
