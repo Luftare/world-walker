@@ -2,6 +2,7 @@ import { Weapon } from "./Weapon";
 import { Pistol } from "./Pistol";
 import { FullAutoGun } from "./FullAutoGun";
 import { Sniper } from "./Sniper";
+import { Shotgun } from "./Shotgun";
 
 export class WeaponInventory {
   private currentWeapon: Weapon;
@@ -13,6 +14,8 @@ export class WeaponInventory {
     this.weapons.set("sniper", this.currentWeapon);
     this.weapons.set("fullautogun", new FullAutoGun());
     this.weapons.set("pistol", new Pistol());
+    this.weapons.set("shotgun", new Shotgun());
+    this.setCurrentWeapon("shotgun");
   }
 
   getCurrentWeapon(): Weapon {
