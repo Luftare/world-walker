@@ -3,7 +3,6 @@ import { Character } from "../entities/Character";
 import { PositionMarker } from "../entities/PositionMarker";
 import { ZombieGroup } from "../entities/ZombieGroup";
 import { WalkingZombie } from "../entities/WalkingZombie";
-import { ZombieSpawnPoint } from "../entities/ZombieSpawnPoint";
 import { Projectile } from "../entities/Projectile";
 import { GridSystem } from "../systems/GridSystem";
 import { CameraSystem } from "../systems/CameraSystem";
@@ -11,18 +10,18 @@ import { DebugSystem } from "../systems/DebugSystem";
 import { UIScene } from "../scenes/UIScene";
 import { GeolocationService } from "../utils/GeolocationService";
 import { CompassService } from "../utils/CompassService";
+import { SpawnService } from "../utils/SpawnService";
 
 import compassUrl from "../assets/compass.png";
 import debugCompassSquare from "../assets/debug-compass-square.png";
 import debugCompassCircle from "../assets/debug-compass-circle.png";
 import debugZombie from "../assets/debug-zombie.png";
-import { HexagonUtils } from "../utils/HexagonUtils";
+import { HexagonCoord } from "../utils/HexagonUtils";
 
 export class GameScene extends Phaser.Scene {
   private character?: Character;
   private positionMarker?: PositionMarker;
   private zombieGroup?: ZombieGroup;
-  private zombieSpawnPoints: ZombieSpawnPoint[] = [];
   private systems: {
     grid?: GridSystem;
     camera?: CameraSystem;
@@ -31,6 +30,7 @@ export class GameScene extends Phaser.Scene {
   private uiScene?: UIScene;
   private geolocationService?: GeolocationService;
   private compassService?: CompassService;
+  private spawnService?: SpawnService;
   private projectiles: Projectile[] = [];
 
   constructor() {
@@ -70,6 +70,7 @@ export class GameScene extends Phaser.Scene {
 
     this.setupWorld();
     this.createEntities();
+    this.setupHexEventListeners();
     this.initializeSystems();
     this.setupInput();
 
@@ -178,11 +179,6 @@ export class GameScene extends Phaser.Scene {
       }
     }
 
-    // Update zombie spawn points
-    this.zombieSpawnPoints.forEach((spawnPoint) => {
-      spawnPoint.update(time);
-    });
-
     // Update projectiles
     this.projectiles = this.projectiles.filter((projectile) => {
       if (!projectile.active) return false;
@@ -251,18 +247,6 @@ export class GameScene extends Phaser.Scene {
     // Create zombie group
     this.zombieGroup = new ZombieGroup(this);
 
-    // Create zombie spawn point at position (200, 200)
-    this.zombieSpawnPoints.push(
-      new ZombieSpawnPoint(
-        this,
-        100 * gameConfig.scale,
-        100 * gameConfig.scale,
-        gameConfig.hexagonRadius * gameConfig.scale * 2,
-        10000,
-        this.zombieGroup
-      )
-    );
-
     // Set all zombies to follow the player
     if (this.character) {
       this.zombieGroup.setAllTargets(this.character);
@@ -275,14 +259,7 @@ export class GameScene extends Phaser.Scene {
   private initializeSystems(): void {
     // Initialize grid system
     if (this.character) {
-      this.systems.grid = new GridSystem(this, this.character, (hex) => {
-        // Here's where we would populate the hexagon, replace _ with hex
-        if (!this.zombieGroup || !this.character) return;
-        if (Math.random() > 0.5) return;
-        const worldPos = HexagonUtils.hexagonToWorld(hex.q, hex.r);
-        this.zombieGroup.addZombie(worldPos.x, worldPos.y);
-        this.zombieGroup.setAllTargets(this.character);
-      });
+      this.systems.grid = new GridSystem(this, this.character);
     }
 
     // Initialize camera system
@@ -388,6 +365,20 @@ export class GameScene extends Phaser.Scene {
         );
       }
     }
+  }
+
+  private setupHexEventListeners(): void {
+    // Initialize spawn service first
+    if (this.zombieGroup) {
+      this.spawnService = new SpawnService(this.zombieGroup);
+    }
+
+    // Set up event listeners for hex discovery
+    this.events.on("hexDiscovered", (hex: HexagonCoord) => {
+      if (this.spawnService) {
+        this.spawnService.handleHexDiscovered(hex);
+      }
+    });
   }
 
   private setupInput(): void {

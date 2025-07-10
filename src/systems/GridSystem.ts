@@ -10,16 +10,10 @@ export class GridSystem implements BaseSystem {
   private populatedHexagons: Map<string, HexagonCoord> = new Map();
   private lastCharacterHex: HexagonCoord = { q: 0, r: 0 };
   private gridGraphics?: Phaser.GameObjects.Graphics;
-  private onPopulate: (coord: HexagonCoord) => void;
 
-  constructor(
-    scene: Phaser.Scene,
-    character: Character,
-    onPopulate: (coord: HexagonCoord) => void
-  ) {
+  constructor(scene: Phaser.Scene, character: Character) {
     this.scene = scene;
     this.character = character;
-    this.onPopulate = onPopulate;
     this.initializeGrid();
   }
 
@@ -80,8 +74,11 @@ export class GridSystem implements BaseSystem {
 
   private populateHexagon(hex: HexagonCoord): void {
     const hexKey = this.getHexagonKey(hex);
+    const isRediscovery = this.populatedHexagons.has(hexKey);
     this.populatedHexagons.set(hexKey, hex);
-    this.onPopulate(hex);
+
+    // Emit event for hex discovery/rediscovery
+    this.scene.events.emit("hexDiscovered", hex, isRediscovery);
   }
 
   private updateGridVisualization(): void {
