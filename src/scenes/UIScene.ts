@@ -29,7 +29,7 @@ export class UIScene extends Phaser.Scene {
     const fontSize = {
       debug: `${14 * dpr}px`,
       score: `${16 * dpr}px`,
-      button: `${14 * dpr}px`,
+      button: `${24 * dpr}px`,
       controls: `${12 * dpr}px`,
     };
 
@@ -56,7 +56,7 @@ export class UIScene extends Phaser.Scene {
 
     // Create shoot button (bottom-right)
     this.shootButton = this.add.text(
-      gameWidth - padding,
+      gameWidth - padding - 40 * this.devicePixelRatio,
       this.cameras.main.height - padding - 40 * this.devicePixelRatio,
       "SHOOT",
       {
@@ -64,8 +64,8 @@ export class UIScene extends Phaser.Scene {
         color: "#ffffff",
         backgroundColor: "#cc0000",
         padding: {
-          x: 12 * this.devicePixelRatio,
-          y: 8 * this.devicePixelRatio,
+          x: 16 * this.devicePixelRatio,
+          y: 16 * this.devicePixelRatio,
         },
       }
     );
