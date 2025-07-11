@@ -1,12 +1,10 @@
 import Phaser from "phaser";
-import { gameConfig } from "../config/gameConfig";
 
 export class UIScene extends Phaser.Scene {
   private debugButton?: Phaser.GameObjects.Text;
   private shootButton?: Phaser.GameObjects.Text;
   private weaponInfoText?: Phaser.GameObjects.Text;
   private isVisible: boolean = true;
-  private onDebugToggle?: () => void;
   private onShootStart?: () => void;
   private onShootEnd?: () => void;
   private onWeaponSwitch?: () => void;
@@ -78,10 +76,6 @@ export class UIScene extends Phaser.Scene {
     });
   }
 
-  setDebugToggleCallback(callback: () => void): void {
-    this.onDebugToggle = callback;
-  }
-
   setShootStartCallback(callback: () => void): void {
     this.onShootStart = callback;
   }
@@ -92,12 +86,6 @@ export class UIScene extends Phaser.Scene {
 
   setWeaponSwitchCallback(callback: () => void): void {
     this.onWeaponSwitch = callback;
-  }
-
-  private toggleDebug(): void {
-    if (this.onDebugToggle) {
-      this.onDebugToggle();
-    }
   }
 
   private startShooting(): void {
