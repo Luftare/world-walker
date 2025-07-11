@@ -13,6 +13,7 @@ export class WalkingZombie extends BaseEnemy {
 
   protected performAttack(): void {
     if (this.isAttacking) return;
+    if (!this.isFacingTarget()) return;
 
     this.isAttacking = true;
     this.lastAttackTime = this.scene.time.now;

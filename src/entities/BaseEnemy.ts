@@ -398,7 +398,7 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
 
   isFacingTarget(): boolean {
     if (!this.targetEntity) return false;
-    const toleranceDegrees = 30;
+    const toleranceDegrees = 60;
 
     const targetAngle = Math.atan2(
       this.targetEntity.y - this.y,
