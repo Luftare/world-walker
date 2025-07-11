@@ -41,8 +41,8 @@ export class UIScene extends Phaser.Scene {
         color: "#ffffff",
         backgroundColor: "#cc0000",
         padding: {
-          x: 16 * this.devicePixelRatio,
-          y: 16 * this.devicePixelRatio,
+          x: 32 * this.devicePixelRatio,
+          y: 32 * this.devicePixelRatio,
         },
       }
     );
