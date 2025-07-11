@@ -4,7 +4,7 @@ import { gameConfig } from "../config/gameConfig";
 
 export class Projectile extends Phaser.Physics.Arcade.Sprite {
   private speed: number = gameConfig.scale * 100;
-  private timeToLive: number = 5000; // 5 seconds in milliseconds
+  private timeToLive: number = 1500;
   private startTime: number;
   private damage: number = 1;
 
