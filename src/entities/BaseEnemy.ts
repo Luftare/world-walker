@@ -326,6 +326,9 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
     this.health = Math.max(0, this.health - damage);
     const willDie = this.health <= 0;
 
+    // Aggro the enemy when it takes damage
+    this.isAggroed = true;
+
     this.createStainEffect(willDie ? 12 : 5, projectileDirection);
 
     if (willDie) {
