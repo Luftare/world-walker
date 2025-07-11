@@ -4,6 +4,7 @@ import { PositionMarker } from "../entities/PositionMarker";
 import { ZombieGroup } from "../entities/ZombieGroup";
 import { WalkingZombie } from "../entities/WalkingZombie";
 import { Projectile } from "../entities/Projectile";
+import { AmmoPack } from "../entities/AmmoPack";
 import { GridSystem } from "../systems/GridSystem";
 import { CameraSystem } from "../systems/CameraSystem";
 import { DebugSystem } from "../systems/DebugSystem";
@@ -33,6 +34,7 @@ export class GameScene extends Phaser.Scene {
   private spawnService?: SpawnService;
   private safeStartCounter: number = 3000;
   private projectiles: Projectile[] = [];
+  private ammoPacks: AmmoPack[] = [];
 
   constructor() {
     super({ key: "GameScene" });
@@ -177,6 +179,9 @@ export class GameScene extends Phaser.Scene {
     // Check for projectile-zombie collisions
     this.checkProjectileCollisions();
 
+    // Check for ammo pack pickups
+    this.checkAmmoPackPickups();
+
     // Update all systems
     Object.values(this.systems).forEach((system) => {
       if (system && typeof system.update === "function") {
@@ -243,6 +248,11 @@ export class GameScene extends Phaser.Scene {
 
     // Set up collision detection
     this.setupCollisions();
+
+    this.ammoPacks.push(new AmmoPack(this, 30, 30, "compass-circle"));
+    this.ammoPacks.push(new AmmoPack(this, -30, 30, "compass-circle"));
+    this.ammoPacks.push(new AmmoPack(this, 30, -30, "compass-circle"));
+    this.ammoPacks.push(new AmmoPack(this, -30, -30, "compass-circle"));
   }
 
   private initializeSystems(): void {
@@ -330,6 +340,18 @@ export class GameScene extends Phaser.Scene {
         }
       }
     }
+  }
+
+  private checkAmmoPackPickups(): void {
+    if (!this.character) return;
+
+    // Filter out picked up ammo packs and check for pickups
+    this.ammoPacks = this.ammoPacks.filter((ammoPack) => {
+      if (!ammoPack.isActive()) return false;
+
+      const wasPickedUp = ammoPack.checkPickup(this.character!);
+      return !wasPickedUp;
+    });
   }
 
   private handleContinuousFiring(): void {
