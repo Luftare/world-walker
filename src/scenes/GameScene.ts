@@ -117,9 +117,6 @@ export class GameScene extends Phaser.Scene {
       // Start location tracking
       this.geolocationService.startLocationTracking(
         (x: number, y: number) => {
-          if (this.systems.debug?.isDebugEnabled()) {
-            return;
-          }
           // Convert meters to pixels (coordinates are already in meters with Y-axis inversion)
           const xPixels = x;
           const yPixels = y;
@@ -145,9 +142,6 @@ export class GameScene extends Phaser.Scene {
       // Update the compass heading callback for the game scene
       // Tracking is already started in the menu scene to maintain the user gesture call chain
       this.compassService.startCompassTracking((direction: number) => {
-        if (this.systems.debug?.isDebugEnabled()) {
-          return;
-        }
         // Convert degrees to radians
         const radians = (direction * Math.PI) / 180;
 
@@ -408,7 +402,7 @@ export class GameScene extends Phaser.Scene {
 
   private setupInput(): void {
     this.input.on("pointerdown", (pointer: Phaser.Input.Pointer) => {
-      if (this.positionMarker && this.systems.debug?.isDebugEnabled()) {
+      if (this.positionMarker) {
         this.positionMarker.setPosition(pointer.worldX, pointer.worldY);
       }
     });

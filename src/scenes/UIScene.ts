@@ -33,27 +33,6 @@ export class UIScene extends Phaser.Scene {
       controls: `${12 * dpr}px`,
     };
 
-    // Create toggle debug button (top-right, below score)
-    const initialDebugState = gameConfig.devMode;
-    this.debugButton = this.add.text(
-      gameWidth - padding,
-      padding + 40 * this.devicePixelRatio,
-      initialDebugState ? "Debug: ON" : "Debug: OFF",
-      {
-        fontSize: fontSize.button,
-        color: "#ffffff",
-        backgroundColor: initialDebugState ? "#006600" : "#333333",
-        padding: { x: 8 * this.devicePixelRatio, y: 4 * this.devicePixelRatio },
-      }
-    );
-    this.debugButton.setOrigin(1, 0); // Right-align
-    this.debugButton.setScrollFactor(0);
-    this.debugButton.setDepth(1000);
-    this.debugButton.setInteractive({ useHandCursor: true });
-    this.debugButton.on("pointerdown", () => {
-      this.toggleDebug();
-    });
-
     // Create shoot button (bottom-right)
     this.shootButton = this.add.text(
       gameWidth - padding - 40 * this.devicePixelRatio,
