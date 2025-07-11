@@ -26,7 +26,7 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
   // Follow properties
   protected targetEntity: Phaser.GameObjects.Sprite | undefined;
   protected followDistance: number = gameConfig.playerRadius * 2;
-  protected aggroRange: number = 150;
+  protected aggroRange: number = 240;
   protected isAggroed: boolean = false;
 
   // Rotation properties
