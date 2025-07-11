@@ -7,7 +7,6 @@ export class SpawnService {
     new Map();
   private zombieGroup: ZombieGroup;
   private readonly RESPAWN_DELAY = 20000; // 20 seconds
-  private readonly INITIAL_SAFE_HEXES = 0;
   private initialHexesDiscovered = 0;
 
   constructor(zombieGroup: ZombieGroup) {
@@ -17,7 +16,6 @@ export class SpawnService {
   handleHexDiscovered(hex: HexagonCoord): void {
     const hexKey = this.getHexagonKey(hex);
     const currentTime = Date.now();
-    console.log("Hex discovered: ", hexKey);
     // Check if this is a rediscovery
     const existingState = this.spawnState.get(hexKey);
 
@@ -34,21 +32,11 @@ export class SpawnService {
     } else {
       // First discovery
       this.initialHexesDiscovered++;
-
-      if (this.initialHexesDiscovered > this.INITIAL_SAFE_HEXES) {
-        // Spawn immediately for hexes beyond the initial safe zone
-        this.spawnInHex(hex);
-        this.spawnState.set(hexKey, {
-          timestamp: currentTime,
-          hasSpawned: true,
-        });
-      } else {
-        // Mark as discovered but don't spawn for initial safe hexes
-        this.spawnState.set(hexKey, {
-          timestamp: currentTime,
-          hasSpawned: false,
-        });
-      }
+      this.spawnInHex(hex);
+      this.spawnState.set(hexKey, {
+        timestamp: currentTime,
+        hasSpawned: true,
+      });
     }
   }
 
@@ -58,7 +46,7 @@ export class SpawnService {
 
     // Add some randomness to the spawn position within the hex
     // Use half the hexagon radius for spawn area to avoid edge spawning
-    const spawnRadius = gameConfig.hexagonRadius * gameConfig.scale * 0.5;
+    const spawnRadius = gameConfig.hexagonRadius * gameConfig.scale;
     const randomOffset = {
       x: (Math.random() - 0.5) * spawnRadius,
       y: (Math.random() - 0.5) * spawnRadius,
