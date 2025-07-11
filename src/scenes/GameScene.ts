@@ -5,6 +5,7 @@ import { ZombieGroup } from "../entities/ZombieGroup";
 import { WalkingZombie } from "../entities/WalkingZombie";
 import { Projectile } from "../entities/Projectile";
 import { AmmoPack } from "../entities/AmmoPack";
+import { Coin } from "../entities/Coin";
 import { GridSystem } from "../systems/GridSystem";
 import { CameraSystem } from "../systems/CameraSystem";
 import { DebugSystem } from "../systems/DebugSystem";
@@ -15,6 +16,7 @@ import { SpawnService } from "../utils/SpawnService";
 
 import compassUrl from "../assets/compass.png";
 import ammoPackUrl from "../assets/ammo-pack.png";
+import coinUrl from "../assets/coin.png";
 import debugCompassSquare from "../assets/debug-compass-square.png";
 import debugCompassCircle from "../assets/debug-compass-circle.png";
 import debugZombie from "../assets/debug-zombie.png";
@@ -36,6 +38,7 @@ export class GameScene extends Phaser.Scene {
   private safeStartCounter: number = 3000;
   private projectiles: Projectile[] = [];
   private ammoPacks: AmmoPack[] = [];
+  private coins: Coin[] = [];
 
   constructor() {
     super({ key: "GameScene" });
@@ -47,6 +50,7 @@ export class GameScene extends Phaser.Scene {
     this.load.image("compass-circle", debugCompassCircle);
     this.load.image("zombie", debugZombie);
     this.load.image("ammo-pack", ammoPackUrl);
+    this.load.image("coin", coinUrl);
     this.load.image("projectile", debugCompassCircle); // Using same texture for now
   }
 
@@ -76,6 +80,7 @@ export class GameScene extends Phaser.Scene {
     this.setupWorld();
     this.createEntities();
     this.setupHexEventListeners();
+    this.setupEventListeners();
     this.initializeSystems();
     this.setupInput();
 
@@ -183,6 +188,9 @@ export class GameScene extends Phaser.Scene {
 
     // Check for ammo pack pickups
     this.checkAmmoPackPickups();
+
+    // Check for coin pickups
+    this.checkCoinPickups();
 
     // Update all systems
     Object.values(this.systems).forEach((system) => {
@@ -351,6 +359,38 @@ export class GameScene extends Phaser.Scene {
     });
   }
 
+  private checkCoinPickups(): void {
+    if (!this.character) return;
+
+    // Filter out picked up coins and check for pickups
+    this.coins = this.coins.filter((coin) => {
+      if (!coin.isActive()) return false;
+
+      const wasPickedUp = coin.checkPickup(this.character!);
+      return !wasPickedUp;
+    });
+  }
+
+  private handleZombieDeath(x: number, y: number): void {
+    // Create coin at zombie death location
+    const coin = new Coin(this, x, y);
+    this.coins.push(coin);
+
+    // Tween coin to random direction
+    const randomAngle = Math.random() * 2 * Math.PI;
+    const randomDistance = 20 + Math.random() * 20; // 20-40px
+    const targetX = x + Math.cos(randomAngle) * randomDistance;
+    const targetY = y + Math.sin(randomAngle) * randomDistance;
+
+    this.tweens.add({
+      targets: coin,
+      x: targetX,
+      y: targetY,
+      duration: 500,
+      ease: "Power2",
+    });
+  }
+
   private handleContinuousFiring(): void {
     if (!this.character || !this.uiScene) return;
 
@@ -373,6 +413,20 @@ export class GameScene extends Phaser.Scene {
         );
       }
     }
+  }
+
+  private setupEventListeners(): void {
+    // Set up zombie death event listener
+    this.events.on("zombieDied", (x: number, y: number) => {
+      this.handleZombieDeath(x, y);
+    });
+
+    // Set up coin pickup event listener
+    this.events.on("coinPickedUp", () => {
+      if (this.uiScene) {
+        this.uiScene.addCoin();
+      }
+    });
   }
 
   private setupHexEventListeners(): void {

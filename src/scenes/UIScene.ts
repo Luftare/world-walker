@@ -4,10 +4,12 @@ export class UIScene extends Phaser.Scene {
   private debugButton?: Phaser.GameObjects.Text;
   private shootButton?: Phaser.GameObjects.Text;
   private weaponInfoText?: Phaser.GameObjects.Text;
+  private coinCounterText?: Phaser.GameObjects.Text;
   private isVisible: boolean = true;
   private onWeaponSwitch?: () => void;
   private devicePixelRatio: number;
   private isShooting: boolean = false;
+  private coinCount: number = 0;
 
   constructor() {
     super({ key: "UIScene" });
@@ -72,6 +74,22 @@ export class UIScene extends Phaser.Scene {
     this.weaponInfoText.on("pointerdown", () => {
       this.switchWeapon();
     });
+
+    // Create coin counter text (top-right)
+    this.coinCounterText = this.add.text(
+      gameWidth - padding,
+      padding,
+      "Coins: 0",
+      {
+        fontSize: fontSize.score,
+        color: "#ffffff",
+        backgroundColor: "#333333",
+        padding: { x: 8 * this.devicePixelRatio, y: 4 * this.devicePixelRatio },
+      }
+    );
+    this.coinCounterText.setOrigin(1, 0); // Right-align
+    this.coinCounterText.setScrollFactor(0);
+    this.coinCounterText.setDepth(1000);
   }
 
   setWeaponSwitchCallback(callback: () => void): void {
@@ -111,11 +129,27 @@ export class UIScene extends Phaser.Scene {
     }
   }
 
+  addCoin(): void {
+    this.coinCount++;
+    this.updateCoinCounter();
+  }
+
+  private updateCoinCounter(): void {
+    if (this.coinCounterText && this.isVisible) {
+      this.coinCounterText.setText(`Coins: ${this.coinCount}`);
+    }
+  }
+
+  getCoinCount(): number {
+    return this.coinCount;
+  }
+
   setVisible(visible: boolean): void {
     this.isVisible = visible;
     if (this.debugButton) this.debugButton.setVisible(visible);
     if (this.shootButton) this.shootButton.setVisible(visible);
     if (this.weaponInfoText) this.weaponInfoText.setVisible(visible);
+    if (this.coinCounterText) this.coinCounterText.setVisible(visible);
   }
 
   toggleVisibility(): void {
@@ -145,5 +179,6 @@ export class UIScene extends Phaser.Scene {
     if (this.debugButton) this.debugButton.destroy();
     if (this.shootButton) this.shootButton.destroy();
     if (this.weaponInfoText) this.weaponInfoText.destroy();
+    if (this.coinCounterText) this.coinCounterText.destroy();
   }
 }
