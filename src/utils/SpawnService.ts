@@ -1,12 +1,13 @@
 import { HexagonCoord, HexagonUtils } from "./HexagonUtils";
 import { ZombieGroup } from "../entities/ZombieGroup";
+import { gameConfig } from "../config/gameConfig";
 
 export class SpawnService {
   private spawnState: Map<string, { timestamp: number; hasSpawned: boolean }> =
     new Map();
   private zombieGroup: ZombieGroup;
   private readonly RESPAWN_DELAY = 20000; // 20 seconds
-  private readonly INITIAL_SAFE_HEXES = 7;
+  private readonly INITIAL_SAFE_HEXES = 0;
   private initialHexesDiscovered = 0;
 
   constructor(zombieGroup: ZombieGroup) {
@@ -52,13 +53,15 @@ export class SpawnService {
   }
 
   private spawnInHex(hex: HexagonCoord): void {
-    // Convert hex coordinates to world coordinates using existing HexagonUtils
-    const worldPos = HexagonUtils.hexagonToWorld(hex.q, hex.r);
+    // Convert hex coordinates to scaled world coordinates for rendering
+    const worldPos = HexagonUtils.hexagonToWorldScaled(hex.q, hex.r);
 
     // Add some randomness to the spawn position within the hex
+    // Use half the hexagon radius for spawn area to avoid edge spawning
+    const spawnRadius = gameConfig.hexagonRadius * gameConfig.scale * 0.5;
     const randomOffset = {
-      x: (Math.random() - 0.5) * 50,
-      y: (Math.random() - 0.5) * 50,
+      x: (Math.random() - 0.5) * spawnRadius,
+      y: (Math.random() - 0.5) * spawnRadius,
     };
 
     const spawnX = worldPos.x + randomOffset.x;

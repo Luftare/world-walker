@@ -12,12 +12,16 @@ export interface WorldCoord {
 
 export class HexagonUtils {
   static readonly HEXAGON_ANGLE = Math.PI / 3; // 60 degrees
-  static readonly HEXAGON_RADIUS = gameConfig.hexagonRadius * gameConfig.scale;
+  // World coordinates (without scale) - used for game mechanics
+  static readonly HEXAGON_RADIUS_WORLD = gameConfig.hexagonRadius;
+  // Rendering coordinates (with scale) - used for visual display
+  static readonly HEXAGON_RADIUS_RENDER =
+    gameConfig.hexagonRadius * gameConfig.scale;
 
   static calculateHexagonPoints(
     centerX: number,
     centerY: number,
-    radius: number = this.HEXAGON_RADIUS,
+    radius: number = this.HEXAGON_RADIUS_RENDER
   ): Array<{ x: number; y: number }> {
     const points: Array<{ x: number; y: number }> = [];
     for (let i = 0; i < 6; i++) {
@@ -31,14 +35,30 @@ export class HexagonUtils {
   }
 
   static worldToHexagon(x: number, y: number): HexagonCoord {
-    const q = ((Math.sqrt(3) / 3) * x - (1 / 3) * y) / this.HEXAGON_RADIUS;
-    const r = ((2 / 3) * y) / this.HEXAGON_RADIUS;
+    const q =
+      ((Math.sqrt(3) / 3) * x - (1 / 3) * y) / this.HEXAGON_RADIUS_WORLD;
+    const r = ((2 / 3) * y) / this.HEXAGON_RADIUS_WORLD;
+    return this.roundHexagon(q, r);
+  }
+
+  static worldToHexagonScaled(x: number, y: number): HexagonCoord {
+    const q =
+      ((Math.sqrt(3) / 3) * x - (1 / 3) * y) / this.HEXAGON_RADIUS_RENDER;
+    const r = ((2 / 3) * y) / this.HEXAGON_RADIUS_RENDER;
     return this.roundHexagon(q, r);
   }
 
   static hexagonToWorld(q: number, r: number): WorldCoord {
-    const x = this.HEXAGON_RADIUS * (Math.sqrt(3) * q + (Math.sqrt(3) / 2) * r);
-    const y = this.HEXAGON_RADIUS * ((3 / 2) * r);
+    const x =
+      this.HEXAGON_RADIUS_WORLD * (Math.sqrt(3) * q + (Math.sqrt(3) / 2) * r);
+    const y = this.HEXAGON_RADIUS_WORLD * ((3 / 2) * r);
+    return { x, y };
+  }
+
+  static hexagonToWorldScaled(q: number, r: number): WorldCoord {
+    const x =
+      this.HEXAGON_RADIUS_RENDER * (Math.sqrt(3) * q + (Math.sqrt(3) / 2) * r);
+    const y = this.HEXAGON_RADIUS_RENDER * ((3 / 2) * r);
     return { x, y };
   }
 
@@ -88,7 +108,7 @@ export class HexagonUtils {
 
   static getHexagonsInRange(
     center: HexagonCoord,
-    range: number,
+    range: number
   ): HexagonCoord[] {
     const hexagons: HexagonCoord[] = [];
 
@@ -110,7 +130,7 @@ export class HexagonUtils {
   static isHexagonInRange(
     center: HexagonCoord,
     target: HexagonCoord,
-    range: number,
+    range: number
   ): boolean {
     return this.getHexagonDistance(center, target) <= range;
   }

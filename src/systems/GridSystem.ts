@@ -22,7 +22,7 @@ export class GridSystem implements BaseSystem {
 
     // Populate initial hexagons around character's starting position
     const characterPos = this.character.getPosition();
-    const characterHex = HexagonUtils.worldToHexagon(
+    const characterHex = HexagonUtils.worldToHexagonScaled(
       characterPos.x,
       characterPos.y
     );
@@ -34,7 +34,7 @@ export class GridSystem implements BaseSystem {
   update(): void {
     // Check if character has moved to a different hexagon
     const characterPos = this.character.getPosition();
-    const currentHex = HexagonUtils.worldToHexagon(
+    const currentHex = HexagonUtils.worldToHexagonScaled(
       characterPos.x,
       characterPos.y
     );
@@ -54,8 +54,7 @@ export class GridSystem implements BaseSystem {
 
   private populateHexagonsAroundPosition(centerHex: HexagonCoord): void {
     const populateRange = Math.ceil(
-      gameConfig.populateDistance /
-        (gameConfig.hexagonRadius * gameConfig.scale)
+      gameConfig.populateDistance / gameConfig.hexagonRadius
     );
     const hexagonsToPopulate = HexagonUtils.getHexagonsInRange(
       centerHex,
@@ -89,7 +88,7 @@ export class GridSystem implements BaseSystem {
 
     // Draw hexagons around character position
     const characterPos = this.character.getPosition();
-    const characterHex = HexagonUtils.worldToHexagon(
+    const characterHex = HexagonUtils.worldToHexagonScaled(
       characterPos.x,
       characterPos.y
     );
@@ -108,7 +107,7 @@ export class GridSystem implements BaseSystem {
     const graphics = this.gridGraphics;
     if (!graphics) return;
 
-    const worldPos = HexagonUtils.hexagonToWorld(hex.q, hex.r);
+    const worldPos = HexagonUtils.hexagonToWorldScaled(hex.q, hex.r);
     const points = HexagonUtils.calculateHexagonPoints(worldPos.x, worldPos.y);
 
     // Draw hexagon outline
