@@ -21,7 +21,7 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
     0,
     0
   );
-  protected pushbackDecayRate: number = 0.9;
+  protected pushbackDecayRate: number = 0.85;
 
   // Follow properties
   protected targetEntity: Phaser.GameObjects.Sprite | undefined;
@@ -168,27 +168,36 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
   }
 
   protected updateMovement(delta: number): void {
-    if (!this.isMoving) return;
+    const deltaTime = delta / 1000;
+    let newPosition = new Phaser.Math.Vector2(this.x, this.y);
 
-    const movementDirection = this.calculateMovementDirection();
-
-    if (movementDirection.length() > 0) {
-      const dampFactor = this.calculateDirectionDampFactor();
-      const moveDistance = this.speed * (delta / 1000) * dampFactor;
-      const newPosition = new Phaser.Math.Vector2(
-        this.x + movementDirection.x * moveDistance,
-        this.y + movementDirection.y * moveDistance
-      );
-
-      const deltaTime = delta / 1000;
+    // Apply pushback regardless of movement state
+    if (this.pushbackVelocity.length() > 0) {
       const pushbackOffset = this.pushbackVelocity.clone().scale(deltaTime);
       newPosition.add(pushbackOffset);
+    }
 
-      this.setPosition(newPosition.x, newPosition.y);
+    // Apply normal movement if moving
+    if (this.isMoving) {
+      const movementDirection = this.calculateMovementDirection();
 
+      if (movementDirection.length() > 0) {
+        const dampFactor = this.calculateDirectionDampFactor();
+        const moveDistance = this.speed * deltaTime * dampFactor;
+        const movementOffset = movementDirection.clone().scale(moveDistance);
+        newPosition.add(movementOffset);
+      }
+    }
+
+    // Update position
+    this.setPosition(newPosition.x, newPosition.y);
+
+    // Update target if moving
+    if (this.isMoving) {
       this.target = { x: newPosition.x, y: newPosition.y };
     }
 
+    // Decay pushback velocity
     this.pushbackVelocity.scale(this.pushbackDecayRate);
 
     if (this.pushbackVelocity.length() < 1) {
