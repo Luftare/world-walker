@@ -3,7 +3,7 @@ import { Projectile } from "../Projectile";
 
 export class FullAutoGun extends Weapon {
   constructor() {
-    super(-1, 150, 1, "Full Auto Gun", 0.002, 60); // Medium shake for full auto
+    super(150, 1, "Full Auto Gun", 0.002, 60); // Medium shake for full auto
   }
 
   shoot(

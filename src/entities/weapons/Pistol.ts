@@ -3,7 +3,7 @@ import { Projectile } from "../Projectile";
 
 export class Pistol extends Weapon {
   constructor() {
-    super(-1, 500, 1, "Pistol", 0.002, 80); // Light shake for pistol
+    super(500, 1, "Pistol", 0.002, 80); // Light shake for pistol
   }
 
   shoot(

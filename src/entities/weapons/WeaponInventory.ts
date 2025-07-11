@@ -7,6 +7,7 @@ import { Shotgun } from "./Shotgun";
 export class WeaponInventory {
   private currentWeapon: Weapon;
   private weapons: Map<string, Weapon> = new Map();
+  private sharedAmmo: number = 10; // Initial ammo pool
 
   constructor() {
     this.currentWeapon = new Sniper();
@@ -68,6 +69,7 @@ export class WeaponInventory {
   }
 
   canShoot(currentTime: number): boolean {
+    if (this.sharedAmmo <= 0) return false;
     return this.currentWeapon.canShoot(currentTime);
   }
 
@@ -81,8 +83,17 @@ export class WeaponInventory {
     if (this.canShoot(currentTime)) {
       this.currentWeapon.fire(currentTime);
       this.currentWeapon.shoot(scene, x, y, direction);
+      this.sharedAmmo--;
       return true;
     }
     return false;
+  }
+
+  getAmmo(): number {
+    return this.sharedAmmo;
+  }
+
+  addAmmo(amount: number): void {
+    this.sharedAmmo += amount;
   }
 }

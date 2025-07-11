@@ -85,9 +85,10 @@ export class GameScene extends Phaser.Scene {
           const currentWeapon = this.character
             .getWeaponInventory()
             .getCurrentWeapon();
+          const weaponInventory = this.character.getWeaponInventory();
           this.uiScene?.updateWeaponInfo(
             currentWeapon.getWeaponName(),
-            currentWeapon.getAmmo()
+            weaponInventory.getAmmo()
           );
         }
       });
@@ -200,9 +201,10 @@ export class GameScene extends Phaser.Scene {
       const currentWeapon = this.character
         .getWeaponInventory()
         .getCurrentWeapon();
+      const weaponInventory = this.character.getWeaponInventory();
       this.uiScene.updateWeaponInfo(
         currentWeapon.getWeaponName(),
-        currentWeapon.getAmmo()
+        weaponInventory.getAmmo()
       );
     }
   }

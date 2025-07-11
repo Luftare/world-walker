@@ -107,8 +107,7 @@ export class UIScene extends Phaser.Scene {
 
   updateWeaponInfo(weaponName: string, ammo: number): void {
     if (this.weaponInfoText && this.isVisible) {
-      const ammoText = ammo === -1 ? "∞" : ammo.toString();
-      this.weaponInfoText.setText(`${weaponName} - ${ammoText}`);
+      this.weaponInfoText.setText(`${weaponName} - ${ammo}`);
     }
   }
 

@@ -3,7 +3,7 @@ import { Projectile } from "../Projectile";
 
 export class Sniper extends Weapon {
   constructor() {
-    super(-1, 2000, 3, "Sniper", 0.005, 150);
+    super(2000, 3, "Sniper", 0.005, 150);
   }
 
   shoot(

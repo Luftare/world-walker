@@ -3,7 +3,7 @@ import { Projectile } from "../Projectile";
 
 export class Shotgun extends Weapon {
   constructor() {
-    super(-1, 800, 1, "Shotgun", 0.006, 120); // Medium fire rate, medium damage, heavy shake
+    super(800, 1, "Shotgun", 0.006, 120); // Medium fire rate, medium damage, heavy shake
   }
 
   shoot(
