@@ -396,6 +396,22 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
     return this.isAggroed;
   }
 
+  isFacingTarget(): boolean {
+    if (!this.targetEntity) return false;
+    const toleranceDegrees = 30;
+
+    const targetAngle = Math.atan2(
+      this.targetEntity.y - this.y,
+      this.targetEntity.x - this.x
+    );
+
+    let angleDiff = Math.abs(targetAngle - this.rotation);
+    if (angleDiff > Math.PI) angleDiff = 2 * Math.PI - angleDiff;
+
+    const toleranceRadians = (toleranceDegrees * Math.PI) / 180;
+    return angleDiff <= toleranceRadians;
+  }
+
   resetAggro(): void {
     this.isAggroed = false;
   }
