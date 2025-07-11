@@ -16,7 +16,7 @@ import compassUrl from "../assets/compass.png";
 import debugCompassSquare from "../assets/debug-compass-square.png";
 import debugCompassCircle from "../assets/debug-compass-circle.png";
 import debugZombie from "../assets/debug-zombie.png";
-import { HexagonCoord } from "../utils/HexagonUtils";
+import { HexagonCoord, HexagonUtils } from "../utils/HexagonUtils";
 
 export class GameScene extends Phaser.Scene {
   private character?: Character;
@@ -31,6 +31,7 @@ export class GameScene extends Phaser.Scene {
   private geolocationService?: GeolocationService;
   private compassService?: CompassService;
   private spawnService?: SpawnService;
+  private safeStartCounter: number = 3000;
   private projectiles: Projectile[] = [];
 
   constructor() {
@@ -164,6 +165,14 @@ export class GameScene extends Phaser.Scene {
   }
 
   override update(time: number, delta: number): void {
+    // Update safe start counter
+    if (this.safeStartCounter > 0) {
+      this.safeStartCounter -= delta;
+      if (this.safeStartCounter < 0) {
+        this.safeStartCounter = 0;
+      }
+    }
+
     // Update character behaviors
     if (this.character && this.positionMarker) {
       const markerPos = this.positionMarker.getPosition();
@@ -376,7 +385,23 @@ export class GameScene extends Phaser.Scene {
     // Set up event listeners for hex discovery
     this.events.on("hexDiscovered", (hex: HexagonCoord) => {
       if (this.spawnService) {
-        this.spawnService.handleHexDiscovered(hex);
+        // Calculate distance from player to hex center
+        const playerPos = this.positionMarker?.getPosition();
+        const hexWorldPos = HexagonUtils.hexagonToWorld(hex.q, hex.r);
+
+        let spawnEmpty = false;
+        if (playerPos && this.safeStartCounter > 0) {
+          const distance = Phaser.Math.Distance.Between(
+            playerPos.x / gameConfig.scale,
+            playerPos.y / gameConfig.scale,
+            hexWorldPos.x,
+            hexWorldPos.y
+          );
+          // Spawn empty if within 10 meters and safe start counter is active
+          spawnEmpty = distance <= 20;
+        }
+
+        this.spawnService.handleHexDiscovered(hex, spawnEmpty);
       }
     });
   }

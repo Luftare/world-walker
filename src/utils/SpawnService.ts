@@ -13,7 +13,7 @@ export class SpawnService {
     this.zombieGroup = zombieGroup;
   }
 
-  handleHexDiscovered(hex: HexagonCoord): void {
+  handleHexDiscovered(hex: HexagonCoord, spawnEmpty: boolean = false): void {
     const hexKey = this.getHexagonKey(hex);
     const currentTime = Date.now();
     // Check if this is a rediscovery
@@ -22,7 +22,7 @@ export class SpawnService {
     if (existingState) {
       // Rediscovery - check if enough time has passed
       const timeSinceLastSpawn = currentTime - existingState.timestamp;
-      if (timeSinceLastSpawn >= this.RESPAWN_DELAY) {
+      if (timeSinceLastSpawn >= this.RESPAWN_DELAY && !spawnEmpty) {
         this.spawnInHex(hex);
         this.spawnState.set(hexKey, {
           timestamp: currentTime,
@@ -32,11 +32,13 @@ export class SpawnService {
     } else {
       // First discovery
       this.initialHexesDiscovered++;
-      this.spawnInHex(hex);
-      this.spawnState.set(hexKey, {
-        timestamp: currentTime,
-        hasSpawned: true,
-      });
+      if (!spawnEmpty) {
+        this.spawnInHex(hex);
+        this.spawnState.set(hexKey, {
+          timestamp: currentTime,
+          hasSpawned: true,
+        });
+      }
     }
   }
 
