@@ -22,7 +22,7 @@ export class GridSystem implements BaseSystem {
 
     // Populate initial hexagons around character's starting position
     const characterPos = this.character.getPosition();
-    const characterHex = HexagonUtils.worldToHexagonScaled(
+    const characterHex = HexagonUtils.worldToHexagon(
       characterPos.x,
       characterPos.y
     );
@@ -34,7 +34,7 @@ export class GridSystem implements BaseSystem {
   update(): void {
     // Check if character has moved to a different hexagon
     const characterPos = this.character.getPosition();
-    const currentHex = HexagonUtils.worldToHexagonScaled(
+    const currentHex = HexagonUtils.worldToHexagon(
       characterPos.x,
       characterPos.y
     );
@@ -88,7 +88,7 @@ export class GridSystem implements BaseSystem {
 
     // Draw hexagons around character position
     const characterPos = this.character.getPosition();
-    const characterHex = HexagonUtils.worldToHexagonScaled(
+    const characterHex = HexagonUtils.worldToHexagon(
       characterPos.x,
       characterPos.y
     );
@@ -107,7 +107,7 @@ export class GridSystem implements BaseSystem {
     const graphics = this.gridGraphics;
     if (!graphics) return;
 
-    const worldPos = HexagonUtils.hexagonToWorldScaled(hex.q, hex.r);
+    const worldPos = HexagonUtils.hexagonToWorld(hex.q, hex.r);
     const points = HexagonUtils.calculateHexagonPoints(worldPos.x, worldPos.y);
 
     // Draw hexagon outline

@@ -12,11 +12,10 @@ export interface WorldCoord {
 
 export class HexagonUtils {
   static readonly HEXAGON_ANGLE = Math.PI / 3; // 60 degrees
-  // World coordinates (without scale) - used for game mechanics
+  // World coordinates - used for game mechanics (now in pixels)
   static readonly HEXAGON_RADIUS_WORLD = gameConfig.hexagonRadius;
-  // Rendering coordinates (with scale) - used for visual display
-  static readonly HEXAGON_RADIUS_RENDER =
-    gameConfig.hexagonRadius * gameConfig.scale;
+  // Rendering coordinates - used for visual display
+  static readonly HEXAGON_RADIUS_RENDER = gameConfig.hexagonRadius;
 
   static calculateHexagonPoints(
     centerX: number,
@@ -41,24 +40,10 @@ export class HexagonUtils {
     return this.roundHexagon(q, r);
   }
 
-  static worldToHexagonScaled(x: number, y: number): HexagonCoord {
-    const q =
-      ((Math.sqrt(3) / 3) * x - (1 / 3) * y) / this.HEXAGON_RADIUS_RENDER;
-    const r = ((2 / 3) * y) / this.HEXAGON_RADIUS_RENDER;
-    return this.roundHexagon(q, r);
-  }
-
   static hexagonToWorld(q: number, r: number): WorldCoord {
     const x =
       this.HEXAGON_RADIUS_WORLD * (Math.sqrt(3) * q + (Math.sqrt(3) / 2) * r);
     const y = this.HEXAGON_RADIUS_WORLD * ((3 / 2) * r);
-    return { x, y };
-  }
-
-  static hexagonToWorldScaled(q: number, r: number): WorldCoord {
-    const x =
-      this.HEXAGON_RADIUS_RENDER * (Math.sqrt(3) * q + (Math.sqrt(3) / 2) * r);
-    const y = this.HEXAGON_RADIUS_RENDER * ((3 / 2) * r);
     return { x, y };
   }
 

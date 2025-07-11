@@ -5,7 +5,6 @@ describe("CoordinateUtils", () => {
     it("should properly invert Y-axis for game coordinate system", () => {
       const initialLocation = { latitude: 60.1699, longitude: 24.9384 };
       const geoScale = { metersPerLon: 111320, metersPerLat: 110540 };
-      const gameScale = 1;
 
       // Test moving north (latitude increases)
       const northLocation = {
@@ -16,8 +15,7 @@ describe("CoordinateUtils", () => {
       const northCoords = CoordinateUtils.convertGeoToGameCoordinates(
         northLocation,
         initialLocation,
-        geoScale,
-        gameScale
+        geoScale
       );
 
       // Y should be negative (inverted) when moving north
@@ -33,8 +31,7 @@ describe("CoordinateUtils", () => {
       const southCoords = CoordinateUtils.convertGeoToGameCoordinates(
         southLocation,
         initialLocation,
-        geoScale,
-        gameScale
+        geoScale
       );
 
       // Y should be positive (inverted) when moving south
@@ -50,8 +47,7 @@ describe("CoordinateUtils", () => {
       const eastCoords = CoordinateUtils.convertGeoToGameCoordinates(
         eastLocation,
         initialLocation,
-        geoScale,
-        gameScale
+        geoScale
       );
 
       // X should be positive when moving east
@@ -67,8 +63,7 @@ describe("CoordinateUtils", () => {
       const westCoords = CoordinateUtils.convertGeoToGameCoordinates(
         westLocation,
         initialLocation,
-        geoScale,
-        gameScale
+        geoScale
       );
 
       // X should be negative when moving west
@@ -84,35 +79,26 @@ describe("CoordinateUtils", () => {
         longitude: initialLocation.longitude + 0.001,
       };
 
-      const coordsScale1 = CoordinateUtils.convertGeoToGameCoordinates(
+      const coords = CoordinateUtils.convertGeoToGameCoordinates(
         testLocation,
         initialLocation,
-        geoScale,
-        1
+        geoScale
       );
 
-      const coordsScale10 = CoordinateUtils.convertGeoToGameCoordinates(
-        testLocation,
-        initialLocation,
-        geoScale,
-        10
-      );
-
-      // Scale 10 should be 10x larger than scale 1
-      expect(coordsScale10.x).toBeCloseTo(coordsScale1.x * 10, 1);
-      expect(coordsScale10.y).toBeCloseTo(coordsScale1.y * 10, 1);
+      // Should return coordinates in pixels (scale of 8)
+      expect(coords.x).toBeCloseTo(110.54, 1);
+      expect(coords.y).toBeCloseTo(-110.54, 1);
     });
   });
 
   describe("metersToPixels and pixelsToMeters", () => {
     it("should convert between meters and pixels correctly", () => {
       const meters = 100;
-      const scale = 20;
 
-      const pixels = CoordinateUtils.metersToPixels(meters, scale);
-      expect(pixels).toBe(2000);
+      const pixels = CoordinateUtils.metersToPixels(meters);
+      expect(pixels).toBe(800);
 
-      const backToMeters = CoordinateUtils.pixelsToMeters(pixels, scale);
+      const backToMeters = CoordinateUtils.pixelsToMeters(pixels);
       expect(backToMeters).toBe(meters);
     });
   });

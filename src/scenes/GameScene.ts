@@ -121,8 +121,8 @@ export class GameScene extends Phaser.Scene {
             return;
           }
           // Convert meters to pixels (coordinates are already in meters with Y-axis inversion)
-          const xPixels = x * gameConfig.scale;
-          const yPixels = y * gameConfig.scale;
+          const xPixels = x;
+          const yPixels = y;
 
           // Update position marker
           if (this.positionMarker) {
@@ -344,7 +344,7 @@ export class GameScene extends Phaser.Scene {
           // Apply pushback in the direction of the projectile
           const projectileDirection = projectile.getDirection();
           zombie.takeDamage(projectile.getDamage(), projectileDirection);
-          zombie.applyPushback(projectileDirection, 40 * gameConfig.scale);
+          zombie.applyPushback(projectileDirection, 500);
           projectile.destroy();
           break;
         }
@@ -392,8 +392,8 @@ export class GameScene extends Phaser.Scene {
         let spawnEmpty = false;
         if (playerPos && this.safeStartCounter > 0) {
           const distance = Phaser.Math.Distance.Between(
-            playerPos.x / gameConfig.scale,
-            playerPos.y / gameConfig.scale,
+            playerPos.x / 8,
+            playerPos.y / 8,
             hexWorldPos.x,
             hexWorldPos.y
           );

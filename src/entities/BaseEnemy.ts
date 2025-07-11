@@ -12,8 +12,7 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
   protected target: Point | undefined;
   protected isMoving: boolean = false;
   protected directionDamp: number = 1;
-  protected avoidRadius: number =
-    gameConfig.playerRadius * gameConfig.scale * 2;
+  protected avoidRadius: number = gameConfig.playerRadius * 2;
   protected avoidWeight: number = 2;
   protected forwardWeight: number = 1;
 
@@ -27,7 +26,7 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
   // Follow properties
   protected targetEntity: Phaser.GameObjects.Sprite | undefined;
   protected followDistance: number = gameConfig.playerRadius * 2;
-  protected aggroRange: number = 20 * gameConfig.scale;
+  protected aggroRange: number = 150;
   protected isAggroed: boolean = false;
 
   // Rotation properties
@@ -37,8 +36,7 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
   // Attack properties
   protected lastAttackTime: number = 0;
   protected attackCooldown: number = 1000;
-  protected attackRange: number =
-    gameConfig.playerRadius * gameConfig.scale * 2;
+  protected attackRange: number = gameConfig.playerRadius * 2;
   protected isAttacking: boolean = false;
 
   constructor(
@@ -47,7 +45,7 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
     y: number = 0,
     texture: string,
     health: number = 3,
-    speed: number = gameConfig.movementSpeed * 0.4
+    speed: number = gameConfig.movementSpeed * 0.5
   ) {
     super(scene, x, y, texture);
     scene.add.existing(this);
@@ -66,7 +64,7 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
       this.body.setCircle(this.width / 2);
     }
 
-    const radius = gameConfig.playerRadius * gameConfig.scale;
+    const radius = gameConfig.playerRadius;
     this.setDisplaySize(radius * 2, radius * 2);
 
     this.targetRotation = this.rotation;
@@ -88,7 +86,7 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
     this.followDistance = distance;
   }
 
-  applyPushback(direction: Phaser.Math.Vector2, strength: number = 30): void {
+  applyPushback(direction: Phaser.Math.Vector2, strength: number): void {
     const pushbackVector = direction.clone().scale(strength);
     this.pushbackVelocity.add(pushbackVector);
   }
@@ -176,8 +174,7 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
 
     if (movementDirection.length() > 0) {
       const dampFactor = this.calculateDirectionDampFactor();
-      const moveDistance =
-        this.speed * gameConfig.scale * (delta / 1000) * dampFactor;
+      const moveDistance = this.speed * (delta / 1000) * dampFactor;
       const newPosition = new Phaser.Math.Vector2(
         this.x + movementDirection.x * moveDistance,
         this.y + movementDirection.y * moveDistance
@@ -340,7 +337,7 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
     const stainX = this.x;
     const stainY = this.y;
 
-    const baseRadius = gameConfig.playerRadius * gameConfig.scale * 0.3;
+    const baseRadius = gameConfig.playerRadius * 0.3;
     const stain = this.scene.add.circle(stainX, stainY, baseRadius, 0x006400);
     stain.setDepth(4);
 
@@ -354,7 +351,7 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
     const fanSpread = Math.PI / 3;
     const randomAngle = baseAngle + (Math.random() - 0.5) * fanSpread;
 
-    const distance = (3 + Math.random() * 6) * gameConfig.scale;
+    const distance = 30 + Math.random() * 60;
     const scale = 0.3 + Math.random() * 0.7;
 
     stain.setScale(scale);

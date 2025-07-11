@@ -131,8 +131,7 @@ export class GeolocationService {
     return CoordinateUtils.convertGeoToGameCoordinates(
       location,
       this.initialLocation,
-      this.geoScale,
-      1 // Return coordinates in meters, GameScene will convert to pixels
+      this.geoScale
     );
   }
 

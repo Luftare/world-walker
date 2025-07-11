@@ -9,7 +9,6 @@ export interface GameConfig {
   markerRadius: number;
   hexagonRadius: number;
   populateDistance: number;
-  scale: number;
   devMode: boolean;
   rotationSpeed: number;
   movementSpeed: number;
@@ -34,17 +33,16 @@ export interface GameConfig {
 }
 
 export const gameConfig: GameConfig = {
-  playerSpeed: 3,
-  playerRadius: 2,
-  markerRadius: 2,
-  hexagonRadius: 22,
-  populateDistance: 40,
-  scale: 8,
+  playerSpeed: 24,
+  playerRadius: 16, // 2 * 8
+  markerRadius: 16, // 2 * 8
+  hexagonRadius: 176, // 22 * 8
+  populateDistance: 320, // 40 * 8
   devMode: false,
   rotationSpeed: 2.0,
-  movementSpeed: 3,
+  movementSpeed: 24,
   debugMovementSpeed: 300,
-  featureRadius: 3,
+  featureRadius: 24, // 3 * 8
   markerAlpha: 0.6,
   colors: {
     player: 0x666666,

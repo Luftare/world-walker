@@ -9,12 +9,12 @@ export class WeaponInventory {
   private weapons: Map<string, Weapon> = new Map();
 
   constructor() {
-    // Start with a sniper
     this.currentWeapon = new Sniper();
     this.weapons.set("sniper", this.currentWeapon);
     this.weapons.set("fullautogun", new FullAutoGun());
     this.weapons.set("pistol", new Pistol());
     this.weapons.set("shotgun", new Shotgun());
+    this.setCurrentWeapon("pistol");
   }
 
   getCurrentWeapon(): Weapon {

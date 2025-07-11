@@ -9,7 +9,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
   private finalTarget: Point | undefined;
   private isMovingTowardsTarget: boolean = false;
   private flockingEnabled: boolean = true;
-  private avoidRadius: number = gameConfig.playerRadius * gameConfig.scale * 2;
+  private avoidRadius: number = gameConfig.playerRadius * 2;
   private avoidWeight: number = 2;
   private targetWeight: number = 1;
 
@@ -45,7 +45,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
       this.body.setCircle(this.width / 2);
     }
 
-    const radius = gameConfig.playerRadius * gameConfig.scale;
+    const radius = gameConfig.playerRadius;
     this.setDisplaySize(radius * 2, radius * 2);
 
     // Initialize weapon inventory
@@ -275,7 +275,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
       const flockingDirection = this.calculateFlockingDirection();
 
       if (flockingDirection.length() > 0) {
-        const moveDistance = this.speed * gameConfig.scale * (delta / 1000);
+        const moveDistance = this.speed * (delta / 1000);
         const newPosition = new Phaser.Math.Vector2(
           this.x + flockingDirection.x * moveDistance,
           this.y + flockingDirection.y * moveDistance
@@ -300,7 +300,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
         return;
       }
 
-      const moveDistance = this.speed * gameConfig.scale * (delta / 1000);
+      const moveDistance = this.speed * (delta / 1000);
 
       if (distance > 0) {
         const direction = new Phaser.Math.Vector2(

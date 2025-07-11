@@ -43,12 +43,12 @@ export class SpawnService {
   }
 
   private spawnInHex(hex: HexagonCoord): void {
-    // Convert hex coordinates to scaled world coordinates for rendering
-    const worldPos = HexagonUtils.hexagonToWorldScaled(hex.q, hex.r);
+    // Convert hex coordinates to world coordinates for rendering
+    const worldPos = HexagonUtils.hexagonToWorld(hex.q, hex.r);
 
     // Add some randomness to the spawn position within the hex
     // Use half the hexagon radius for spawn area to avoid edge spawning
-    const spawnRadius = gameConfig.hexagonRadius * gameConfig.scale;
+    const spawnRadius = gameConfig.hexagonRadius;
     const randomOffset = {
       x: (Math.random() - 0.5) * spawnRadius,
       y: (Math.random() - 0.5) * spawnRadius,

@@ -30,8 +30,8 @@ export class WalkingZombie extends BaseEnemy {
       const dy = this.targetEntity.y - this.y;
       const distance = Math.sqrt(dx * dx + dy * dy);
       if (distance > 0) {
-        jumpDirectionX = (dx / distance) * 2 * gameConfig.scale;
-        jumpDirectionY = (dy / distance) * 2 * gameConfig.scale;
+        jumpDirectionX = (dx / distance) * 2;
+        jumpDirectionY = (dy / distance) * 2;
       }
     }
 
