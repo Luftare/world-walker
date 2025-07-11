@@ -77,14 +77,6 @@ export class GameScene extends Phaser.Scene {
 
     // Set up debug toggle callback
     if (this.uiScene) {
-      // Set up shoot callbacks for continuous firing
-      this.uiScene.setShootStartCallback(() => {
-        // Start continuous firing
-      });
-      this.uiScene.setShootEndCallback(() => {
-        // Stop continuous firing
-      });
-
       // Set up weapon switch callback
       this.uiScene.setWeaponSwitchCallback(() => {
         if (this.character) {

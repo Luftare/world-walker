@@ -5,8 +5,6 @@ export class UIScene extends Phaser.Scene {
   private shootButton?: Phaser.GameObjects.Text;
   private weaponInfoText?: Phaser.GameObjects.Text;
   private isVisible: boolean = true;
-  private onShootStart?: () => void;
-  private onShootEnd?: () => void;
   private onWeaponSwitch?: () => void;
   private devicePixelRatio: number;
   private isShooting: boolean = false;
@@ -76,30 +74,16 @@ export class UIScene extends Phaser.Scene {
     });
   }
 
-  setShootStartCallback(callback: () => void): void {
-    this.onShootStart = callback;
-  }
-
-  setShootEndCallback(callback: () => void): void {
-    this.onShootEnd = callback;
-  }
-
   setWeaponSwitchCallback(callback: () => void): void {
     this.onWeaponSwitch = callback;
   }
 
   private startShooting(): void {
     this.isShooting = true;
-    if (this.onShootStart) {
-      this.onShootStart();
-    }
   }
 
   private stopShooting(): void {
     this.isShooting = false;
-    if (this.onShootEnd) {
-      this.onShootEnd();
-    }
   }
 
   private switchWeapon(): void {
