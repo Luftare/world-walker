@@ -58,6 +58,7 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
     this.setOrigin(0.5, 0.5);
     this.setPosition(x, y);
     this.setDepth(5);
+    this.rotation = Math.random() * 2 * Math.PI;
 
     if (this.body) {
       this.body.setSize(this.width, this.height);
