@@ -1,16 +1,20 @@
 import { HexagonCoord, HexagonUtils } from "./HexagonUtils";
 import { ZombieGroup } from "../entities/ZombieGroup";
+import { AmmoPack } from "../entities/AmmoPack";
 import { gameConfig } from "../config/gameConfig";
 
 export class SpawnService {
   private spawnState: Map<string, { timestamp: number; hasSpawned: boolean }> =
     new Map();
   private zombieGroup: ZombieGroup;
+  private gameScene: Phaser.Scene;
   private readonly RESPAWN_DELAY = 20000; // 20 seconds
+  private readonly AMMO_PACK_CHANCE = 0.25; // 25% chance for ammo pack
   private initialHexesDiscovered = 0;
 
-  constructor(zombieGroup: ZombieGroup) {
+  constructor(zombieGroup: ZombieGroup, gameScene: Phaser.Scene) {
     this.zombieGroup = zombieGroup;
+    this.gameScene = gameScene;
   }
 
   handleHexDiscovered(hex: HexagonCoord, spawnEmpty: boolean = false): void {
@@ -57,8 +61,26 @@ export class SpawnService {
     const spawnX = worldPos.x + randomOffset.x;
     const spawnY = worldPos.y + randomOffset.y;
 
-    // Spawn a walking zombie
-    this.zombieGroup.addZombie(spawnX, spawnY);
+    // 25% chance to spawn ammo pack, 75% chance to spawn zombie
+    if (Math.random() < this.AMMO_PACK_CHANCE) {
+      this.spawnAmmoPack(spawnX, spawnY);
+    } else {
+      this.spawnZombie(spawnX, spawnY);
+    }
+  }
+
+  private spawnAmmoPack(x: number, y: number): void {
+    const ammoPack = new AmmoPack(this.gameScene, x, y);
+
+    // Add to the game scene's ammo packs array
+    const gameScene = this.gameScene as any;
+    if (gameScene.ammoPacks) {
+      gameScene.ammoPacks.push(ammoPack);
+    }
+  }
+
+  private spawnZombie(x: number, y: number): void {
+    this.zombieGroup.addZombie(x, y);
   }
 
   private getHexagonKey(hex: HexagonCoord): string {

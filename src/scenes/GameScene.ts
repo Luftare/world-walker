@@ -14,6 +14,7 @@ import { CompassService } from "../utils/CompassService";
 import { SpawnService } from "../utils/SpawnService";
 
 import compassUrl from "../assets/compass.png";
+import ammoPackUrl from "../assets/ammo-pack.png";
 import debugCompassSquare from "../assets/debug-compass-square.png";
 import debugCompassCircle from "../assets/debug-compass-circle.png";
 import debugZombie from "../assets/debug-zombie.png";
@@ -45,6 +46,7 @@ export class GameScene extends Phaser.Scene {
     this.load.image("compass-square", debugCompassSquare);
     this.load.image("compass-circle", debugCompassCircle);
     this.load.image("zombie", debugZombie);
+    this.load.image("ammo-pack", ammoPackUrl);
     this.load.image("projectile", debugCompassCircle); // Using same texture for now
   }
 
@@ -248,11 +250,6 @@ export class GameScene extends Phaser.Scene {
 
     // Set up collision detection
     this.setupCollisions();
-
-    this.ammoPacks.push(new AmmoPack(this, 30, 30, "compass-circle"));
-    this.ammoPacks.push(new AmmoPack(this, -30, 30, "compass-circle"));
-    this.ammoPacks.push(new AmmoPack(this, 30, -30, "compass-circle"));
-    this.ammoPacks.push(new AmmoPack(this, -30, -30, "compass-circle"));
   }
 
   private initializeSystems(): void {
@@ -381,7 +378,7 @@ export class GameScene extends Phaser.Scene {
   private setupHexEventListeners(): void {
     // Initialize spawn service first
     if (this.zombieGroup) {
-      this.spawnService = new SpawnService(this.zombieGroup);
+      this.spawnService = new SpawnService(this.zombieGroup, this);
     }
 
     // Set up event listeners for hex discovery

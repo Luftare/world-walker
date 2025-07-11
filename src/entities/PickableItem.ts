@@ -21,6 +21,7 @@ export abstract class PickableItem extends Phaser.Physics.Arcade.Sprite {
 
     const radius = gameConfig.playerRadius;
     this.setDisplaySize(radius * 2, radius * 2);
+    this.rotation = Math.random() * 2 * Math.PI;
   }
 
   checkPickup(player: Phaser.GameObjects.Sprite): boolean {

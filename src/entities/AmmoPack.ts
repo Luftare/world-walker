@@ -8,7 +8,7 @@ export class AmmoPack extends PickableItem {
     scene: Phaser.Scene,
     x: number,
     y: number,
-    texture: string = "compass-circle"
+    texture: string = "ammo-pack"
   ) {
     super(scene, x, y, texture);
   }
