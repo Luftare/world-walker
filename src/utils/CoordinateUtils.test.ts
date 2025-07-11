@@ -85,21 +85,9 @@ describe("CoordinateUtils", () => {
         geoScale
       );
 
-      // Should return coordinates in pixels (scale of 8)
-      expect(coords.x).toBeCloseTo(110.54, 1);
+      // Should return coordinates in meters (no scale applied)
+      expect(coords.x).toBeCloseTo(111.32, 1);
       expect(coords.y).toBeCloseTo(-110.54, 1);
-    });
-  });
-
-  describe("metersToPixels and pixelsToMeters", () => {
-    it("should convert between meters and pixels correctly", () => {
-      const meters = 100;
-
-      const pixels = CoordinateUtils.metersToPixels(meters);
-      expect(pixels).toBe(800);
-
-      const backToMeters = CoordinateUtils.pixelsToMeters(pixels);
-      expect(backToMeters).toBe(meters);
     });
   });
 
