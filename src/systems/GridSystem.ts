@@ -84,7 +84,7 @@ export class GridSystem implements BaseSystem {
     if (!this.gridGraphics) return;
 
     this.gridGraphics.clear();
-    this.gridGraphics.lineStyle(1, gameConfig.colors.grid, 0.3);
+    this.gridGraphics.lineStyle(1, gameConfig.colors.grid, 0.2);
 
     // Draw hexagons around character position
     const characterPos = this.character.getPosition();
