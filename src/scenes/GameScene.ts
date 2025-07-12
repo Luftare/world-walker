@@ -25,18 +25,22 @@ import healthPackUrl from "../assets/health-pack.png";
 import { HexagonCoord, HexagonUtils } from "../utils/HexagonUtils";
 
 export class GameScene extends Phaser.Scene {
-  private character?: Character;
-  private positionMarker?: PositionMarker;
-  private zombieGroup?: ZombieGroup;
+  private character: Character | undefined;
+  private positionMarker: PositionMarker | undefined;
+  private zombieGroup: ZombieGroup | undefined;
   private systems: {
-    grid?: GridSystem;
-    camera?: CameraSystem;
-    debug?: DebugSystem;
-  } = {};
-  private uiScene?: UIScene;
-  private geolocationService?: GeolocationService;
-  private compassService?: CompassService;
-  private spawnService?: SpawnService;
+    grid: GridSystem | undefined;
+    camera: CameraSystem | undefined;
+    debug: DebugSystem | undefined;
+  } = {
+    grid: undefined,
+    camera: undefined,
+    debug: undefined,
+  };
+  private uiScene: UIScene | undefined;
+  private geolocationService: GeolocationService | undefined;
+  private compassService: CompassService | undefined;
+  private spawnService: SpawnService | undefined;
   private safeStartCounter: number = 3000;
   private projectiles: Projectile[] = [];
   private ammoPacks: AmmoPack[] = [];
@@ -62,6 +66,12 @@ export class GameScene extends Phaser.Scene {
     geolocationService?: GeolocationService;
     compassService?: CompassService;
   }): Promise<void> {
+    // Clean up any existing state first
+    this.cleanupEntities();
+    this.cleanupSystems();
+    this.cleanupEventListeners();
+    this.resetState();
+
     // Start the UI scene if it's not already running
     if (!this.scene.isActive("UIScene")) {
       this.scene.launch("UIScene");
@@ -422,12 +432,118 @@ export class GameScene extends Phaser.Scene {
     // Stop the UI scene
     this.scene.stop("UIScene");
 
+    // Clean up the current game state before transitioning
+    this.cleanupEntities();
+    this.cleanupSystems();
+    this.cleanupEventListeners();
+    this.resetState();
+
     // Transition to lobby with game over state
     this.scene.start("LobbyScene", {
       geolocationService: this.geolocationService,
       compassService: this.compassService,
       isGameOver: true,
     });
+  }
+
+  shutdown(): void {
+    // Clean up all entities
+    this.cleanupEntities();
+
+    // Clean up all systems
+    this.cleanupSystems();
+
+    // Clean up event listeners
+    this.cleanupEventListeners();
+
+    // Reset state variables
+    this.resetState();
+  }
+
+  private cleanupEntities(): void {
+    // Clean up character
+    if (this.character) {
+      this.character.destroy();
+      this.character = undefined;
+    }
+
+    // Clean up position marker
+    if (this.positionMarker) {
+      this.positionMarker.destroy();
+      this.positionMarker = undefined;
+    }
+
+    // Clean up zombie group
+    if (this.zombieGroup) {
+      this.zombieGroup.clear(true, true);
+      this.zombieGroup = undefined;
+    }
+
+    // Clean up projectiles
+    this.projectiles.forEach((projectile) => {
+      if (projectile && projectile.active) {
+        projectile.destroy();
+      }
+    });
+    this.projectiles = [];
+
+    // Clean up ammo packs
+    this.ammoPacks.forEach((ammoPack) => {
+      if (ammoPack && ammoPack.isActive()) {
+        ammoPack.destroy();
+      }
+    });
+    this.ammoPacks = [];
+
+    // Clean up coins
+    this.coins.forEach((coin) => {
+      if (coin && coin.isActive()) {
+        coin.destroy();
+      }
+    });
+    this.coins = [];
+
+    // Clean up health packs
+    this.healthPacks.forEach((healthPack) => {
+      if (healthPack && healthPack.isActive()) {
+        healthPack.destroy();
+      }
+    });
+    this.healthPacks = [];
+  }
+
+  private cleanupSystems(): void {
+    // Clean up grid system - no destroy method needed
+    this.systems.grid = undefined;
+
+    // Clean up camera system - no destroy method needed
+    this.systems.camera = undefined;
+
+    // Clean up debug system
+    if (this.systems.debug) {
+      if (typeof this.systems.debug.destroy === "function") {
+        this.systems.debug.destroy();
+      }
+      this.systems.debug = undefined;
+    }
+
+    // Clean up spawn service
+    this.spawnService = undefined;
+  }
+
+  private cleanupEventListeners(): void {
+    // Remove all event listeners
+    this.events.off("zombieDied");
+    this.events.off("coinPickedUp");
+    this.events.off("playerDied");
+    this.events.off("hexDiscovered");
+    this.events.off("zombieMeleeAttack");
+  }
+
+  private resetState(): void {
+    // Reset all state variables
+    this.safeStartCounter = 3000;
+    this.uiScene = undefined;
   }
 
   private handleContinuousFiring(): void {
