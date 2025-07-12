@@ -4,6 +4,9 @@ export class UniversalCompass {
   private headingCallback?: HeadingCallback;
   private listenersAdded = false;
   private permissionGranted = false;
+  private headingBuffer: number[] = [];
+  private readonly BUFFER_SIZE = 5;
+  private readonly MAX_DELTA = 30;
 
   async requestPermission(): Promise<void> {
     if (!window.DeviceOrientationEvent) {
@@ -53,13 +56,50 @@ export class UniversalCompass {
     this.listenersAdded = true;
   }
 
+  private getMedian(headings: number[]): number {
+    if (headings.length === 0) return 0;
+
+    const sorted = [...headings].sort((a, b) => a - b);
+    const mid = Math.floor(sorted.length / 2);
+
+    return sorted.length % 2 === 0
+      ? (sorted[mid - 1]! + sorted[mid]!) / 2
+      : sorted[mid]!;
+  }
+
+  private getDelta(heading1: number, heading2: number): number {
+    let delta = Math.abs(heading1 - heading2);
+    if (delta > 180) {
+      delta = 360 - delta;
+    }
+    return delta;
+  }
+
   private onDeviceOrientation(e: any): void {
     if (typeof e.webkitCompassHeading !== "undefined") {
-      // iOS Safari
+      // iOS Safari - no filtering needed
       this.headingCallback?.(e.webkitCompassHeading);
-    } else {
-      // Android Chrome
-      this.headingCallback?.(360 - e.alpha);
+    } else if (typeof e.alpha !== "undefined") {
+      // Android Chrome - apply median filter
+      const heading = 360 - e.alpha;
+      this.headingBuffer.push(heading);
+
+      if (this.headingBuffer.length > this.BUFFER_SIZE) {
+        this.headingBuffer.shift();
+      }
+
+      if (this.headingBuffer.length >= 3) {
+        const median = this.getMedian(this.headingBuffer);
+        const delta = this.getDelta(heading, median);
+
+        if (delta <= this.MAX_DELTA) {
+          this.headingCallback?.(heading);
+        }
+      } else {
+        // Not enough data yet, pass through
+        this.headingCallback?.(heading);
+      }
     }
+    // If neither webkitCompassHeading nor alpha is available, ignore the event
   }
 }
