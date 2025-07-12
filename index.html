@@ -46,6 +46,7 @@
       import Phaser from "phaser";
       import { gameConfig } from "./src/config/gameConfig.ts";
       import { MenuScene } from "./src/scenes/MenuScene.ts";
+      import { LobbyScene } from "./src/scenes/LobbyScene.ts";
       import { GameScene } from "./src/scenes/GameScene.ts";
       import { UIScene } from "./src/scenes/UIScene.ts";
 
@@ -64,7 +65,7 @@
             debug: gameConfig.devMode,
           },
         },
-        scene: [MenuScene, GameScene, UIScene],
+        scene: [MenuScene, LobbyScene, GameScene, UIScene],
         scale: {
           mode: Phaser.Scale.AUTO,
           autoCenter: Phaser.Scale.CENTER_BOTH,

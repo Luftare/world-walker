@@ -173,8 +173,8 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
       duration: 1000,
       ease: "Power2",
       onComplete: () => {
-        // Game over logic could go here
-        console.log("Player died!");
+        // Emit player death event for scene handling
+        this.scene.events.emit("playerDied");
       },
     });
   }

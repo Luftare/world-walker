@@ -79,7 +79,7 @@ export class MenuScene extends Phaser.Scene {
 
     // Create start game button
     this.startGameButton = document.createElement("button");
-    this.startGameButton.textContent = "Start Game";
+    this.startGameButton.textContent = "Continue";
     this.startGameButton.style.display = "none";
     this.startGameButton.style.width = "200px";
     this.startGameButton.style.margin = "10px auto";
@@ -216,8 +216,8 @@ export class MenuScene extends Phaser.Scene {
     // Clean up HTML elements before starting the game
     this.cleanupHTMLMenu();
 
-    // Pass the services to the game scene
-    this.scene.start("GameScene", {
+    // Pass the services to the lobby scene
+    this.scene.start("LobbyScene", {
       geolocationService: this.geolocationService,
       compassService: this.compassService,
     });
