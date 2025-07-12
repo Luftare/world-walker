@@ -10,8 +10,8 @@ export class SpawnService {
   private zombieGroup: ZombieGroup;
   private gameScene: Phaser.Scene;
   private readonly RESPAWN_DELAY = 20000; // 20 seconds
-  private readonly AMMO_PACK_CHANCE = 0.25; // 25% chance for ammo pack
-  private readonly HEALTH_PACK_CHANCE = 0.25; // 25% chance for health pack
+  private readonly AMMO_PACK_CHANCE = 0.1;
+  private readonly HEALTH_PACK_CHANCE = 0.1;
   private initialHexesDiscovered = 0;
 
   constructor(zombieGroup: ZombieGroup, gameScene: Phaser.Scene) {
