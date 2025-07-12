@@ -196,16 +196,9 @@ export class GameScene extends Phaser.Scene {
       return projectile.active;
     });
 
-    // Check for projectile-zombie collisions
     this.checkProjectileCollisions();
-
-    // Check for ammo pack pickups
     this.checkAmmoPackPickups();
-
-    // Check for coin pickups
     this.checkCoinPickups();
-
-    // Check for health pack pickups
     this.checkHealthPackPickups();
 
     // Update all systems
@@ -431,12 +424,7 @@ export class GameScene extends Phaser.Scene {
   private handlePlayerDeath(): void {
     // Stop the UI scene
     this.scene.stop("UIScene");
-
-    // Clean up the current game state before transitioning
-    this.cleanupEntities();
-    this.cleanupSystems();
-    this.cleanupEventListeners();
-    this.resetState();
+    this.tearDown();
 
     // Transition to lobby with game over state
     this.scene.start("LobbyScene", {
@@ -446,17 +434,10 @@ export class GameScene extends Phaser.Scene {
     });
   }
 
-  shutdown(): void {
-    // Clean up all entities
+  tearDown(): void {
     this.cleanupEntities();
-
-    // Clean up all systems
     this.cleanupSystems();
-
-    // Clean up event listeners
     this.cleanupEventListeners();
-
-    // Reset state variables
     this.resetState();
   }
 
