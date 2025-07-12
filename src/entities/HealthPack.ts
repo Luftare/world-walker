@@ -11,6 +11,18 @@ export class HealthPack extends PickableItem {
     super(scene, x, y, texture);
   }
 
+  override checkPickup(player: Phaser.GameObjects.Sprite): boolean {
+    const character = this.scene.children.list.find(
+      (child) => child instanceof Character
+    ) as Character;
+
+    if (character && character.getHealth() >= character.getMaxHealth()) {
+      return false;
+    }
+
+    return super.checkPickup(player);
+  }
+
   protected onPickupComplete(): void {
     const character = this.scene.children.list.find(
       (child) => child instanceof Character
