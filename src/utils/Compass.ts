@@ -8,6 +8,11 @@ export class UniversalCompass {
   private readonly BUFFER_SIZE = 5;
   private readonly MAX_DELTA = 30;
 
+  // DEBUG: Getter for heading buffer to visualize in UI
+  getHeadingBuffer(): number[] {
+    return [...this.headingBuffer];
+  }
+
   async requestPermission(): Promise<void> {
     if (!window.DeviceOrientationEvent) {
       throw new Error("DeviceOrientation API is not available");

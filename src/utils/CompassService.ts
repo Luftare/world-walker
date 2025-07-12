@@ -52,4 +52,9 @@ export class CompassService {
   isPermissionGranted(): boolean {
     return this.permissionGranted;
   }
+
+  // DEBUG: Get compass instance for debugging
+  getCompass(): UniversalCompass {
+    return this.compass;
+  }
 }
