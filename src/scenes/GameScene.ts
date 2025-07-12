@@ -415,23 +415,23 @@ export class GameScene extends Phaser.Scene {
     const randomValue = Math.random();
     let item: AmmoPack | Coin | HealthPack;
 
-    if (randomValue < 0.33) {
-      // Spawn health pack
-      item = new HealthPack(this, x, y);
-      this.healthPacks.push(item);
-    } else if (randomValue < 0.66) {
-      // Spawn ammo pack
-      item = new AmmoPack(this, x, y);
-      this.ammoPacks.push(item);
-    } else {
+    if (randomValue < 0.2) {
       // Spawn coin
       item = new Coin(this, x, y);
       this.coins.push(item);
+    } else if (randomValue < 0.4) {
+      // Spawn health pack
+      item = new HealthPack(this, x, y);
+      this.healthPacks.push(item);
+    } else {
+      // Spawn ammo pack
+      item = new AmmoPack(this, x, y);
+      this.ammoPacks.push(item);
     }
 
     // Tween item to random direction
     const randomAngle = Math.random() * 2 * Math.PI;
-    const randomDistance = 20 + Math.random() * 20; // 20-40px
+    const randomDistance = 20 + Math.random() * 20;
     const targetX = x + Math.cos(randomAngle) * randomDistance;
     const targetY = y + Math.sin(randomAngle) * randomDistance;
 

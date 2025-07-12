@@ -1,7 +1,7 @@
 import { gameConfig } from "../config/gameConfig";
 
 export abstract class PickableItem extends Phaser.Physics.Arcade.Sprite {
-  protected pickupRadius: number = gameConfig.playerRadius * 4;
+  protected pickupRadius: number = gameConfig.playerRadius * 6;
   protected isPickedUp: boolean = false;
   protected tweenDuration: number = 500;
 
