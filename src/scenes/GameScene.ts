@@ -220,6 +220,12 @@ export class GameScene extends Phaser.Scene {
         currentWeapon.getWeaponName(),
         weaponInventory.getAmmo()
       );
+
+      // Update health display
+      this.uiScene.updateHealthDisplay(
+        this.character.getHealth(),
+        this.character.getMaxHealth()
+      );
     }
   }
 

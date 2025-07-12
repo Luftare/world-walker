@@ -4,6 +4,7 @@ export class UIScene extends Phaser.Scene {
   private debugButton?: Phaser.GameObjects.Text;
   private shootButton?: Phaser.GameObjects.Text;
   private weaponInfoText?: Phaser.GameObjects.Text;
+  private healthText?: Phaser.GameObjects.Text;
   private coinCounterText?: Phaser.GameObjects.Text;
   private isVisible: boolean = true;
   private onWeaponSwitch?: () => void;
@@ -75,6 +76,22 @@ export class UIScene extends Phaser.Scene {
       this.switchWeapon();
     });
 
+    // Create health text (below weapon info)
+    this.healthText = this.add.text(
+      padding,
+      padding + 40 * this.devicePixelRatio,
+      "❤️❤️❤️❤️❤️",
+      {
+        fontSize: fontSize.score,
+        color: "#ffffff",
+        backgroundColor: "#333333",
+        padding: { x: 8 * this.devicePixelRatio, y: 4 * this.devicePixelRatio },
+      }
+    );
+    this.healthText.setOrigin(0, 0); // Left-align
+    this.healthText.setScrollFactor(0);
+    this.healthText.setDepth(1000);
+
     // Create coin counter text (top-right)
     this.coinCounterText = this.add.text(
       gameWidth - padding,
@@ -129,6 +146,14 @@ export class UIScene extends Phaser.Scene {
     }
   }
 
+  updateHealthDisplay(currentHealth: number, maxHealth: number): void {
+    if (this.healthText && this.isVisible) {
+      const hearts =
+        "❤️".repeat(currentHealth) + "🖤".repeat(maxHealth - currentHealth);
+      this.healthText.setText(hearts);
+    }
+  }
+
   addCoin(): void {
     this.coinCount++;
     this.updateCoinCounter();
@@ -149,6 +174,7 @@ export class UIScene extends Phaser.Scene {
     if (this.debugButton) this.debugButton.setVisible(visible);
     if (this.shootButton) this.shootButton.setVisible(visible);
     if (this.weaponInfoText) this.weaponInfoText.setVisible(visible);
+    if (this.healthText) this.healthText.setVisible(visible);
     if (this.coinCounterText) this.coinCounterText.setVisible(visible);
   }
 
@@ -179,6 +205,7 @@ export class UIScene extends Phaser.Scene {
     if (this.debugButton) this.debugButton.destroy();
     if (this.shootButton) this.shootButton.destroy();
     if (this.weaponInfoText) this.weaponInfoText.destroy();
+    if (this.healthText) this.healthText.destroy();
     if (this.coinCounterText) this.coinCounterText.destroy();
   }
 }

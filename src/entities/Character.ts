@@ -21,8 +21,8 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
   private weaponInventory: WeaponInventory;
 
   // Health properties
-  private health: number = 100;
-  private maxHealth: number = 100;
+  private health: number = 5;
+  private maxHealth: number = 5;
   private isDead: boolean = false;
 
   constructor(
