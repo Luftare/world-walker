@@ -1,6 +1,7 @@
 import { gameConfig } from "../config/gameConfig";
 import { Point } from "../types/types";
 import { WeaponInventory } from "./weapons/WeaponInventory";
+import { GameLogicHelpers } from "../utils/gameLogicHelpers";
 
 export class Character extends Phaser.Physics.Arcade.Sprite {
   // Movement properties
@@ -208,15 +209,10 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
     const avoidanceVector = new Phaser.Math.Vector2(0, 0);
 
     // Get all entities in the scene that need to be avoided
-    const entities = this.scene.children.list.filter(
-      (child) =>
-        child instanceof Phaser.Physics.Arcade.Sprite &&
-        child !== this &&
-        child.active
-    ) as Phaser.Physics.Arcade.Sprite[];
+    const entities = GameLogicHelpers.getAvoidableEntities(this.scene, this);
 
     for (const otherEntity of entities) {
-      const distance = Phaser.Math.Distance.Between(
+      const distance = GameLogicHelpers.calculateDistance(
         this.x,
         this.y,
         otherEntity.x,
@@ -225,13 +221,18 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
 
       if (distance < this.avoidRadius && distance > 0) {
         // Calculate vector pointing away from the other entity
-        const awayVector = new Phaser.Math.Vector2(
-          this.x - otherEntity.x,
-          this.y - otherEntity.y
-        ).normalize();
+        const awayVector = GameLogicHelpers.createAvoidanceVector(
+          this.x,
+          this.y,
+          otherEntity.x,
+          otherEntity.y
+        );
 
         // Weight by distance (closer entities have stronger avoidance)
-        const weight = (this.avoidRadius - distance) / this.avoidRadius;
+        const weight = GameLogicHelpers.calculateDistanceWeight(
+          distance,
+          this.avoidRadius
+        );
         awayVector.scale(weight * this.avoidWeight);
 
         avoidanceVector.add(awayVector);
