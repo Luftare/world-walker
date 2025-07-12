@@ -5,11 +5,11 @@
 
 export const gameConfig = {
   geoPixelsPerMeter: 10,
-  playerSpeed: 30,
+  playerSpeed: 25,
   playerRadius: 16,
   markerRadius: 16,
   projectilePushbackForce: 500,
-  hexagonRadius: 120,
+  hexagonRadius: 150,
   populateDistance: 320,
   devMode: false,
   rotationSpeed: 2.0,

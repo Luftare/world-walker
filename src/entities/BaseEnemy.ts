@@ -356,7 +356,7 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
 
     const baseRadius = gameConfig.playerRadius * 0.3;
     const stain = this.scene.add.circle(stainX, stainY, baseRadius, 0x006400);
-    stain.setDepth(4);
+    stain.setDepth(2);
 
     let baseAngle: number;
     if (projectileDirection) {

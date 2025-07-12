@@ -12,7 +12,7 @@ export abstract class PickableItem extends Phaser.Physics.Arcade.Sprite {
 
     this.setOrigin(0.5, 0.5);
     this.setPosition(x, y);
-    this.setDepth(8); // Between character and zombies
+    this.setDepth(3);
 
     if (this.body) {
       this.body.setSize(this.width, this.height);
