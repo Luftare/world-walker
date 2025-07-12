@@ -2,7 +2,7 @@ import { PickableItem } from "./PickableItem";
 import { Character } from "./Character";
 
 export class AmmoPack extends PickableItem {
-  private ammoAmount: number = 10;
+  private ammoAmount: number = 7;
 
   constructor(
     scene: Phaser.Scene,
