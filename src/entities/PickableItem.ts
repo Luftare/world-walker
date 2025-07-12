@@ -1,9 +1,10 @@
 import { gameConfig } from "../config/gameConfig";
 
 export abstract class PickableItem extends Phaser.Physics.Arcade.Sprite {
-  protected pickupRadius: number = gameConfig.playerRadius * 6;
+  protected pickupRadius: number = gameConfig.playerRadius * 4;
   protected isPickedUp: boolean = false;
   protected tweenDuration: number = 500;
+  private pickupRing!: Phaser.GameObjects.Graphics;
 
   constructor(scene: Phaser.Scene, x: number, y: number, texture: string) {
     super(scene, x, y, texture);
@@ -22,6 +23,35 @@ export abstract class PickableItem extends Phaser.Physics.Arcade.Sprite {
     const radius = gameConfig.playerRadius;
     this.setDisplaySize(radius * 2, radius * 2);
     this.rotation = Math.random() * 2 * Math.PI;
+
+    this.createPickupRing();
+  }
+
+  private createPickupRing(): void {
+    this.pickupRing = this.scene.add.graphics();
+    this.pickupRing.setDepth(2);
+
+    this.pickupRing.setPosition(this.x, this.y);
+
+    const itemRadius = gameConfig.playerRadius;
+    const scaleRatio = this.pickupRadius / itemRadius;
+
+    this.pickupRing.lineStyle(2, 0xffff00, 0.8);
+    this.pickupRing.strokeCircle(0, 0, itemRadius);
+
+    this.scene.tweens.add({
+      targets: this.pickupRing,
+      scaleX: scaleRatio,
+      scaleY: scaleRatio,
+      alpha: 0,
+      duration: 1500,
+      ease: "Power2",
+      repeat: -1,
+      onRepeat: () => {
+        this.pickupRing.setScale(1, 1);
+        this.pickupRing.setAlpha(0.8);
+      },
+    });
   }
 
   checkPickup(player: Phaser.GameObjects.Sprite): boolean {
@@ -46,6 +76,10 @@ export abstract class PickableItem extends Phaser.Physics.Arcade.Sprite {
     if (this.isPickedUp) return;
 
     this.isPickedUp = true;
+
+    if (this.pickupRing) {
+      this.pickupRing.destroy();
+    }
 
     // Tween towards player
     this.scene.tweens.add({
