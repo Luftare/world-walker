@@ -165,7 +165,7 @@ export class GameScene extends Phaser.Scene {
         // Find all pickable items and update their rotation
         this.children.list.forEach((child) => {
           if (child instanceof PickableItem) {
-            child.setRotation(radians);
+            child.spriteRotation = radians;
           }
         });
       });
@@ -413,21 +413,23 @@ export class GameScene extends Phaser.Scene {
   private handleZombieDeath(x: number, y: number): void {
     // Randomly choose between health pack, ammo pack, or coin with equal chance
     const randomValue = Math.random();
-    let item: AmmoPack | Coin | HealthPack;
+    let item: AmmoPack | Coin | HealthPack | undefined;
 
-    if (randomValue < 0.2) {
+    if (randomValue < 0.1) {
       // Spawn coin
       item = new Coin(this, x, y);
       this.coins.push(item);
-    } else if (randomValue < 0.4) {
+    } else if (randomValue < 0.2) {
       // Spawn health pack
       item = new HealthPack(this, x, y);
       this.healthPacks.push(item);
-    } else {
+    } else if (randomValue < 0.6) {
       // Spawn ammo pack
       item = new AmmoPack(this, x, y);
       this.ammoPacks.push(item);
     }
+
+    if (!item) return;
 
     // Tween item to random direction
     const randomAngle = Math.random() * 2 * Math.PI;
