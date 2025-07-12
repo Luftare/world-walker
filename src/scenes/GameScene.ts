@@ -23,6 +23,7 @@ import debugCompassCircle from "../assets/debug-compass-circle.png";
 import debugZombie from "../assets/debug-zombie.png";
 import healthPackUrl from "../assets/health-pack.png";
 import { HexagonCoord, HexagonUtils } from "../utils/HexagonUtils";
+import { PickableItem } from "../entities/PickableItem";
 
 export class GameScene extends Phaser.Scene {
   private character: Character | undefined;
@@ -156,9 +157,17 @@ export class GameScene extends Phaser.Scene {
         if (this.systems.camera) {
           this.systems.camera.setTargetRotation(-radians);
         }
+
         if (this.character) {
           this.character.setRotation(radians - Math.PI * 0.5);
         }
+
+        // Find all pickable items and update their rotation
+        this.children.list.forEach((child) => {
+          if (child instanceof PickableItem) {
+            child.setRotation(radians);
+          }
+        });
       });
     } catch (error) {
       console.error("Failed to initialize compass for game scene:", error);
