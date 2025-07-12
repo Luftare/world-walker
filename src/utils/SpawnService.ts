@@ -1,6 +1,7 @@
 import { HexagonCoord, HexagonUtils } from "./HexagonUtils";
 import { ZombieGroup } from "../entities/ZombieGroup";
 import { AmmoPack } from "../entities/AmmoPack";
+import { HealthPack } from "../entities/HealthPack";
 import { gameConfig } from "../config/gameConfig";
 
 export class SpawnService {
@@ -10,6 +11,7 @@ export class SpawnService {
   private gameScene: Phaser.Scene;
   private readonly RESPAWN_DELAY = 20000; // 20 seconds
   private readonly AMMO_PACK_CHANCE = 0.25; // 25% chance for ammo pack
+  private readonly HEALTH_PACK_CHANCE = 0.25; // 25% chance for health pack
   private initialHexesDiscovered = 0;
 
   constructor(zombieGroup: ZombieGroup, gameScene: Phaser.Scene) {
@@ -61,8 +63,11 @@ export class SpawnService {
     const spawnX = worldPos.x + randomOffset.x;
     const spawnY = worldPos.y + randomOffset.y;
 
-    // 25% chance to spawn ammo pack, 75% chance to spawn zombie
-    if (Math.random() < this.AMMO_PACK_CHANCE) {
+    // 25% chance to spawn health pack, 25% ammo pack, 50% zombie
+    const roll = Math.random();
+    if (roll < this.HEALTH_PACK_CHANCE) {
+      this.spawnHealthPack(spawnX, spawnY);
+    } else if (roll < this.HEALTH_PACK_CHANCE + this.AMMO_PACK_CHANCE) {
       this.spawnAmmoPack(spawnX, spawnY);
     } else {
       this.spawnZombie(spawnX, spawnY);
@@ -76,6 +81,14 @@ export class SpawnService {
     const gameScene = this.gameScene as any;
     if (gameScene.ammoPacks) {
       gameScene.ammoPacks.push(ammoPack);
+    }
+  }
+
+  private spawnHealthPack(x: number, y: number): void {
+    const healthPack = new HealthPack(this.gameScene, x, y);
+    const gameScene = this.gameScene as any;
+    if (gameScene.healthPacks) {
+      gameScene.healthPacks.push(healthPack);
     }
   }
 

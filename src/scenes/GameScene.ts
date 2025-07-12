@@ -13,6 +13,7 @@ import { UIScene } from "../scenes/UIScene";
 import { GeolocationService } from "../utils/GeolocationService";
 import { CompassService } from "../utils/CompassService";
 import { SpawnService } from "../utils/SpawnService";
+import { HealthPack } from "../entities/HealthPack";
 
 import compassUrl from "../assets/compass.png";
 import ammoPackUrl from "../assets/ammo-pack.png";
@@ -20,6 +21,7 @@ import coinUrl from "../assets/coin.png";
 import debugCompassSquare from "../assets/debug-compass-square.png";
 import debugCompassCircle from "../assets/debug-compass-circle.png";
 import debugZombie from "../assets/debug-zombie.png";
+import healthPackUrl from "../assets/health-pack.png";
 import { HexagonCoord, HexagonUtils } from "../utils/HexagonUtils";
 
 export class GameScene extends Phaser.Scene {
@@ -39,6 +41,7 @@ export class GameScene extends Phaser.Scene {
   private projectiles: Projectile[] = [];
   private ammoPacks: AmmoPack[] = [];
   private coins: Coin[] = [];
+  private healthPacks: HealthPack[] = [];
 
   constructor() {
     super({ key: "GameScene" });
@@ -52,6 +55,7 @@ export class GameScene extends Phaser.Scene {
     this.load.image("ammo-pack", ammoPackUrl);
     this.load.image("coin", coinUrl);
     this.load.image("projectile", debugCompassCircle); // Using same texture for now
+    this.load.image("health-pack", healthPackUrl);
   }
 
   async create(data?: {
@@ -190,6 +194,9 @@ export class GameScene extends Phaser.Scene {
 
     // Check for coin pickups
     this.checkCoinPickups();
+
+    // Check for health pack pickups
+    this.checkHealthPackPickups();
 
     // Update all systems
     Object.values(this.systems).forEach((system) => {
@@ -375,6 +382,18 @@ export class GameScene extends Phaser.Scene {
       if (!coin.isActive()) return false;
 
       const wasPickedUp = coin.checkPickup(this.character!);
+      return !wasPickedUp;
+    });
+  }
+
+  private checkHealthPackPickups(): void {
+    if (!this.character) return;
+
+    // Filter out picked up health packs and check for pickups
+    this.healthPacks = this.healthPacks.filter((healthPack) => {
+      if (!healthPack.isActive()) return false;
+
+      const wasPickedUp = healthPack.checkPickup(this.character!);
       return !wasPickedUp;
     });
   }

@@ -103,6 +103,10 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
     this.targetWeight = weight;
   }
 
+  setHealth(health: number): void {
+    this.health = Math.max(0, Math.min(health, this.maxHealth));
+  }
+
   // Follow methods
   setFollowTarget(targetEntity: Phaser.GameObjects.Sprite): void {
     this.followTarget = targetEntity;
