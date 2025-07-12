@@ -75,7 +75,7 @@ export class GeolocationService {
   }
 
   startLocationTracking(
-    onLocationUpdate: (x: number, y: number) => void,
+    onLocationUpdate: (xMeters: number, yMeters: number) => void,
     onError: (error: string) => void
   ): void {
     if (typeof window === "undefined" || !("geolocation" in window.navigator)) {

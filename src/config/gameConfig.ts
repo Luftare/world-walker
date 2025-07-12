@@ -4,6 +4,7 @@
  */
 
 export interface GameConfig {
+  geoPixelsPerMeter: number;
   playerSpeed: number;
   playerRadius: number;
   markerRadius: number;
@@ -33,11 +34,12 @@ export interface GameConfig {
 }
 
 export const gameConfig: GameConfig = {
+  geoPixelsPerMeter: 10, // This is used solely for the distance travelled in pixels when new location is received.
   playerSpeed: 24,
-  playerRadius: 16, // 2 * 8
-  markerRadius: 16, // 2 * 8
-  hexagonRadius: 176, // 22 * 8
-  populateDistance: 320, // 40 * 8
+  playerRadius: 16,
+  markerRadius: 16,
+  hexagonRadius: 176,
+  populateDistance: 320,
   devMode: false,
   rotationSpeed: 2.0,
   movementSpeed: 24,

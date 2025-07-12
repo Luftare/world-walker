@@ -110,14 +110,13 @@ export class GameScene extends Phaser.Scene {
     try {
       // Start location tracking
       this.geolocationService.startLocationTracking(
-        (x: number, y: number) => {
-          // Convert meters to pixels (coordinates are already in meters with Y-axis inversion)
-          const xPixels = x;
-          const yPixels = y;
-
+        (xMeters: number, yMeters: number) => {
           // Update position marker
           if (this.positionMarker) {
-            this.positionMarker.setPosition(xPixels, yPixels);
+            this.positionMarker.setPosition(
+              xMeters * gameConfig.geoPixelsPerMeter,
+              yMeters * gameConfig.geoPixelsPerMeter
+            );
           }
         },
         (error: string) => {
