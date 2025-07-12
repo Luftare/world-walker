@@ -3,48 +3,19 @@
  * Contains all configurable parameters for the GPS game prototype
  */
 
-export interface GameConfig {
-  geoPixelsPerMeter: number;
-  playerSpeed: number;
-  playerRadius: number;
-  markerRadius: number;
-  hexagonRadius: number;
-  populateDistance: number;
-  devMode: boolean;
-  rotationSpeed: number;
-  movementSpeed: number;
-  debugMovementSpeed: number;
-  featureRadius: number;
-  markerAlpha: number;
-  colors: {
-    player: number;
-    playerBorder: number;
-    feature: number;
-    featureBorder: number;
-    marker: number;
-    grid: number;
-    background: number;
-  };
-  world: {
-    startLocation: {
-      x: number;
-      y: number;
-    };
-  };
-}
-
-export const gameConfig: GameConfig = {
-  geoPixelsPerMeter: 10, // This is used solely for the distance travelled in pixels when new location is received.
-  playerSpeed: 24,
+export const gameConfig = {
+  geoPixelsPerMeter: 10,
+  playerSpeed: 30,
   playerRadius: 16,
   markerRadius: 16,
+  projectilePushbackForce: 500,
   hexagonRadius: 176,
   populateDistance: 320,
   devMode: false,
   rotationSpeed: 2.0,
   movementSpeed: 24,
   debugMovementSpeed: 300,
-  featureRadius: 24, // 3 * 8
+  featureRadius: 24,
   markerAlpha: 0.6,
   colors: {
     player: 0x666666,
@@ -61,4 +32,6 @@ export const gameConfig: GameConfig = {
       y: 0,
     },
   },
-};
+} as const;
+
+export type GameConfig = typeof gameConfig;

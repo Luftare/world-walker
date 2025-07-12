@@ -344,7 +344,10 @@ export class GameScene extends Phaser.Scene {
           // Apply pushback in the direction of the projectile
           const projectileDirection = projectile.getDirection();
           zombie.takeDamage(projectile.getDamage(), projectileDirection);
-          zombie.applyPushback(projectileDirection, 200);
+          zombie.applyPushback(
+            projectileDirection,
+            gameConfig.projectilePushbackForce
+          );
           projectile.destroy();
           break;
         }
