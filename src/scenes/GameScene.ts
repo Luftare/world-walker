@@ -411,18 +411,32 @@ export class GameScene extends Phaser.Scene {
   }
 
   private handleZombieDeath(x: number, y: number): void {
-    // Create coin at zombie death location
-    const coin = new Coin(this, x, y);
-    this.coins.push(coin);
+    // Randomly choose between health pack, ammo pack, or coin with equal chance
+    const randomValue = Math.random();
+    let item: AmmoPack | Coin | HealthPack;
 
-    // Tween coin to random direction
+    if (randomValue < 0.33) {
+      // Spawn health pack
+      item = new HealthPack(this, x, y);
+      this.healthPacks.push(item);
+    } else if (randomValue < 0.66) {
+      // Spawn ammo pack
+      item = new AmmoPack(this, x, y);
+      this.ammoPacks.push(item);
+    } else {
+      // Spawn coin
+      item = new Coin(this, x, y);
+      this.coins.push(item);
+    }
+
+    // Tween item to random direction
     const randomAngle = Math.random() * 2 * Math.PI;
     const randomDistance = 20 + Math.random() * 20; // 20-40px
     const targetX = x + Math.cos(randomAngle) * randomDistance;
     const targetY = y + Math.sin(randomAngle) * randomDistance;
 
     this.tweens.add({
-      targets: coin,
+      targets: item,
       x: targetX,
       y: targetY,
       duration: 500,

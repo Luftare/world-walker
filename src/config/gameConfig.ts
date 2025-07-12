@@ -9,7 +9,7 @@ export const gameConfig = {
   playerRadius: 16,
   markerRadius: 16,
   projectilePushbackForce: 500,
-  hexagonRadius: 176,
+  hexagonRadius: 120,
   populateDistance: 320,
   devMode: false,
   rotationSpeed: 2.0,
