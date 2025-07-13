@@ -220,36 +220,18 @@ export class GameScene extends Phaser.Scene {
     }
     // Check pickups using GameLogic
     if (this.character) {
-      this.ammoPacks = GameLogic.checkPickups(
+      const pickupResults = GameLogic.checkAllPickups(
         this.ammoPacks,
-        this.character,
-        (ammoPack) => {
-          if (this.spawnService) {
-            this.spawnService.onItemPickedUp(ammoPack);
-          }
-        }
-      );
-
-      this.coins = GameLogic.checkPickups(
         this.coins,
-        this.character,
-        (coin) => {
-          this.events.emit("coinPickedUp");
-          if (this.spawnService) {
-            this.spawnService.onItemPickedUp(coin);
-          }
-        }
-      );
-
-      this.healthPacks = GameLogic.checkPickups(
         this.healthPacks,
         this.character,
-        (healthPack) => {
-          if (this.spawnService) {
-            this.spawnService.onItemPickedUp(healthPack);
-          }
-        }
+        this,
+        this.spawnService
       );
+
+      this.ammoPacks = pickupResults.ammoPacks;
+      this.coins = pickupResults.coins;
+      this.healthPacks = pickupResults.healthPacks;
     }
 
     // Update spawn service for respawns

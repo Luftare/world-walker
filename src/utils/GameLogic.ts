@@ -2,7 +2,6 @@ import { Projectile } from "../entities/Projectile";
 import { AmmoPack } from "../entities/AmmoPack";
 import { Coin } from "../entities/Coin";
 import { HealthPack } from "../entities/HealthPack";
-import { PickableItem } from "../entities/PickableItem";
 import { Character } from "../entities/Character";
 
 export class GameLogic {
@@ -57,26 +56,64 @@ export class GameLogic {
   }
 
   /**
-   * Generic method to check pickups for any type of pickable item
-   * @param items Array of pickable items
+   * Checks all pickups for the given arrays of items
+   * @param ammoPacks Array of ammo packs
+   * @param coins Array of coins
+   * @param healthPacks Array of health packs
    * @param character The player character
-   * @param onPickup Callback function when item is picked up
-   * @returns Filtered array of items that weren't picked up
+   * @param scene The Phaser scene
+   * @param spawnService The spawn service for item pickup notifications
+   * @returns Object containing filtered arrays of remaining items
    */
-  static checkPickups<T extends PickableItem>(
-    items: T[],
+  static checkAllPickups(
+    ammoPacks: AmmoPack[],
+    coins: Coin[],
+    healthPacks: HealthPack[],
     character: Character,
-    onPickup: (item: T) => void
-  ): T[] {
-    return items.filter((item) => {
-      if (!item.isActive()) return false;
+    scene: Phaser.Scene,
+    spawnService?: any
+  ): {
+    ammoPacks: AmmoPack[];
+    coins: Coin[];
+    healthPacks: HealthPack[];
+  } {
+    const { events } = scene;
 
-      const wasPickedUp = item.checkPickup(character);
-      if (wasPickedUp) {
-        onPickup(item);
+    const filteredAmmoPacks = ammoPacks.filter((ammoPack) => {
+      if (!ammoPack.isActive()) return false;
+      const wasPickedUp = ammoPack.checkPickup(character);
+      if (wasPickedUp && spawnService) {
+        spawnService.onItemPickedUp(ammoPack);
       }
       return !wasPickedUp;
     });
+
+    const filteredCoins = coins.filter((coin) => {
+      if (!coin.isActive()) return false;
+      const wasPickedUp = coin.checkPickup(character);
+      if (wasPickedUp) {
+        events.emit("coinPickedUp");
+        if (spawnService) {
+          spawnService.onItemPickedUp(coin);
+        }
+      }
+      return !wasPickedUp;
+    });
+
+    const filteredHealthPacks = healthPacks.filter((healthPack) => {
+      if (!healthPack.isActive()) return false;
+      const wasPickedUp = healthPack.checkPickup(character);
+      if (wasPickedUp && spawnService) {
+        spawnService.onItemPickedUp(healthPack);
+      }
+      return !wasPickedUp;
+    });
+
+    return {
+      ammoPacks: filteredAmmoPacks,
+      coins: filteredCoins,
+      healthPacks: filteredHealthPacks,
+    };
   }
 
   /**
@@ -96,6 +133,7 @@ export class GameLogic {
     coins: Coin[],
     healthPacks: HealthPack[]
   ): void {
+    const { tweens } = scene;
     const randomValue = Math.random();
     let item: AmmoPack | Coin | HealthPack | undefined;
 
@@ -121,7 +159,7 @@ export class GameLogic {
     const targetX = x + Math.cos(randomAngle) * randomDistance;
     const targetY = y + Math.sin(randomAngle) * randomDistance;
 
-    scene.tweens.add({
+    tweens.add({
       targets: item,
       x: targetX,
       y: targetY,
