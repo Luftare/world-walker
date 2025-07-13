@@ -45,7 +45,7 @@ export abstract class PickableItem extends Phaser.GameObjects.Container {
     const itemRadius = gameConfig.playerRadius;
     const scaleRatio = this.pickupRadius / itemRadius;
 
-    this.pickupRing.lineStyle(2, 0xffff00, 0.8);
+    this.pickupRing.lineStyle(2, 0xffff00, 0.2);
     this.pickupRing.strokeCircle(0, 0, itemRadius);
 
     this.scene.tweens.add({
@@ -54,11 +54,11 @@ export abstract class PickableItem extends Phaser.GameObjects.Container {
       scaleY: scaleRatio,
       alpha: 0,
       duration: 3000,
-      ease: "Power2",
+      ease: "Linear",
       repeat: -1,
       onRepeat: () => {
         this.pickupRing.setScale(1, 1);
-        this.pickupRing.setAlpha(0.3);
+        this.pickupRing.setAlpha(0.2);
       },
     });
   }

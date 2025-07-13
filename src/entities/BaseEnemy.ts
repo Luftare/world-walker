@@ -3,7 +3,7 @@ import { Point } from "../types/types";
 import { GameLogicHelpers } from "../utils/gameLogicHelpers";
 import { TweenHelpers } from "../utils/TweenHelpers";
 
-export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
+export abstract class BaseEnemy extends Phaser.GameObjects.Container {
   // Core properties
   protected health: number;
   protected maxHealth: number;
@@ -41,6 +41,11 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
   protected attackRange: number = gameConfig.playerRadius * 2;
   protected isAttacking: boolean = false;
 
+  // Visual properties
+  private sprite!: Phaser.Physics.Arcade.Sprite;
+  private aggroRing!: Phaser.GameObjects.Graphics;
+  declare body: Phaser.Physics.Arcade.Body;
+
   constructor(
     scene: Phaser.Scene,
     x: number = 0,
@@ -49,7 +54,7 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
     health: number = 3,
     speed: number = gameConfig.enemySpeed
   ) {
-    super(scene, x, y, texture);
+    super(scene, x, y);
     scene.add.existing(this);
     scene.physics.add.existing(this);
 
@@ -57,22 +62,57 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
     this.maxHealth = health;
     this.speed = speed;
 
-    this.setOrigin(0.5, 0.5);
-    this.setPosition(x, y);
     this.setDepth(5);
-    this.rotation = Math.random() * 2 * Math.PI;
 
+    // Create the sprite as a child of the container
+    this.sprite = scene.physics.add.sprite(0, 0, texture);
+    this.sprite.setOrigin(0.5, 0.5);
+    this.sprite.setDepth(5);
+    this.add(this.sprite);
+
+    // Set up physics body for the container
     if (this.body) {
-      this.body.setSize(this.width, this.height);
-      this.body.setCircle(this.width / 2);
+      this.body.setSize(this.sprite.width, this.sprite.height);
+      this.body.setCircle(this.sprite.width / 2);
     }
 
     const radius = gameConfig.playerRadius;
-    this.setDisplaySize(radius * 2, radius * 2);
+    this.sprite.setDisplaySize(radius * 2, radius * 2);
+    this.sprite.rotation = Math.random() * 2 * Math.PI;
 
-    this.targetRotation = this.rotation;
+    this.targetRotation = this.spriteRotation;
+
+    this.createAggroRing();
 
     TweenHelpers.spawnAnimation(scene, this, this.scaleX, this.scaleY);
+  }
+
+  private createAggroRing(): void {
+    this.aggroRing = this.scene.add.graphics();
+    this.aggroRing.setDepth(2);
+    this.add(this.aggroRing);
+
+    const enemyRadius = gameConfig.playerRadius;
+    const ringRadius = enemyRadius * 2;
+    const scaleRatio = ringRadius / enemyRadius;
+
+    this.aggroRing.lineStyle(4, 0xff0000, 1);
+    this.aggroRing.strokeCircle(0, 0, enemyRadius);
+    this.aggroRing.setAlpha(0.5);
+
+    this.scene.tweens.add({
+      targets: this.aggroRing,
+      scaleX: scaleRatio,
+      scaleY: scaleRatio,
+      alpha: 0,
+      duration: 1500,
+      ease: "Linear",
+      repeat: -1,
+      onRepeat: () => {
+        this.aggroRing.setScale(1, 1);
+        this.aggroRing.setAlpha(0.5);
+      },
+    });
   }
 
   getPosition(): { x: number; y: number } {
@@ -132,8 +172,8 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
 
   protected calculateForwardVector(): Phaser.Math.Vector2 {
     return new Phaser.Math.Vector2(
-      Math.cos(this.rotation),
-      Math.sin(this.rotation)
+      Math.cos(this.spriteRotation),
+      Math.sin(this.spriteRotation)
     ).scale(this.forwardWeight);
   }
 
@@ -143,8 +183,8 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
     }
 
     const forwardVector = new Phaser.Math.Vector2(
-      Math.cos(this.rotation),
-      Math.sin(this.rotation)
+      Math.cos(this.spriteRotation),
+      Math.sin(this.spriteRotation)
     );
 
     const targetVector = new Phaser.Math.Vector2(
@@ -251,14 +291,14 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
 
     const deltaTime = delta / 1000;
     const lerpFactor = this.angularVelocity * deltaTime;
-    const currentRotation = this.rotation;
+    const currentRotation = this.spriteRotation;
 
     let angleDiff = this.targetRotation - currentRotation;
     if (angleDiff > Math.PI) angleDiff -= 2 * Math.PI;
     if (angleDiff < -Math.PI) angleDiff += 2 * Math.PI;
 
     const newRotation = currentRotation + angleDiff * lerpFactor;
-    this.setRotation(newRotation);
+    this.spriteRotation = newRotation;
   }
 
   protected updateAttack(): void {
@@ -365,7 +405,7 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
     if (projectileDirection) {
       baseAngle = Math.atan2(projectileDirection.y, projectileDirection.x);
     } else {
-      baseAngle = this.rotation + Math.PI;
+      baseAngle = this.spriteRotation + Math.PI;
     }
 
     const fanSpread = Math.PI / 3;
@@ -422,7 +462,7 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
       this.targetEntity.x - this.x
     );
 
-    let angleDiff = Math.abs(targetAngle - this.rotation);
+    let angleDiff = Math.abs(targetAngle - this.spriteRotation);
     if (angleDiff > Math.PI) angleDiff = 2 * Math.PI - angleDiff;
 
     const toleranceRadians = (toleranceDegrees * Math.PI) / 180;
@@ -433,10 +473,20 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
     this.isAggroed = false;
   }
 
+  // Expose sprite rotation for compatibility
+  get spriteRotation(): number {
+    return this.sprite.rotation;
+  }
+
+  set spriteRotation(value: number) {
+    this.sprite.rotation = value;
+  }
+
   override update(_time: number, delta: number): void {
     this.updateFollow();
     this.updateRotation(delta);
     this.updateMovement(delta);
+    this.aggroRing.visible = this.isAggroed && !this.isDead;
     if (this.isDead) return;
     this.updateAttack();
   }
