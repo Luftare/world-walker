@@ -4,7 +4,8 @@
  */
 
 export const gameConfig = {
-  initialEmptyHexRadius: 20,
+  initialEmptyHexRadius: 250,
+  aggroRange: 200,
   geoPixelsPerMeter: 10,
   playerSpeed: 30,
   playerRadius: 16,
