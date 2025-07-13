@@ -6,6 +6,7 @@ import { WalkingZombie } from "../entities/WalkingZombie";
 import { Projectile } from "../entities/Projectile";
 import { AmmoPack } from "../entities/AmmoPack";
 import { Coin } from "../entities/Coin";
+
 import { GridSystem } from "../systems/GridSystem";
 import { CameraSystem } from "../systems/CameraSystem";
 import { DebugSystem } from "../systems/DebugSystem";
@@ -217,9 +218,39 @@ export class GameScene extends Phaser.Scene {
         gameConfig.projectilePushbackForce
       );
     }
-    this.checkAmmoPackPickups();
-    this.checkCoinPickups();
-    this.checkHealthPackPickups();
+    // Check pickups using GameLogic
+    if (this.character) {
+      this.ammoPacks = GameLogic.checkPickups(
+        this.ammoPacks,
+        this.character,
+        (ammoPack) => {
+          if (this.spawnService) {
+            this.spawnService.onItemPickedUp(ammoPack);
+          }
+        }
+      );
+
+      this.coins = GameLogic.checkPickups(
+        this.coins,
+        this.character,
+        (coin) => {
+          this.events.emit("coinPickedUp");
+          if (this.spawnService) {
+            this.spawnService.onItemPickedUp(coin);
+          }
+        }
+      );
+
+      this.healthPacks = GameLogic.checkPickups(
+        this.healthPacks,
+        this.character,
+        (healthPack) => {
+          if (this.spawnService) {
+            this.spawnService.onItemPickedUp(healthPack);
+          }
+        }
+      );
+    }
 
     // Update spawn service for respawns
     if (this.spawnService && this.character) {
@@ -361,90 +392,21 @@ export class GameScene extends Phaser.Scene {
     });
   }
 
-  private checkAmmoPackPickups(): void {
-    if (!this.character) return;
-
-    // Filter out picked up ammo packs and check for pickups
-    this.ammoPacks = this.ammoPacks.filter((ammoPack) => {
-      if (!ammoPack.isActive()) return false;
-
-      const wasPickedUp = ammoPack.checkPickup(this.character!);
-      if (wasPickedUp && this.spawnService) {
-        this.spawnService.onItemPickedUp(ammoPack);
-      }
-      return !wasPickedUp;
-    });
-  }
-
-  private checkCoinPickups(): void {
-    if (!this.character) return;
-
-    // Filter out picked up coins and check for pickups
-    this.coins = this.coins.filter((coin) => {
-      if (!coin.isActive()) return false;
-
-      const wasPickedUp = coin.checkPickup(this.character!);
-      if (wasPickedUp && this.spawnService) {
-        this.spawnService.onItemPickedUp(coin);
-      }
-      return !wasPickedUp;
-    });
-  }
-
-  private checkHealthPackPickups(): void {
-    if (!this.character) return;
-
-    // Filter out picked up health packs and check for pickups
-    this.healthPacks = this.healthPacks.filter((healthPack) => {
-      if (!healthPack.isActive()) return false;
-
-      const wasPickedUp = healthPack.checkPickup(this.character!);
-      if (wasPickedUp && this.spawnService) {
-        this.spawnService.onItemPickedUp(healthPack);
-      }
-      return !wasPickedUp;
-    });
-  }
-
   private handleZombieDeath(x: number, y: number, zombie: any): void {
     // Notify spawn service about zombie death for hex respawn
     if (this.spawnService) {
       this.spawnService.onZombieKilled(zombie);
     }
 
-    // Randomly choose between health pack, ammo pack, or coin with equal chance
-    const randomValue = Math.random();
-    let item: AmmoPack | Coin | HealthPack | undefined;
-
-    if (randomValue < 0.1) {
-      // Spawn coin
-      item = new Coin(this, x, y);
-      this.coins.push(item);
-    } else if (randomValue < 0.2) {
-      // Spawn health pack
-      item = new HealthPack(this, x, y);
-      this.healthPacks.push(item);
-    } else if (randomValue < 0.6) {
-      // Spawn ammo pack
-      item = new AmmoPack(this, x, y);
-      this.ammoPacks.push(item);
-    }
-
-    if (!item) return;
-
-    // Tween item to random direction
-    const randomAngle = Math.random() * 2 * Math.PI;
-    const randomDistance = 20 + Math.random() * 20;
-    const targetX = x + Math.cos(randomAngle) * randomDistance;
-    const targetY = y + Math.sin(randomAngle) * randomDistance;
-
-    this.tweens.add({
-      targets: item,
-      x: targetX,
-      y: targetY,
-      duration: 500,
-      ease: "Power2",
-    });
+    // Spawn loot using GameLogic
+    GameLogic.spawnLootFromZombie(
+      x,
+      y,
+      this,
+      this.ammoPacks,
+      this.coins,
+      this.healthPacks
+    );
   }
 
   private handlePlayerDeath(): void {
