@@ -72,15 +72,17 @@ export class UniversalCompass {
       this.onDeviceOrientation(e);
     };
 
-    const isAndroid = navigator.userAgent.toLowerCase().indexOf("android") > -1; //&& ua.indexOf("mobile");
-    // We want only android devices to use the absolute listener
+    window.addEventListener("deviceorientation", defaultListener);
 
-    if (isAndroid) {
-      window.addEventListener("deviceorientationabsolute", absoluteListener);
-    } else {
-      // We want only iOS devices to use the default listener
-      window.addEventListener("deviceorientation", defaultListener);
-    }
+    // const isAndroid = navigator.userAgent.toLowerCase().indexOf("android") > -1; //&& ua.indexOf("mobile");
+    // // We want only android devices to use the absolute listener
+
+    // if (isAndroid) {
+    //   window.addEventListener("deviceorientationabsolute", absoluteListener);
+    // } else {
+    //   // We want only iOS devices to use the default listener
+    //   window.addEventListener("deviceorientation", defaultListener);
+    // }
     this.listenersAdded = true;
   }
 
