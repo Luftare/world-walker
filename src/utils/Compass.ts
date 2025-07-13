@@ -1,12 +1,9 @@
-import { debugLog } from "./DebugLogger";
-
 type HeadingCallback = (heading: number) => void;
 
 export class UniversalCompass {
   private headingCallback?: HeadingCallback;
   private listenersAdded = false;
   private permissionGranted = false;
-  private listenerType = "default";
 
   async requestPermission(): Promise<void> {
     if (!window.DeviceOrientationEvent) {
