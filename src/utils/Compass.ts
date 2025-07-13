@@ -1,3 +1,5 @@
+import { debugLog } from "./DebugLogger";
+
 type HeadingCallback = (heading: number) => void;
 
 export class UniversalCompass {
@@ -45,12 +47,14 @@ export class UniversalCompass {
     const absoluteListener = (e: any) => {
       // Remove the other listener
       window.removeEventListener("deviceorientation", defaultListener);
+      debugLog("absoluteListener");
       this.onDeviceOrientation(e);
     };
 
     const defaultListener = (e: any) => {
       // Remove the other listener
       window.removeEventListener("deviceorientationabsolute", absoluteListener);
+      debugLog("defaultListener");
       this.onDeviceOrientation(e);
     };
 

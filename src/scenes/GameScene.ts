@@ -24,6 +24,7 @@ import debugZombie from "../assets/debug-zombie.png";
 import healthPackUrl from "../assets/health-pack.png";
 import { HexagonCoord, HexagonUtils } from "../utils/HexagonUtils";
 import { PickableItem } from "../entities/PickableItem";
+import { DebugLogger } from "../utils/DebugLogger";
 
 export class GameScene extends Phaser.Scene {
   private character: Character | undefined;
@@ -80,6 +81,9 @@ export class GameScene extends Phaser.Scene {
 
     // Get reference to UI scene
     this.uiScene = this.scene.get("UIScene") as UIScene;
+
+    // Set up debug logger with UI scene
+    DebugLogger.getInstance().setUIScene(this.uiScene);
 
     // Initialize services from menu scene
     if (data?.geolocationService) {

@@ -6,11 +6,13 @@ export class UIScene extends Phaser.Scene {
   private weaponInfoText?: Phaser.GameObjects.Text;
   private healthText?: Phaser.GameObjects.Text;
   private coinCounterText?: Phaser.GameObjects.Text;
+  private debugLogText?: Phaser.GameObjects.Text;
   private isVisible: boolean = true;
   private onWeaponSwitch?: () => void;
   private devicePixelRatio: number;
   private isShooting: boolean = false;
   private coinCount: number = 0;
+  private debugLogTimer: Phaser.Time.TimerEvent | undefined;
 
   constructor() {
     super({ key: "UIScene" });
@@ -31,6 +33,24 @@ export class UIScene extends Phaser.Scene {
       button: `${24 * dpr}px`,
       controls: `${12 * dpr}px`,
     };
+
+    // Create debug log text (bottom-left)
+    this.debugLogText = this.add.text(
+      padding,
+      this.cameras.main.height - padding - 100 * this.devicePixelRatio,
+      "",
+      {
+        fontSize: fontSize.debug,
+        color: "#ffffff",
+        backgroundColor: "#000000",
+        padding: { x: 8 * this.devicePixelRatio, y: 4 * this.devicePixelRatio },
+        wordWrap: { width: gameWidth - 2 * padding },
+      }
+    );
+    this.debugLogText.setOrigin(0, 1); // Bottom-left align
+    this.debugLogText.setScrollFactor(0);
+    this.debugLogText.setDepth(1000);
+    this.debugLogText.setVisible(false);
 
     // Create shoot button (bottom-right)
     this.shootButton = this.add.text(
@@ -169,6 +189,36 @@ export class UIScene extends Phaser.Scene {
     return this.coinCount;
   }
 
+  logDebug(message: string): void {
+    if (!this.debugLogText) return;
+
+    // Clear existing timer if it exists
+    if (this.debugLogTimer) {
+      this.debugLogTimer.destroy();
+    }
+
+    // Show the debug text and set the message
+    this.debugLogText.setVisible(true);
+    this.debugLogText.setText(message);
+
+    // Set timer to hide the text after 10 seconds
+    this.debugLogTimer = this.time.delayedCall(10000, () => {
+      if (this.debugLogText) {
+        this.debugLogText.setVisible(false);
+      }
+    });
+  }
+
+  clearDebugLog(): void {
+    if (this.debugLogText) {
+      this.debugLogText.setVisible(false);
+    }
+    if (this.debugLogTimer) {
+      this.debugLogTimer.destroy();
+      this.debugLogTimer = undefined;
+    }
+  }
+
   setVisible(visible: boolean): void {
     this.isVisible = visible;
     if (this.debugButton) this.debugButton.setVisible(visible);
@@ -176,6 +226,9 @@ export class UIScene extends Phaser.Scene {
     if (this.weaponInfoText) this.weaponInfoText.setVisible(visible);
     if (this.healthText) this.healthText.setVisible(visible);
     if (this.coinCounterText) this.coinCounterText.setVisible(visible);
+    if (this.debugLogText && visible === false) {
+      this.debugLogText.setVisible(false);
+    }
   }
 
   toggleVisibility(): void {
@@ -207,5 +260,7 @@ export class UIScene extends Phaser.Scene {
     if (this.weaponInfoText) this.weaponInfoText.destroy();
     if (this.healthText) this.healthText.destroy();
     if (this.coinCounterText) this.coinCounterText.destroy();
+    if (this.debugLogText) this.debugLogText.destroy();
+    if (this.debugLogTimer) this.debugLogTimer.destroy();
   }
 }
