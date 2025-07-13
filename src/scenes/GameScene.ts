@@ -156,17 +156,13 @@ export class GameScene extends Phaser.Scene {
       // Update the compass heading callback for the game scene
       // Tracking is already started in the menu scene to maintain the user gesture call chain
       this.compassService.startCompassTracking((direction: number) => {
+        if (!this.systems.camera || !this.character) return;
         // Convert degrees to radians
         const radians = (direction * Math.PI) / 180;
 
         // Apply compass direction to camera rotation
-        if (this.systems.camera) {
-          this.systems.camera.setTargetRotation(-radians);
-        }
-
-        if (this.character) {
-          this.character.setRotation(radians - Math.PI * 0.5);
-        }
+        this.systems.camera.setTargetRotation(-radians);
+        this.character.setRotation(radians - Math.PI * 0.5);
 
         // Find all pickable items and update their rotation
         this.children.list.forEach((child) => {
@@ -561,8 +557,7 @@ export class GameScene extends Phaser.Scene {
             hexWorldPos.x,
             hexWorldPos.y
           );
-          // Spawn empty if within 10 meters and safe start counter is active
-          spawnEmpty = distance <= 20;
+          spawnEmpty = distance <= gameConfig.initialEmptyHexRadius;
         }
 
         this.spawnService.handleHexDiscovered(hex, spawnEmpty);

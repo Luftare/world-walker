@@ -4,6 +4,7 @@ import { PickableItem } from "../entities/PickableItem";
 import { AmmoPack } from "../entities/AmmoPack";
 import { HealthPack } from "../entities/HealthPack";
 import { Coin } from "../entities/Coin";
+import { gameConfig } from "../config/gameConfig";
 
 export type HexContentType = "zombie" | "ammo" | "health" | "coin" | "empty";
 
@@ -189,7 +190,7 @@ export class HexContentManager {
     y: number;
   } {
     // Add some randomness within the hex
-    const spawnRadius = 30; // Adjust based on your hex size
+    const spawnRadius = gameConfig.hexagonRadius;
     const randomOffset = {
       x: (Math.random() - 0.5) * spawnRadius,
       y: (Math.random() - 0.5) * spawnRadius,

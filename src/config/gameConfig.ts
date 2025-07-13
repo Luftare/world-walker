@@ -4,8 +4,9 @@
  */
 
 export const gameConfig = {
+  initialEmptyHexRadius: 20,
   geoPixelsPerMeter: 10,
-  playerSpeed: 25,
+  playerSpeed: 30,
   playerRadius: 16,
   markerRadius: 16,
   projectilePushbackForce: 500,

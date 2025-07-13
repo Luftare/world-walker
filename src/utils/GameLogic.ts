@@ -121,9 +121,6 @@ export class GameLogic {
    * @param x X coordinate of zombie death
    * @param y Y coordinate of zombie death
    * @param scene The Phaser scene
-   * @param ammoPacks Array to add ammo packs to
-   * @param coins Array to add coins to
-   * @param healthPacks Array to add health packs to
    */
   static spawnLootFromZombie(
     x: number,
