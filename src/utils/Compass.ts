@@ -50,14 +50,20 @@ export class UniversalCompass {
   private addListeners() {
     if (this.listenersAdded) return;
 
-    window.addEventListener(
-      "deviceorientationabsolute",
-      this.onDeviceOrientation.bind(this)
-    );
-    // window.addEventListener(
-    //   "deviceorientation",
-    //   this.onDeviceOrientation.bind(this)
-    // );
+    const absoluteListener = (e: any) => {
+      // Remove the other listener
+      window.removeEventListener("deviceorientation", defaultListener);
+      this.onDeviceOrientation(e);
+    };
+
+    const defaultListener = (e: any) => {
+      // Remove the other listener
+      window.removeEventListener("deviceorientationabsolute", absoluteListener);
+      this.onDeviceOrientation(e);
+    };
+
+    window.addEventListener("deviceorientation", defaultListener);
+    window.addEventListener("deviceorientationabsolute", absoluteListener);
     this.listenersAdded = true;
   }
 
