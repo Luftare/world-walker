@@ -428,11 +428,45 @@ export class GameScene extends Phaser.Scene {
     });
   }
 
-  private handleZombieDeath(_x: number, _y: number, zombie: any): void {
-    // Notify spawn service about zombie death
+  private handleZombieDeath(x: number, y: number, zombie: any): void {
+    // Notify spawn service about zombie death for hex respawn
     if (this.spawnService) {
       this.spawnService.onZombieKilled(zombie);
     }
+
+    // Randomly choose between health pack, ammo pack, or coin with equal chance
+    const randomValue = Math.random();
+    let item: AmmoPack | Coin | HealthPack | undefined;
+
+    if (randomValue < 0.1) {
+      // Spawn coin
+      item = new Coin(this, x, y);
+      this.coins.push(item);
+    } else if (randomValue < 0.2) {
+      // Spawn health pack
+      item = new HealthPack(this, x, y);
+      this.healthPacks.push(item);
+    } else if (randomValue < 0.6) {
+      // Spawn ammo pack
+      item = new AmmoPack(this, x, y);
+      this.ammoPacks.push(item);
+    }
+
+    if (!item) return;
+
+    // Tween item to random direction
+    const randomAngle = Math.random() * 2 * Math.PI;
+    const randomDistance = 20 + Math.random() * 20;
+    const targetX = x + Math.cos(randomAngle) * randomDistance;
+    const targetY = y + Math.sin(randomAngle) * randomDistance;
+
+    this.tweens.add({
+      targets: item,
+      x: targetX,
+      y: targetY,
+      duration: 500,
+      ease: "Power2",
+    });
   }
 
   private handlePlayerDeath(): void {
