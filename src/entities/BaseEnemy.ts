@@ -1,6 +1,7 @@
 import { gameConfig } from "../config/gameConfig";
 import { Point } from "../types/types";
 import { GameLogicHelpers } from "../utils/gameLogicHelpers";
+import { TweenHelpers } from "../utils/TweenHelpers";
 
 export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
   // Core properties
@@ -70,6 +71,8 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
     this.setDisplaySize(radius * 2, radius * 2);
 
     this.targetRotation = this.rotation;
+
+    TweenHelpers.spawnAnimation(scene, this, this.scaleX, this.scaleY);
   }
 
   getPosition(): { x: number; y: number } {

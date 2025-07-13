@@ -1,4 +1,5 @@
 import { gameConfig } from "../config/gameConfig";
+import { TweenHelpers } from "../utils/TweenHelpers";
 
 export abstract class PickableItem extends Phaser.GameObjects.Container {
   protected pickupRadius: number = gameConfig.playerRadius * 4;
@@ -32,6 +33,8 @@ export abstract class PickableItem extends Phaser.GameObjects.Container {
     this.sprite.rotation = Math.random() * 2 * Math.PI;
 
     this.createPickupRing();
+
+    TweenHelpers.spawnAnimation(scene, this, this.scaleX, this.scaleY);
   }
 
   private createPickupRing(): void {
