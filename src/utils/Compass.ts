@@ -72,10 +72,15 @@ export class UniversalCompass {
       this.onDeviceOrientation(e);
     };
 
-    window.addEventListener("deviceorientation", defaultListener);
-    setTimeout(() => {
+    const isAndroid = navigator.userAgent.toLowerCase().indexOf("android") > -1; //&& ua.indexOf("mobile");
+    // We want only android devices to use the absolute listener
+
+    if (isAndroid) {
       window.addEventListener("deviceorientationabsolute", absoluteListener);
-    }, 1000);
+    } else {
+      // We want only iOS devices to use the default listener
+      window.addEventListener("deviceorientation", defaultListener);
+    }
     this.listenersAdded = true;
   }
 
