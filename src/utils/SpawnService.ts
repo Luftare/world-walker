@@ -1,102 +1,73 @@
-import { HexagonCoord, HexagonUtils } from "./HexagonUtils";
+import { HexagonCoord } from "./HexagonUtils";
 import { ZombieGroup } from "../entities/ZombieGroup";
-import { AmmoPack } from "../entities/AmmoPack";
-import { HealthPack } from "../entities/HealthPack";
-import { gameConfig } from "../config/gameConfig";
+import { HexContentManager } from "./HexContentManager";
 
 export class SpawnService {
-  private spawnState: Map<string, { timestamp: number; hasSpawned: boolean }> =
-    new Map();
+  private hexContentManager: HexContentManager;
   private zombieGroup: ZombieGroup;
   private gameScene: Phaser.Scene;
-  private readonly RESPAWN_DELAY = 20000; // 20 seconds
-  private readonly AMMO_PACK_CHANCE = 0.1;
-  private readonly HEALTH_PACK_CHANCE = 0.1;
-  private initialHexesDiscovered = 0;
 
   constructor(zombieGroup: ZombieGroup, gameScene: Phaser.Scene) {
     this.zombieGroup = zombieGroup;
     this.gameScene = gameScene;
+    this.hexContentManager = new HexContentManager();
   }
 
   handleHexDiscovered(hex: HexagonCoord, spawnEmpty: boolean = false): void {
-    const hexKey = this.getHexagonKey(hex);
-    const currentTime = Date.now();
-    // Check if this is a rediscovery
-    const existingState = this.spawnState.get(hexKey);
+    // Register the hex with the content manager
+    this.hexContentManager.registerHex(hex);
 
-    if (existingState) {
-      // Rediscovery - check if enough time has passed
-      const timeSinceLastSpawn = currentTime - existingState.timestamp;
-      if (timeSinceLastSpawn >= this.RESPAWN_DELAY && !spawnEmpty) {
-        this.spawnInHex(hex);
-        this.spawnState.set(hexKey, {
-          timestamp: currentTime,
-          hasSpawned: true,
-        });
-      }
-    } else {
-      // First discovery
-      this.initialHexesDiscovered++;
-      if (!spawnEmpty) {
-        this.spawnInHex(hex);
-        this.spawnState.set(hexKey, {
-          timestamp: currentTime,
-          hasSpawned: true,
-        });
-      }
+    if (spawnEmpty) return;
+
+    // Get player position for distance checking
+    const playerPos = this.getPlayerPosition();
+    if (!playerPos) return;
+
+    // Check if we can spawn in this hex
+    if (this.hexContentManager.canSpawnInHex(hex, playerPos.x, playerPos.y)) {
+      this.hexContentManager.spawnContentInHex(
+        hex,
+        this.gameScene,
+        this.zombieGroup
+      );
     }
   }
 
-  private spawnInHex(hex: HexagonCoord): void {
-    // Convert hex coordinates to world coordinates for rendering
-    const worldPos = HexagonUtils.hexagonToWorld(hex.q, hex.r);
+  update(playerX: number, playerY: number): void {
+    // Check for respawns
+    this.hexContentManager.checkRespawns(
+      this.gameScene,
+      this.zombieGroup,
+      playerX,
+      playerY
+    );
+  }
 
-    // Add some randomness to the spawn position within the hex
-    // Use half the hexagon radius for spawn area to avoid edge spawning
-    const spawnRadius = gameConfig.hexagonRadius;
-    const randomOffset = {
-      x: (Math.random() - 0.5) * spawnRadius,
-      y: (Math.random() - 0.5) * spawnRadius,
-    };
-
-    const spawnX = worldPos.x + randomOffset.x;
-    const spawnY = worldPos.y + randomOffset.y;
-
-    // 25% chance to spawn health pack, 25% ammo pack, 50% zombie
-    const roll = Math.random();
-    if (roll < this.HEALTH_PACK_CHANCE) {
-      this.spawnHealthPack(spawnX, spawnY);
-    } else if (roll < this.HEALTH_PACK_CHANCE + this.AMMO_PACK_CHANCE) {
-      this.spawnAmmoPack(spawnX, spawnY);
-    } else {
-      this.spawnZombie(spawnX, spawnY);
+  onZombieKilled(zombie: any): void {
+    // Find which hex this zombie belonged to
+    const hex = this.hexContentManager.findHexForEntity(zombie);
+    if (hex) {
+      this.hexContentManager.onContentConsumed(hex);
     }
   }
 
-  private spawnAmmoPack(x: number, y: number): void {
-    const ammoPack = new AmmoPack(this.gameScene, x, y);
+  onItemPickedUp(item: any): void {
+    // Find which hex this item belonged to
+    const hex = this.hexContentManager.findHexForEntity(item);
+    if (hex) {
+      this.hexContentManager.onContentConsumed(hex);
+    }
+  }
 
-    // Add to the game scene's ammo packs array
+  private getPlayerPosition(): { x: number; y: number } | null {
+    // Get player position from the game scene
     const gameScene = this.gameScene as any;
-    if (gameScene.ammoPacks) {
-      gameScene.ammoPacks.push(ammoPack);
+    if (gameScene.character) {
+      return {
+        x: gameScene.character.x,
+        y: gameScene.character.y,
+      };
     }
-  }
-
-  private spawnHealthPack(x: number, y: number): void {
-    const healthPack = new HealthPack(this.gameScene, x, y);
-    const gameScene = this.gameScene as any;
-    if (gameScene.healthPacks) {
-      gameScene.healthPacks.push(healthPack);
-    }
-  }
-
-  private spawnZombie(x: number, y: number): void {
-    this.zombieGroup.addZombie(x, y);
-  }
-
-  private getHexagonKey(hex: HexagonCoord): string {
-    return `${hex.q},${hex.r}`;
+    return null;
   }
 }

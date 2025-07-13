@@ -304,8 +304,8 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
     this.targetEntity = undefined;
     this.target = undefined;
 
-    // Emit zombie death event for coin drop
-    this.scene.events.emit("zombieDied", this.x, this.y);
+    // Emit zombie death event with the zombie instance
+    this.scene.events.emit("zombieDied", this.x, this.y, this);
 
     this.scene.tweens.add({
       targets: this,
