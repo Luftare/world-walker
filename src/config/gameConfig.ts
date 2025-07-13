@@ -4,7 +4,7 @@
  */
 
 export const gameConfig = {
-  aggroRange: 200,
+  aggroRange: 240,
   spawnMinDistance: 250,
   geoPixelsPerMeter: 10,
   playerSpeed: 30,
