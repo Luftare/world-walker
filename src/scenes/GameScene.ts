@@ -25,6 +25,7 @@ import healthPackUrl from "../assets/health-pack.png";
 import { HexagonCoord, HexagonUtils } from "../utils/HexagonUtils";
 import { PickableItem } from "../entities/PickableItem";
 import { DebugLogger } from "../utils/DebugLogger";
+import { GameLogic } from "../utils/GameLogic";
 
 export class GameScene extends Phaser.Scene {
   private character: Character | undefined;
@@ -202,14 +203,20 @@ export class GameScene extends Phaser.Scene {
       }
     }
 
-    // Update projectiles
-    this.projectiles = this.projectiles.filter((projectile) => {
-      if (!projectile.active) return false;
-      projectile.update(this.time.now);
-      return projectile.active;
-    });
+    // Update projectiles using GameLogic
+    this.projectiles = GameLogic.updateProjectiles(
+      this.projectiles,
+      this.time.now
+    );
 
-    this.checkProjectileCollisions();
+    // Check projectile collisions using GameLogic
+    if (this.zombieGroup) {
+      GameLogic.checkProjectileCollisions(
+        this.projectiles,
+        this.zombieGroup.getZombies(),
+        gameConfig.projectilePushbackForce
+      );
+    }
     this.checkAmmoPackPickups();
     this.checkCoinPickups();
     this.checkHealthPackPickups();
@@ -352,35 +359,6 @@ export class GameScene extends Phaser.Scene {
         this.character?.clearTint(); // Always clear tint to ensure it returns to normal
       },
     });
-  }
-
-  private checkProjectileCollisions(): void {
-    if (!this.zombieGroup) return;
-    const zombies = this.zombieGroup.getZombies();
-    for (const projectile of this.projectiles) {
-      if (!projectile.active) continue;
-      for (const zombie of zombies) {
-        if (!zombie.active || zombie.getIsDead()) continue;
-        const distance = Phaser.Math.Distance.Between(
-          projectile.x,
-          projectile.y,
-          zombie.x,
-          zombie.y
-        );
-        const collisionRadius = 20;
-        if (distance < collisionRadius) {
-          // Apply pushback in the direction of the projectile
-          const projectileDirection = projectile.getDirection();
-          zombie.takeDamage(projectile.getDamage(), projectileDirection);
-          zombie.applyPushback(
-            projectileDirection,
-            gameConfig.projectilePushbackForce
-          );
-          projectile.destroy();
-          break;
-        }
-      }
-    }
   }
 
   private checkAmmoPackPickups(): void {
