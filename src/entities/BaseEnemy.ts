@@ -36,7 +36,7 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
 
   // Attack properties
   protected lastAttackTime: number = 0;
-  protected attackCooldown: number = 1000;
+  protected attackCooldown: number = 1500;
   protected attackRange: number = gameConfig.playerRadius * 2;
   protected isAttacking: boolean = false;
 
@@ -46,7 +46,7 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
     y: number = 0,
     texture: string,
     health: number = 3,
-    speed: number = gameConfig.movementSpeed * 0.5
+    speed: number = gameConfig.enemySpeed
   ) {
     super(scene, x, y, texture);
     scene.add.existing(this);

@@ -8,7 +8,7 @@ export class WalkingZombie extends BaseEnemy {
     y: number = 0,
     texture: string = "zombie"
   ) {
-    super(scene, x, y, texture, 3, gameConfig.movementSpeed * 0.6);
+    super(scene, x, y, texture, 3, gameConfig.enemySpeed);
   }
 
   protected performAttack(): void {
