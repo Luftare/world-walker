@@ -54,10 +54,10 @@ export class UniversalCompass {
       "deviceorientationabsolute",
       this.onDeviceOrientation.bind(this)
     );
-    window.addEventListener(
-      "deviceorientation",
-      this.onDeviceOrientation.bind(this)
-    );
+    // window.addEventListener(
+    //   "deviceorientation",
+    //   this.onDeviceOrientation.bind(this)
+    // );
     this.listenersAdded = true;
   }
 
