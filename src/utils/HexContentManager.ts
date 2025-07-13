@@ -19,7 +19,7 @@ export class HexContentManager {
   private hexStates: Map<string, HexContentState> = new Map();
   private readonly RESPAWN_DELAY = 10000; // 10 seconds
   private readonly ZOMBIE_CHANCE = 0.8; // 80% chance for zombie
-  private readonly PLAYER_SAFE_DISTANCE = 200; // 200px minimum distance from player
+  private readonly PLAYER_SAFE_DISTANCE = gameConfig.spawnMinDistance; // 200px minimum distance from player
 
   constructor() {
     // Initialize hex content manager
