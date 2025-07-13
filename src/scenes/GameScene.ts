@@ -168,9 +168,6 @@ export class GameScene extends Phaser.Scene {
             child.spriteRotation = radians;
           }
         });
-
-        // DEBUG: Update compass buffer visualization
-        this.updateCompassBufferVisualization();
       });
     } catch (error) {
       console.error("Failed to initialize compass for game scene:", error);
@@ -248,18 +245,6 @@ export class GameScene extends Phaser.Scene {
         this.character.getHealth(),
         this.character.getMaxHealth()
       );
-    }
-  }
-
-  // DEBUG: Update compass buffer visualization
-  private updateCompassBufferVisualization(): void {
-    if (!this.uiScene || !this.compassService) return;
-
-    // Get the compass instance from the service
-    const compass = this.compassService.getCompass();
-    if (compass && typeof compass.getHeadingBuffer === "function") {
-      const headings = compass.getHeadingBuffer();
-      this.uiScene.updateCompassBuffer(headings);
     }
   }
 
