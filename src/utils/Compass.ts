@@ -6,6 +6,7 @@ export class UniversalCompass {
   private headingCallback?: HeadingCallback;
   private listenersAdded = false;
   private permissionGranted = false;
+  private listenerType = "default";
 
   async requestPermission(): Promise<void> {
     if (!window.DeviceOrientationEvent) {
@@ -43,17 +44,30 @@ export class UniversalCompass {
 
   private addListeners() {
     if (this.listenersAdded) return;
+    let didRemoveObsoleteListener = false;
 
     const absoluteListener = (e: any) => {
       // Remove the other listener
-      window.removeEventListener("deviceorientation", defaultListener);
-      debugLog("absoluteListener");
+      // Android Chrome, Desktop Chrome (no override)
+      if (!didRemoveObsoleteListener) {
+        window.removeEventListener("deviceorientation", defaultListener);
+        didRemoveObsoleteListener = true;
+        this.listenerType = "absolute";
+      }
       this.onDeviceOrientation(e);
     };
 
     const defaultListener = (e: any) => {
       // Remove the other listener
-      window.removeEventListener("deviceorientationabsolute", absoluteListener);
+      // iOS Safari, Desktop Chrome (override)
+      if (!didRemoveObsoleteListener) {
+        window.removeEventListener(
+          "deviceorientationabsolute",
+          absoluteListener
+        );
+        didRemoveObsoleteListener = true;
+        this.listenerType = "default";
+      }
       debugLog("defaultListener");
       this.onDeviceOrientation(e);
     };
@@ -68,10 +82,12 @@ export class UniversalCompass {
   private onDeviceOrientation(e: any): void {
     if (typeof e.webkitCompassHeading !== "undefined") {
       // iOS Safari
+      debugLog("webkitCompassHeading + " + this.listenerType);
       this.headingCallback?.(e.webkitCompassHeading);
     } else if (typeof e.alpha !== "undefined") {
       // Android Chrome
       const heading = 360 - e.alpha;
+      debugLog("alpha + " + this.listenerType);
       this.headingCallback?.(heading);
     }
     // If neither webkitCompassHeading nor alpha is available, ignore the event
