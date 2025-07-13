@@ -19,7 +19,6 @@ export class HexContentManager {
   private hexStates: Map<string, HexContentState> = new Map();
   private readonly RESPAWN_DELAY = 10000; // 10 seconds
   private readonly ZOMBIE_CHANCE = 0.8; // 80% chance for zombie
-  private readonly PLAYER_SAFE_DISTANCE = gameConfig.spawnMinDistance; // 200px minimum distance from player
 
   constructor() {
     // Initialize hex content manager
@@ -51,7 +50,7 @@ export class HexContentManager {
         Math.pow(hexWorldPos.y - playerY, 2)
     );
 
-    return distance >= this.PLAYER_SAFE_DISTANCE;
+    return distance >= gameConfig.spawnMinDistance;
   }
 
   spawnContentInHex(

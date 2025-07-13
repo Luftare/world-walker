@@ -4,7 +4,6 @@
  */
 
 export const gameConfig = {
-  initialEmptyHexRadius: 250,
   aggroRange: 200,
   spawnMinDistance: 250,
   geoPixelsPerMeter: 10,

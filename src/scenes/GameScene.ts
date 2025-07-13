@@ -45,7 +45,6 @@ export class GameScene extends Phaser.Scene {
   private geolocationService: GeolocationService | undefined;
   private compassService: CompassService | undefined;
   private spawnService: SpawnService | undefined;
-  private safeStartCounter: number = 3000;
   private projectiles: Projectile[] = [];
   private ammoPacks: AmmoPack[] = [];
   private coins: Coin[] = [];
@@ -177,14 +176,6 @@ export class GameScene extends Phaser.Scene {
   }
 
   override update(time: number, delta: number): void {
-    // Update safe start counter
-    if (this.safeStartCounter > 0) {
-      this.safeStartCounter -= delta;
-      if (this.safeStartCounter < 0) {
-        this.safeStartCounter = 0;
-      }
-    }
-
     // Update character behaviors
     if (this.character && this.positionMarker) {
       const markerPos = this.positionMarker.getPosition();
@@ -489,7 +480,6 @@ export class GameScene extends Phaser.Scene {
 
   private resetState(): void {
     // Reset all state variables
-    this.safeStartCounter = 3000;
     this.uiScene = undefined;
   }
 
@@ -546,21 +536,7 @@ export class GameScene extends Phaser.Scene {
     this.events.on("hexDiscovered", (hex: HexagonCoord) => {
       if (this.spawnService) {
         // Calculate distance from player to hex center
-        const playerPos = this.positionMarker?.getPosition();
-        const hexWorldPos = HexagonUtils.hexagonToWorld(hex.q, hex.r);
-
-        let spawnEmpty = false;
-        if (playerPos && this.safeStartCounter > 0) {
-          const distance = Phaser.Math.Distance.Between(
-            playerPos.x / 8,
-            playerPos.y / 8,
-            hexWorldPos.x,
-            hexWorldPos.y
-          );
-          spawnEmpty = distance <= gameConfig.initialEmptyHexRadius;
-        }
-
-        this.spawnService.handleHexDiscovered(hex, spawnEmpty);
+        this.spawnService.handleHexDiscovered(hex);
       }
     });
   }

@@ -13,11 +13,9 @@ export class SpawnService {
     this.hexContentManager = new HexContentManager();
   }
 
-  handleHexDiscovered(hex: HexagonCoord, spawnEmpty: boolean = false): void {
+  handleHexDiscovered(hex: HexagonCoord): void {
     // Register the hex with the content manager
     this.hexContentManager.registerHex(hex);
-
-    if (spawnEmpty) return;
 
     // Get player position for distance checking
     const playerPos = this.getPlayerPosition();
