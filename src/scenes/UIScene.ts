@@ -36,7 +36,7 @@ export class UIScene extends Phaser.Scene {
     this.shootButton = this.add.text(
       gameWidth - padding - 40 * this.devicePixelRatio,
       this.cameras.main.height - padding - 40 * this.devicePixelRatio,
-      "SHOOT",
+      "PEW PEW!",
       {
         fontSize: fontSize.button,
         color: "#ffffff",
