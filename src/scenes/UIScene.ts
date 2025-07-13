@@ -37,7 +37,7 @@ export class UIScene extends Phaser.Scene {
     // Create debug log text (bottom-left)
     this.debugLogText = this.add.text(
       padding,
-      this.cameras.main.height - padding - 100 * this.devicePixelRatio,
+      this.cameras.main.height * 0.5,
       "",
       {
         fontSize: fontSize.debug,
