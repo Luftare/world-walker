@@ -38,7 +38,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
 
     this.setOrigin(0.5, 0.5);
     this.setPosition(x, y);
-    this.setDepth(10);
+    this.setDepth(9);
 
     if (this.body) {
       // We use the sprite size for the physics body and later scale it to the correct size

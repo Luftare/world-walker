@@ -15,18 +15,11 @@ import { GeolocationService } from "../utils/GeolocationService";
 import { CompassService } from "../utils/CompassService";
 import { SpawnService } from "../utils/SpawnService";
 import { HealthPack } from "../entities/HealthPack";
-
-import compassUrl from "../assets/compass.png";
-import ammoPackUrl from "../assets/ammo-pack.png";
-import coinUrl from "../assets/coin.png";
-import debugCompassSquare from "../assets/debug-compass-square.png";
-import debugCompassCircle from "../assets/debug-compass-circle.png";
-import debugZombie from "../assets/debug-zombie.png";
-import healthPackUrl from "../assets/health-pack.png";
-import { HexagonCoord, HexagonUtils } from "../utils/HexagonUtils";
+import { HexagonCoord } from "../utils/HexagonUtils";
 import { PickableItem } from "../entities/PickableItem";
 import { DebugLogger } from "../utils/DebugLogger";
 import { GameLogic } from "../utils/GameLogic";
+import { loadAssets } from "../utils/AssetLoadHelpers";
 
 export class GameScene extends Phaser.Scene {
   private character: Character | undefined;
@@ -55,14 +48,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   preload(): void {
-    this.load.image("character", compassUrl);
-    this.load.image("compass-square", debugCompassSquare);
-    this.load.image("compass-circle", debugCompassCircle);
-    this.load.image("zombie", debugZombie);
-    this.load.image("ammo-pack", ammoPackUrl);
-    this.load.image("coin", coinUrl);
-    this.load.image("projectile", debugCompassCircle); // Using same texture for now
-    this.load.image("health-pack", healthPackUrl);
+    loadAssets(this);
   }
 
   async create(data?: {

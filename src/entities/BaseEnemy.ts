@@ -41,6 +41,10 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
   protected attackRange: number = gameConfig.playerRadius * 2;
   protected isAttacking: boolean = false;
 
+  // Animation properties
+  private baseTextureKey: string;
+  private currentAnimation: string = "idle";
+
   // Visual properties
   private aggroRing!: Phaser.GameObjects.Graphics;
 
@@ -48,21 +52,21 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
     scene: Phaser.Scene,
     x: number = 0,
     y: number = 0,
-    texture: string,
     health: number = 3,
     speed: number = gameConfig.enemySpeed
   ) {
-    super(scene, x, y, texture);
+    super(scene, x, y, "zombie-idle0");
     scene.add.existing(this);
     scene.physics.add.existing(this);
 
+    this.baseTextureKey = "zombie";
     this.health = health;
     this.maxHealth = health;
     this.speed = speed;
 
     this.setOrigin(0.5, 0.5);
     this.setPosition(x, y);
-    this.setDepth(5);
+    this.setDepth(10);
     this.rotation = Math.random() * 2 * Math.PI;
 
     if (this.body) {
@@ -75,9 +79,50 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
 
     this.targetRotation = this.rotation;
 
-    this.createAggroRing();
+    setTimeout(() => {
+      this.createAnimations();
+      this.createAggroRing();
+    }, 1000 * Math.random());
 
     TweenHelpers.spawnAnimation(scene, this, this.scaleX, this.scaleY);
+  }
+
+  private createAnimations(): void {
+    // Create idle animation (1000ms per frame)
+    this.scene.anims.create({
+      key: `${this.baseTextureKey}-idle`,
+      frames: [
+        { key: `${this.baseTextureKey}-idle0` },
+        { key: `${this.baseTextureKey}-idle1` },
+      ],
+      frameRate: 0.4,
+      repeat: -1,
+    });
+
+    // Create walk animation (700ms per frame)
+    this.scene.anims.create({
+      key: `${this.baseTextureKey}-walk`,
+      frames: [
+        { key: `${this.baseTextureKey}-walk0` },
+        { key: `${this.baseTextureKey}-walk1` },
+      ],
+      frameRate: 3,
+      repeat: -1,
+    });
+
+    // Start with idle animation
+    this.play(`${this.baseTextureKey}-idle`);
+  }
+
+  private updateAnimation(): void {
+    const targetAnimation = this.isAggroed
+      ? `${this.baseTextureKey}-walk`
+      : `${this.baseTextureKey}-idle`;
+
+    if (this.currentAnimation !== targetAnimation) {
+      this.play(targetAnimation);
+      this.currentAnimation = targetAnimation;
+    }
   }
 
   private createAggroRing(): void {
@@ -482,6 +527,7 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
     this.updateFollow();
     this.updateRotation(delta);
     this.updateMovement(delta);
+    this.updateAnimation(); // Call the new animation update method
     this.updateAggroRing();
     if (this.isDead) return;
     this.updateAttack();

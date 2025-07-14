@@ -2,13 +2,8 @@ import { gameConfig } from "../config/gameConfig";
 import { BaseEnemy } from "./BaseEnemy";
 
 export class WalkingZombie extends BaseEnemy {
-  constructor(
-    scene: Phaser.Scene,
-    x: number = 0,
-    y: number = 0,
-    texture: string = "zombie"
-  ) {
-    super(scene, x, y, texture, 3, gameConfig.enemySpeed);
+  constructor(scene: Phaser.Scene, x: number = 0, y: number = 0) {
+    super(scene, x, y, 3, gameConfig.enemySpeed);
   }
 
   protected performAttack(): void {
