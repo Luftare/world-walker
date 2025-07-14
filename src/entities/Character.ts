@@ -4,13 +4,14 @@ import { WeaponInventory } from "./weapons/WeaponInventory";
 import { GameLogicHelpers } from "../utils/gameLogicHelpers";
 
 export class Character extends Phaser.Physics.Arcade.Sprite {
+  public radius: number = gameConfig.playerRadius;
+
   // Movement properties
   private speed: number = gameConfig.movementSpeed;
   private target: Point | undefined;
   private finalTarget: Point | undefined;
   private isMovingTowardsTarget: boolean = false;
   private flockingEnabled: boolean = true;
-  private avoidRadius: number = gameConfig.playerRadius * 2;
   private avoidWeight: number = 2;
   private targetWeight: number = 1;
 
@@ -41,8 +42,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
       this.body.setCircle(this.width / 2);
     }
 
-    const radius = gameConfig.playerRadius;
-    this.setDisplaySize(radius * 2, radius * 2);
+    this.setDisplaySize(this.radius * 2, this.radius * 2);
 
     // Initialize weapon inventory
     this.weaponInventory = new WeaponInventory();
@@ -84,10 +84,6 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
 
   setFlockingEnabled(enabled: boolean): void {
     this.flockingEnabled = enabled;
-  }
-
-  setAvoidRadius(radius: number): void {
-    this.avoidRadius = radius;
   }
 
   setAvoidWeight(weight: number): void {
@@ -217,8 +213,9 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
         otherEntity.x,
         otherEntity.y
       );
+      const centerDistance = this.radius + otherEntity.radius;
 
-      if (distance < this.avoidRadius && distance > 0) {
+      if (distance < centerDistance && distance > 0) {
         // Calculate vector pointing away from the other entity
         const awayVector = GameLogicHelpers.createAvoidanceVector(
           this.x,
@@ -230,7 +227,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
         // Weight by distance (closer entities have stronger avoidance)
         const weight = GameLogicHelpers.calculateDistanceWeight(
           distance,
-          this.avoidRadius
+          centerDistance
         );
         awayVector.scale(weight * this.avoidWeight);
 

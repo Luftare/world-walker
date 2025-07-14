@@ -9,12 +9,12 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
   protected maxHealth: number;
   protected speed: number;
   protected isDead: boolean = false;
+  public radius: number = gameConfig.enemyRadius;
 
   // Movement properties
   protected target: Point | undefined;
   protected isMoving: boolean = false;
   protected directionDamp: number = 1;
-  protected avoidRadius: number = gameConfig.playerRadius * 2;
   protected avoidWeight: number = 2;
   protected forwardWeight: number = 1;
 
@@ -67,16 +67,15 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
     this.setOrigin(0.5, 0.5);
     this.setPosition(x, y);
     this.setDepth(10);
-    this.rotation = Math.random() * 2 * Math.PI;
+    const radius = gameConfig.enemyRadius;
+    this.setDisplaySize(radius * 2, radius * 2);
 
     if (this.body) {
       this.body.setSize(this.width, this.height);
       this.body.setCircle(this.width / 2);
     }
 
-    const radius = gameConfig.playerRadius;
-    this.setDisplaySize(radius * 2, radius * 2);
-
+    this.rotation = Math.random() * 2 * Math.PI;
     this.targetRotation = this.rotation;
 
     setTimeout(() => {
@@ -131,7 +130,7 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
     this.aggroRing.setDepth(2);
     this.aggroRing.setPosition(this.x, this.y);
 
-    const enemyRadius = gameConfig.playerRadius;
+    const enemyRadius = gameConfig.enemyRadius;
     const ringRadius = enemyRadius * 2;
     const scaleRatio = ringRadius / enemyRadius;
 
@@ -188,7 +187,9 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
         otherEntity.y
       );
 
-      if (distance < this.avoidRadius && distance > 0) {
+      const centerDistance = this.radius + otherEntity.radius;
+
+      if (distance < centerDistance && distance > 0) {
         const awayVector = GameLogicHelpers.createAvoidanceVector(
           this.x,
           this.y,
@@ -198,7 +199,7 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
 
         const weight = GameLogicHelpers.calculateDistanceWeight(
           distance,
-          this.avoidRadius
+          centerDistance
         );
         awayVector.scale(weight * this.avoidWeight);
 
@@ -441,7 +442,7 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
     const stainX = this.x;
     const stainY = this.y;
 
-    const baseRadius = gameConfig.playerRadius * 0.3;
+    const baseRadius = gameConfig.enemyRadius * 0.3;
     const stain = this.scene.add.circle(stainX, stainY, baseRadius, 0x006400);
     stain.setDepth(2);
 

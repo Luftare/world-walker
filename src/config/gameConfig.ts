@@ -4,7 +4,6 @@
  */
 
 export const gameConfig = {
-  aggroRange: 240,
   spawnMinDistance: 250,
   geoPixelsPerMeter: 10,
   playerSpeed: 30,
@@ -16,13 +15,14 @@ export const gameConfig = {
   projectilePushbackForce: 500,
   hexagonRadius: 120,
   populateDistance: 250,
-  devMode: false,
+  devMode: true,
   rotationSpeed: 2.0,
   movementSpeed: 35,
   enemySpeed: 50,
   enemyRotationSpeed: 0.1,
   enemyDirectionDamp: 8,
-  debugMovementSpeed: 300,
+  enemyRadius: 25,
+  aggroRange: 240,
   featureRadius: 24,
   colors: {
     player: 0x666666,

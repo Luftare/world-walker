@@ -1,3 +1,5 @@
+import { BaseEnemy } from "../entities/BaseEnemy";
+import { Character } from "../entities/Character";
 import { PickableItem } from "../entities/PickableItem";
 
 export class GameLogicHelpers {
@@ -9,10 +11,9 @@ export class GameLogicHelpers {
    */
   static shouldAvoidEntity(entity: any, currentEntity: any): boolean {
     return (
-      entity instanceof Phaser.Physics.Arcade.Sprite &&
-      entity !== currentEntity &&
+      GameLogicHelpers.isAvoidableEntity(entity) &&
       entity.active &&
-      !GameLogicHelpers.isPickableItem(entity)
+      entity !== currentEntity
     );
   }
 
@@ -26,6 +27,15 @@ export class GameLogicHelpers {
   }
 
   /**
+   * Checks if an entity is an an avoidable entity
+   * @param entity - The entity to check
+   * @returns True if the entity is an avoidable entity
+   */
+  static isAvoidableEntity(entity: any): boolean {
+    return entity instanceof BaseEnemy || entity instanceof Character;
+  }
+
+  /**
    * Gets all entities that should be avoided for flocking behavior
    * @param scene - The Phaser scene
    * @param currentEntity - The entity performing the check
@@ -34,10 +44,10 @@ export class GameLogicHelpers {
   static getAvoidableEntities(
     scene: Phaser.Scene,
     currentEntity: any
-  ): Phaser.Physics.Arcade.Sprite[] {
+  ): (Character | BaseEnemy)[] {
     return scene.children.list.filter((child: any) =>
       GameLogicHelpers.shouldAvoidEntity(child, currentEntity)
-    ) as Phaser.Physics.Arcade.Sprite[];
+    ) as (Character | BaseEnemy)[];
   }
 
   /**
