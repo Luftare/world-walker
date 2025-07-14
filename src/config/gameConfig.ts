@@ -19,7 +19,9 @@ export const gameConfig = {
   devMode: false,
   rotationSpeed: 2.0,
   movementSpeed: 35,
-  enemySpeed: 14,
+  enemySpeed: 50,
+  enemyRotationSpeed: 0.1,
+  enemyDirectionDamp: 8,
   debugMovementSpeed: 300,
   featureRadius: 24,
   colors: {

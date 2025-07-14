@@ -17,10 +17,11 @@ export class PositionMarker implements Point {
     this.graphics.clear();
 
     // Draw position marker as semi-transparent blue circle
-    this.graphics.fillStyle(gameConfig.colors.marker, gameConfig.markerAlpha);
+    this.graphics.fillStyle(gameConfig.colors.marker);
     this.graphics.lineStyle(2, gameConfig.colors.marker);
     this.graphics.fillCircle(0, 0, gameConfig.markerRadius);
     this.graphics.strokeCircle(0, 0, gameConfig.markerRadius);
+    this.graphics.setAlpha(gameConfig.markerAlpha);
 
     // Set position
     this.graphics.setPosition(this.x, this.y);

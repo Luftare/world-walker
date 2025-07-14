@@ -33,7 +33,7 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
 
   // Rotation properties
   protected targetRotation: number;
-  protected angularVelocity: number = 0.4;
+  protected angularVelocity: number = gameConfig.enemyRotationSpeed;
 
   // Attack properties
   protected lastAttackTime: number = 0;
@@ -115,9 +115,10 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
   }
 
   private updateAnimation(): void {
-    const targetAnimation = this.isAggroed
-      ? `${this.baseTextureKey}-walk`
-      : `${this.baseTextureKey}-idle`;
+    let targetAnimation = `${this.baseTextureKey}-idle`;
+    if (this.isAggroed && this.isFacingTarget()) {
+      targetAnimation = `${this.baseTextureKey}-walk`;
+    }
 
     if (this.currentAnimation !== targetAnimation) {
       this.play(targetAnimation);
@@ -232,7 +233,7 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
 
     const dotProduct = forwardVector.dot(targetVector);
     const dampFactor = 1 - (this.directionDamp * (1 - dotProduct)) / 2;
-    const weightedDampFactor = dampFactor ** 4;
+    const weightedDampFactor = dampFactor ** gameConfig.enemyDirectionDamp;
 
     return Math.max(0, weightedDampFactor);
   }
@@ -527,7 +528,7 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
     this.updateFollow();
     this.updateRotation(delta);
     this.updateMovement(delta);
-    this.updateAnimation(); // Call the new animation update method
+    this.updateAnimation();
     this.updateAggroRing();
     if (this.isDead) return;
     this.updateAttack();
