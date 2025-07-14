@@ -26,13 +26,8 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
   private maxHealth: number = 5;
   private isDead: boolean = false;
 
-  constructor(
-    scene: Phaser.Scene,
-    x: number = 0,
-    y: number = 0,
-    texture: string = "compass-circle"
-  ) {
-    super(scene, x, y, texture);
+  constructor(scene: Phaser.Scene, x: number = 0, y: number = 0) {
+    super(scene, x, y, "character");
     scene.add.existing(this);
     scene.physics.add.existing(this);
 

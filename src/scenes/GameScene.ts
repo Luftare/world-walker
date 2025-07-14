@@ -270,8 +270,7 @@ export class GameScene extends Phaser.Scene {
     this.character = new Character(
       this,
       gameConfig.world.startLocation.x,
-      gameConfig.world.startLocation.y,
-      "compass-circle"
+      gameConfig.world.startLocation.y
     );
 
     // Create zombie group

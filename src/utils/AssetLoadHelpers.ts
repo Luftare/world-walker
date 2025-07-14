@@ -8,9 +8,10 @@ import zombieIdle1Url from "../assets/zombie-idle1.png";
 import zombieWalk0Url from "../assets/zombie-walk0.png";
 import zombieWalk1Url from "../assets/zombie-walk1.png";
 import healthPackUrl from "../assets/health-pack.png";
+import characterUrl from "../assets/character.png";
 
 export const loadAssets = (scene: Phaser.Scene) => {
-  scene.load.image("character", compassUrl);
+  scene.load.image("character", characterUrl);
   scene.load.image("compass-square", debugCompassSquare);
   scene.load.image("compass-circle", debugCompassCircle);
   scene.load.image("zombie-idle0", zombieIdle0Url);

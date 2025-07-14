@@ -2,7 +2,7 @@ import { gameConfig } from "../config/gameConfig";
 import { TweenHelpers } from "../utils/TweenHelpers";
 
 export abstract class PickableItem extends Phaser.GameObjects.Container {
-  protected pickupRadius: number = gameConfig.playerRadius * 4;
+  protected pickupRadius: number = gameConfig.itemPickupRadius;
   protected isPickedUp: boolean = false;
   protected tweenDuration: number = 500;
   private pickupRing!: Phaser.GameObjects.Graphics;
@@ -28,7 +28,7 @@ export abstract class PickableItem extends Phaser.GameObjects.Container {
       this.body.setCircle(this.sprite.width / 2);
     }
 
-    const radius = gameConfig.playerRadius;
+    const radius = gameConfig.itemRadius;
     this.sprite.setDisplaySize(radius * 2, radius * 2);
     this.sprite.rotation = Math.random() * 2 * Math.PI;
 
@@ -42,7 +42,7 @@ export abstract class PickableItem extends Phaser.GameObjects.Container {
     this.pickupRing.setDepth(2);
     this.add(this.pickupRing);
 
-    const itemRadius = gameConfig.playerRadius;
+    const itemRadius = gameConfig.itemRadius;
     const scaleRatio = this.pickupRadius / itemRadius;
 
     this.pickupRing.lineStyle(2, 0xffff00, 0.2);
@@ -73,7 +73,7 @@ export abstract class PickableItem extends Phaser.GameObjects.Container {
       player.y
     );
 
-    if (distance <= this.pickupRadius) {
+    if (distance <= this.pickupRadius + gameConfig.playerRadius) {
       this.pickup(player);
       return true;
     }
