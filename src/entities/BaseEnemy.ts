@@ -294,10 +294,6 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
 
     // Decay pushback velocity
     this.pushbackVelocity.scale(this.pushbackDecayRate);
-
-    if (this.pushbackVelocity.length() < 1) {
-      this.pushbackVelocity.set(0, 0);
-    }
   }
 
   protected updateFollow(): void {

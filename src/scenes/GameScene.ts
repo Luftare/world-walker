@@ -19,11 +19,13 @@ import { HexagonCoord } from "../utils/HexagonUtils";
 import { PickableItem } from "../entities/PickableItem";
 import { DebugLogger } from "../utils/DebugLogger";
 import { GameLogic } from "../utils/GameLogic";
+import { ZombieVehicleGroup } from "../entities/ZombieVehicleGroup";
 
 export class GameScene extends Phaser.Scene {
   private character: Character | undefined;
   private positionMarker: PositionMarker | undefined;
   private zombieGroup: ZombieGroup | undefined;
+  private zombieVehicleGroup: ZombieVehicleGroup | undefined;
   private systems: {
     grid: GridSystem | undefined;
     camera: CameraSystem | undefined;
@@ -105,57 +107,6 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
-  private async initializeGeolocation(): Promise<void> {
-    if (!this.geolocationService) return;
-
-    try {
-      // Start location tracking
-      this.geolocationService.startLocationTracking(
-        (xMeters: number, yMeters: number) => {
-          // Update position marker
-          if (this.positionMarker) {
-            this.positionMarker.setPosition(
-              xMeters * gameConfig.geoPixelsPerMeter,
-              yMeters * gameConfig.geoPixelsPerMeter
-            );
-          }
-        },
-        (error: string) => {
-          console.error("Geolocation error:", error);
-        }
-      );
-    } catch (error) {
-      console.error("Failed to start geolocation tracking:", error);
-    }
-  }
-
-  private async initializeCompass(): Promise<void> {
-    if (!this.compassService) return;
-
-    try {
-      // Update the compass heading callback for the game scene
-      // Tracking is already started in the menu scene to maintain the user gesture call chain
-      this.compassService.startCompassTracking((direction: number) => {
-        if (!this.systems.camera || !this.character) return;
-        // Convert degrees to radians
-        const radians = (direction * Math.PI) / 180;
-
-        // Apply compass direction to camera rotation
-        this.systems.camera.setTargetRotation(-radians);
-        this.character.setRotation(radians - Math.PI * 0.5);
-
-        // Find all pickable items and update their rotation
-        this.children.list.forEach((child) => {
-          if (child instanceof PickableItem) {
-            child.spriteRotation = radians;
-          }
-        });
-      });
-    } catch (error) {
-      console.error("Failed to initialize compass for game scene:", error);
-    }
-  }
-
   override update(time: number, delta: number): void {
     // Update character behaviors
     if (this.character && this.positionMarker) {
@@ -169,6 +120,14 @@ export class GameScene extends Phaser.Scene {
       this.zombieGroup.update(time, delta);
       if (this.character) {
         this.zombieGroup.setAllTargets(this.character);
+      }
+    }
+
+    // Update zombie vehicle behaviors
+    if (this.zombieVehicleGroup) {
+      this.zombieVehicleGroup.update(time, delta);
+      if (this.character) {
+        this.zombieVehicleGroup.setAllTargets(this.character);
       }
     }
 
@@ -218,6 +177,57 @@ export class GameScene extends Phaser.Scene {
 
     // Handle continuous firing
     this.handleContinuousFiring();
+  }
+
+  private async initializeGeolocation(): Promise<void> {
+    if (!this.geolocationService) return;
+
+    try {
+      // Start location tracking
+      this.geolocationService.startLocationTracking(
+        (xMeters: number, yMeters: number) => {
+          // Update position marker
+          if (this.positionMarker) {
+            this.positionMarker.setPosition(
+              xMeters * gameConfig.geoPixelsPerMeter,
+              yMeters * gameConfig.geoPixelsPerMeter
+            );
+          }
+        },
+        (error: string) => {
+          console.error("Geolocation error:", error);
+        }
+      );
+    } catch (error) {
+      console.error("Failed to start geolocation tracking:", error);
+    }
+  }
+
+  private async initializeCompass(): Promise<void> {
+    if (!this.compassService) return;
+
+    try {
+      // Update the compass heading callback for the game scene
+      // Tracking is already started in the menu scene to maintain the user gesture call chain
+      this.compassService.startCompassTracking((direction: number) => {
+        if (!this.systems.camera || !this.character) return;
+        // Convert degrees to radians
+        const radians = (direction * Math.PI) / 180;
+
+        // Apply compass direction to camera rotation
+        this.systems.camera.setTargetRotation(-radians);
+        this.character.setRotation(radians - Math.PI * 0.5);
+
+        // Find all pickable items and update their rotation
+        this.children.list.forEach((child) => {
+          if (child instanceof PickableItem) {
+            child.spriteRotation = radians;
+          }
+        });
+      });
+    } catch (error) {
+      console.error("Failed to initialize compass for game scene:", error);
+    }
   }
 
   private updateUI(): void {
@@ -270,6 +280,15 @@ export class GameScene extends Phaser.Scene {
 
     // Create zombie group
     this.zombieGroup = new ZombieGroup(this);
+
+    // Create zombie vehicle group
+    this.zombieVehicleGroup = new ZombieVehicleGroup(this);
+
+    // Add a zombie vehicle to the group
+    this.zombieVehicleGroup.addZombieVehicle(
+      gameConfig.world.startLocation.x - 250,
+      gameConfig.world.startLocation.y - 100
+    );
 
     // Set all zombies to follow the player
     if (this.character) {
