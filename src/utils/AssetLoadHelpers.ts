@@ -8,6 +8,10 @@ import zombieWalk0Url from "../assets/zombie-walk0.png";
 import zombieWalk1Url from "../assets/zombie-walk1.png";
 import healthPackUrl from "../assets/health-pack.png";
 import characterUrl from "../assets/character.png";
+import gunshotUrl from "../assets/audio/gunshot.m4a";
+import themeUrl from "../assets/audio/theme.m4a";
+import zombieGrowlUrl from "../assets/audio/zombie-growl.m4a";
+import zombieMoanUrl from "../assets/audio/zombie-moan.m4a";
 
 export const loadAssets = (scene: Phaser.Scene) => {
   scene.load.image("character", characterUrl);
@@ -21,4 +25,9 @@ export const loadAssets = (scene: Phaser.Scene) => {
   scene.load.image("coin", coinUrl);
   scene.load.image("projectile", debugCompassCircle); // Using same texture for now
   scene.load.image("health-pack", healthPackUrl);
+
+  scene.load.audio("gunshot", gunshotUrl);
+  scene.load.audio("theme", themeUrl);
+  scene.load.audio("zombie-growl", zombieGrowlUrl);
+  scene.load.audio("zombie-moan", zombieMoanUrl);
 };

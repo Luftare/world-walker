@@ -86,6 +86,16 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
     TweenHelpers.spawnAnimation(scene, this, this.scaleX, this.scaleY);
   }
 
+  override update(_time: number, delta: number): void {
+    this.updateFollow();
+    this.updateRotation(delta);
+    this.updateMovement(delta);
+    this.updateAnimation();
+    this.updateAggroRing();
+    if (this.isDead) return;
+    this.updateAttack();
+  }
+
   private createAnimations(): void {
     // Create idle animation (1000ms per frame)
     this.scene.anims.create({
@@ -303,6 +313,10 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
     // Check if player is within aggro range
     if (!this.isAggroed && distance <= this.aggroRange) {
       this.isAggroed = true;
+      const sampleName = Math.random() < 0.5 ? "zombie-growl" : "zombie-moan";
+      this.scene.sound.play(sampleName, {
+        volume: 0.5,
+      });
     }
 
     // Only follow if aggroed
@@ -523,15 +537,5 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
       this.aggroRing.setPosition(this.x, this.y);
       this.aggroRing.visible = this.isAggroed && !this.isDead;
     }
-  }
-
-  override update(_time: number, delta: number): void {
-    this.updateFollow();
-    this.updateRotation(delta);
-    this.updateMovement(delta);
-    this.updateAnimation();
-    this.updateAggroRing();
-    if (this.isDead) return;
-    this.updateAttack();
   }
 }

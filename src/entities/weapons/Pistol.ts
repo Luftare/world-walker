@@ -20,5 +20,9 @@ export class Pistol extends Weapon {
     if (gameScene.projectiles) {
       gameScene.projectiles.push(projectile);
     }
+
+    scene.sound.play("gunshot", {
+      volume: 0.5,
+    });
   }
 }

@@ -15,7 +15,7 @@ export const gameConfig = {
   projectilePushbackForce: 500,
   hexagonRadius: 120,
   populateDistance: 250,
-  devMode: true,
+  devMode: false,
   rotationSpeed: 2.0,
   movementSpeed: 35,
   enemySpeed: 50,

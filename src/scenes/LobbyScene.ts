@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import { GeolocationService } from "../utils/GeolocationService";
 import { CompassService } from "../utils/CompassService";
+import { loadAssets } from "../utils/AssetLoadHelpers";
 
 export class LobbyScene extends Phaser.Scene {
   private geolocationService?: GeolocationService;
@@ -12,6 +13,10 @@ export class LobbyScene extends Phaser.Scene {
 
   constructor() {
     super({ key: "LobbyScene" });
+  }
+
+  preload(): void {
+    loadAssets(this);
   }
 
   create(data?: {
@@ -31,6 +36,8 @@ export class LobbyScene extends Phaser.Scene {
     }
 
     this.createHTMLLobby();
+
+    this.sound.play("theme", { loop: true, volume: 0.5 });
   }
 
   private createHTMLLobby(): void {
@@ -81,6 +88,7 @@ export class LobbyScene extends Phaser.Scene {
   }
 
   private startGame(): void {
+    this.sound.stopAll();
     // Clean up HTML elements before starting the game
     this.cleanupHTMLLobby();
 

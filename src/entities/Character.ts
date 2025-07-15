@@ -48,6 +48,11 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
     this.weaponInventory = new WeaponInventory();
   }
 
+  override update(_time: number, delta: number): void {
+    this.updateFollowBehavior();
+    this.updateMovementBehavior(delta);
+  }
+
   override setPosition(x: number, y: number): this {
     super.setPosition(x, y);
     return this;
@@ -324,11 +329,5 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
         }
       }
     }
-  }
-
-  override update(_time: number, delta: number): void {
-    this.updateFollowBehavior();
-    this.updateMovementBehavior(delta);
-    // Remove updateProjectiles();
   }
 }

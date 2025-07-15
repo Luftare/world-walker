@@ -19,7 +19,6 @@ import { HexagonCoord } from "../utils/HexagonUtils";
 import { PickableItem } from "../entities/PickableItem";
 import { DebugLogger } from "../utils/DebugLogger";
 import { GameLogic } from "../utils/GameLogic";
-import { loadAssets } from "../utils/AssetLoadHelpers";
 
 export class GameScene extends Phaser.Scene {
   private character: Character | undefined;
@@ -45,10 +44,6 @@ export class GameScene extends Phaser.Scene {
 
   constructor() {
     super({ key: "GameScene" });
-  }
-
-  preload(): void {
-    loadAssets(this);
   }
 
   async create(data?: {
