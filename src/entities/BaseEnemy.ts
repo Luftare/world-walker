@@ -179,9 +179,8 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
     this.followDistance = distance;
   }
 
-  applyPushback(direction: Phaser.Math.Vector2, strength: number): void {
-    const pushbackVector = direction.clone().scale(strength);
-    this.pushbackVelocity.add(pushbackVector);
+  applyPushback(impulse: Phaser.Math.Vector2): void {
+    this.pushbackVelocity.add(impulse);
   }
 
   protected calculateAvoidanceVector(): Phaser.Math.Vector2 {

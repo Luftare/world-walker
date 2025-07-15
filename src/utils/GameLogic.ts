@@ -47,7 +47,9 @@ export class GameLogic {
         if (distance < collisionRadius) {
           const projectileDirection = projectile.getDirection();
           zombie.takeDamage(projectile.getDamage(), projectileDirection);
-          zombie.applyPushback(projectileDirection, projectilePushbackForce);
+          zombie.applyPushback(
+            projectileDirection.clone().scale(projectilePushbackForce)
+          );
           projectile.destroy();
           break;
         }

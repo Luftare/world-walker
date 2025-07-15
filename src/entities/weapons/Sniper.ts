@@ -23,10 +23,11 @@ export class Sniper extends Weapon {
     if (character) {
       console.log("PUSHBACK");
       // direction is a vector2, opposite of where the character is facing
-      const direction = new Phaser.Math.Vector2(1, 0).rotate(
-        character.rotation + Math.PI
-      );
-      character.applyPushback(direction, 500);
+      const impulse = new Phaser.Math.Vector2(1, 0)
+        .rotate(character.rotation + Math.PI)
+        .normalize()
+        .scale(500);
+      character.applyPushback(impulse);
     }
 
     // Add to scene's projectile array

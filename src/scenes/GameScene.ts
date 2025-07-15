@@ -336,6 +336,15 @@ export class GameScene extends Phaser.Scene {
     // Deal damage to player
     this.character.takeDamage(1);
 
+    // Apply pushback to the character
+    const impulse = new Phaser.Math.Vector2(
+      this.character.x - zombie.x,
+      this.character.y - zombie.y
+    )
+      .normalize()
+      .scale(400);
+    this.character.applyPushback(impulse);
+
     // Add screen shake for feedback
     this.cameras.main.shake(100, 0.002);
 
