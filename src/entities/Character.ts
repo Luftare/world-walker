@@ -67,13 +67,11 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
 
   // Movement methods
   setMovementTarget(x: number, y: number): void {
-    this.target = { x, y };
     this.finalTarget = { x, y };
     this.isMovingTowardsTarget = true;
   }
 
   clearMovementTarget(): void {
-    this.target = undefined;
     this.finalTarget = undefined;
     this.isMovingTowardsTarget = false;
   }
@@ -139,7 +137,6 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
 
     // Disable movement and interactions
     this.isMovingTowardsTarget = false;
-    this.target = undefined;
     this.finalTarget = undefined;
 
     // Create death animation
@@ -271,7 +268,6 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
           newPosition.add(movementOffset);
 
           // Update current target to the adjusted position for next frame
-          this.target = { x: newPosition.x, y: newPosition.y };
         }
       } else {
         // Original movement logic without flocking
