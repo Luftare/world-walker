@@ -1,7 +1,7 @@
 import Phaser from "phaser";
 import { GeolocationService } from "../utils/GeolocationService";
 import { CompassService } from "../utils/CompassService";
-import { loadAssets } from "../utils/AssetLoadHelpers";
+import { createAnimations, loadAssets } from "../utils/AssetLoadHelpers";
 
 export class LobbyScene extends Phaser.Scene {
   private geolocationService?: GeolocationService;
@@ -24,6 +24,7 @@ export class LobbyScene extends Phaser.Scene {
     compassService?: CompassService;
     isGameOver?: boolean;
   }): void {
+    createAnimations(this);
     // Store services if provided
     if (data?.geolocationService) {
       this.geolocationService = data.geolocationService;

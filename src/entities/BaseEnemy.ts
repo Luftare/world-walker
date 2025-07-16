@@ -42,7 +42,6 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
   protected isAttacking: boolean = false;
 
   // Animation properties
-  private baseTextureKey: string;
   private currentAnimation: string = "idle";
 
   // Visual properties
@@ -59,7 +58,6 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
     scene.add.existing(this);
     scene.physics.add.existing(this);
 
-    this.baseTextureKey = "zombie";
     this.health = health;
     this.maxHealth = health;
     this.speed = speed;
@@ -79,7 +77,7 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
     this.targetRotation = this.rotation;
 
     setTimeout(() => {
-      this.createAnimations();
+      this.play("zombie-idle");
       this.createAggroRing();
     }, 1000 * Math.random());
 
@@ -96,37 +94,10 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
     this.updateAttack();
   }
 
-  private createAnimations(): void {
-    // Create idle animation (1000ms per frame)
-    this.scene.anims.create({
-      key: `${this.baseTextureKey}-idle`,
-      frames: [
-        { key: `${this.baseTextureKey}-idle0` },
-        { key: `${this.baseTextureKey}-idle1` },
-      ],
-      frameRate: 0.4,
-      repeat: -1,
-    });
-
-    // Create walk animation (700ms per frame)
-    this.scene.anims.create({
-      key: `${this.baseTextureKey}-walk`,
-      frames: [
-        { key: `${this.baseTextureKey}-walk0` },
-        { key: `${this.baseTextureKey}-walk1` },
-      ],
-      frameRate: 3,
-      repeat: -1,
-    });
-
-    // Start with idle animation
-    this.play(`${this.baseTextureKey}-idle`);
-  }
-
   private updateAnimation(): void {
-    let targetAnimation = `${this.baseTextureKey}-idle`;
+    let targetAnimation = "zombie-idle";
     if (this.isAggroed && this.isFacingTarget()) {
-      targetAnimation = `${this.baseTextureKey}-walk`;
+      targetAnimation = "zombie-walk";
     }
 
     if (this.currentAnimation !== targetAnimation) {

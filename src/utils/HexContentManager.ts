@@ -77,30 +77,20 @@ export class HexContentManager {
     } else {
       // Spawn random pickable item
       const itemRoll = Math.random();
+      const gameSceneAny = gameScene as any;
       if (itemRoll < 0.33) {
         entity = new AmmoPack(gameScene, spawnPos.x, spawnPos.y);
         contentType = "ammo";
         // Add to game scene's ammo packs array
-        const gameSceneAny = gameScene as any;
-        if (gameSceneAny.ammoPacks) {
-          gameSceneAny.ammoPacks.push(entity);
-        }
+        gameSceneAny.pickableItems.push(entity);
       } else if (itemRoll < 0.66) {
         entity = new HealthPack(gameScene, spawnPos.x, spawnPos.y);
         contentType = "health";
-        // Add to game scene's health packs array
-        const gameSceneAny = gameScene as any;
-        if (gameSceneAny.healthPacks) {
-          gameSceneAny.healthPacks.push(entity);
-        }
+        gameSceneAny.pickableItems.push(entity);
       } else {
         entity = new Coin(gameScene, spawnPos.x, spawnPos.y);
         contentType = "coin";
-        // Add to game scene's coins array
-        const gameSceneAny = gameScene as any;
-        if (gameSceneAny.coins) {
-          gameSceneAny.coins.push(entity);
-        }
+        gameSceneAny.pickableItems.push(entity);
       }
     }
 

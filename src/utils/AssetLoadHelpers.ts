@@ -34,3 +34,21 @@ export const loadAssets = (scene: Phaser.Scene) => {
   scene.load.audio("zombie-growl", zombieGrowlUrl);
   scene.load.audio("zombie-moan", zombieMoanUrl);
 };
+
+export const createAnimations = (scene: Phaser.Scene) => {
+  // Create idle animation (1000ms per frame)
+  scene.anims.create({
+    key: "zombie-idle",
+    frames: [{ key: "zombie-idle0" }, { key: "zombie-idle1" }],
+    frameRate: 0.4,
+    repeat: -1,
+  });
+
+  // Create walk animation (700ms per frame)
+  scene.anims.create({
+    key: "zombie-walk",
+    frames: [{ key: "zombie-walk0" }, { key: "zombie-walk1" }],
+    frameRate: 3,
+    repeat: -1,
+  });
+};

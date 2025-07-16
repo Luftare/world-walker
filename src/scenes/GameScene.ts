@@ -4,8 +4,6 @@ import { PositionMarker } from "../entities/PositionMarker";
 import { ZombieGroup } from "../entities/ZombieGroup";
 import { WalkingZombie } from "../entities/WalkingZombie";
 import { Projectile } from "../entities/Projectile";
-import { AmmoPack } from "../entities/AmmoPack";
-import { Coin } from "../entities/Coin";
 
 import { GridSystem } from "../systems/GridSystem";
 import { CameraSystem } from "../systems/CameraSystem";
@@ -14,7 +12,6 @@ import { UIScene } from "../scenes/UIScene";
 import { GeolocationService } from "../utils/GeolocationService";
 import { CompassService } from "../utils/CompassService";
 import { SpawnService } from "../utils/SpawnService";
-import { HealthPack } from "../entities/HealthPack";
 import { HexagonCoord } from "../utils/HexagonUtils";
 import { PickableItem } from "../entities/PickableItem";
 import { DebugLogger } from "../utils/DebugLogger";
@@ -40,9 +37,7 @@ export class GameScene extends Phaser.Scene {
   private compassService: CompassService | undefined;
   private spawnService: SpawnService | undefined;
   private projectiles: Projectile[] = [];
-  private ammoPacks: AmmoPack[] = [];
-  private coins: Coin[] = [];
-  private healthPacks: HealthPack[] = [];
+  private pickableItems: PickableItem[] = [];
 
   constructor() {
     super({ key: "GameScene" });
@@ -156,18 +151,11 @@ export class GameScene extends Phaser.Scene {
 
     // Check pickups using GameLogic
     if (this.character) {
-      const pickupResults = GameLogic.checkAllPickups(
-        this.ammoPacks,
-        this.coins,
-        this.healthPacks,
+      this.pickableItems = GameLogic.checkAllPickups(
+        this.pickableItems,
         this.character,
-        this,
         this.spawnService
       );
-
-      this.ammoPacks = pickupResults.ammoPacks;
-      this.coins = pickupResults.coins;
-      this.healthPacks = pickupResults.healthPacks;
     }
 
     // Update spawn service for respawns
@@ -385,14 +373,7 @@ export class GameScene extends Phaser.Scene {
     }
 
     // Spawn loot using GameLogic
-    GameLogic.spawnLootFromZombie(
-      x,
-      y,
-      this,
-      this.ammoPacks,
-      this.coins,
-      this.healthPacks
-    );
+    GameLogic.spawnLootFromZombie(x, y, this, this.pickableItems);
   }
 
   private handlePlayerDeath(): void {
@@ -442,29 +423,12 @@ export class GameScene extends Phaser.Scene {
     });
     this.projectiles = [];
 
-    // Clean up ammo packs
-    this.ammoPacks.forEach((ammoPack) => {
-      if (ammoPack && ammoPack.isActive()) {
-        ammoPack.destroy();
+    this.pickableItems.forEach((item) => {
+      if (item && item.isActive()) {
+        item.destroy();
       }
     });
-    this.ammoPacks = [];
-
-    // Clean up coins
-    this.coins.forEach((coin) => {
-      if (coin && coin.isActive()) {
-        coin.destroy();
-      }
-    });
-    this.coins = [];
-
-    // Clean up health packs
-    this.healthPacks.forEach((healthPack) => {
-      if (healthPack && healthPack.isActive()) {
-        healthPack.destroy();
-      }
-    });
-    this.healthPacks = [];
+    this.pickableItems = [];
   }
 
   private cleanupSystems(): void {
