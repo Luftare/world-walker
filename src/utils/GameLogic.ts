@@ -5,7 +5,6 @@ import { HealthPack } from "../entities/HealthPack";
 import { Character } from "../entities/Character";
 import { PickableItem } from "../entities/PickableItem";
 import { BaseEnemy } from "../entities/BaseEnemy";
-import { WalkingZombie } from "../entities/WalkingZombie";
 import { GameScene } from "../scenes/GameScene";
 import { TweenHelpers } from "./TweenHelpers";
 
