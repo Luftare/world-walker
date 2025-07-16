@@ -166,4 +166,36 @@ export class GameLogic {
       ease: "Power2",
     });
   }
+
+  static checkAngledRectangleCollisionWithCircle(
+    circleCenter: { x: number; y: number },
+    circleRadius: number,
+    rectWidth: number,
+    rectHeight: number,
+    rectCenter: { x: number; y: number },
+    rectAngle: number // in radians
+  ): boolean {
+    // Rotate circle center into rectangle's local space (inverse rotate around rect center)
+    const dx = circleCenter.x - rectCenter.x;
+    const dy = circleCenter.y - rectCenter.y;
+    const cos = Math.cos(-rectAngle);
+    const sin = Math.sin(-rectAngle);
+
+    const localX = cos * dx - sin * dy;
+    const localY = sin * dx + cos * dy;
+
+    // Rectangle is now axis-aligned from (-w/2, -h/2) to (w/2, h/2)
+    const halfW = rectWidth / 2;
+    const halfH = rectHeight / 2;
+
+    // Clamp the local circle center to the bounds of the rectangle
+    const closestX = Phaser.Math.Clamp(localX, -halfW, halfW);
+    const closestY = Phaser.Math.Clamp(localY, -halfH, halfH);
+
+    // Compute distance from circle to closest point
+    const distX = localX - closestX;
+    const distY = localY - closestY;
+
+    return distX * distX + distY * distY <= circleRadius * circleRadius;
+  }
 }

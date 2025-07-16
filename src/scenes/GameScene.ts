@@ -145,6 +145,15 @@ export class GameScene extends Phaser.Scene {
         gameConfig.projectilePushbackForce
       );
     }
+
+    // Check tractor collision using GameLogic
+    if (this.zombieVehicleGroup && this.character && this.zombieGroup) {
+      this.zombieVehicleGroup.checkCollisions([
+        this.character,
+        ...(this.zombieGroup.getChildren() as WalkingZombie[]),
+      ]);
+    }
+
     // Check pickups using GameLogic
     if (this.character) {
       const pickupResults = GameLogic.checkAllPickups(

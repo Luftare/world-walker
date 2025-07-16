@@ -3,27 +3,33 @@ export class BaseVehicle extends Phaser.Physics.Arcade.Sprite {
   // to target vector
   private toTargetVector: Phaser.Math.Vector2 = new Phaser.Math.Vector2(1, 0);
   private facingVector: Phaser.Math.Vector2 = new Phaser.Math.Vector2(1, 0);
-  private turnWheelSpeed: number = 0.0005;
+  private turnWheelSpeed: number = 0.0003;
   private turnWheelAngle: number = 0;
-  private turnSpeed: number = 0.000002;
-  private speed: number = 70;
+  private turnSpeed: number = 0.004;
+  private speed: number = 0.1;
+  private renderScale = 0.2;
 
   // Movement properties
   constructor(scene: Phaser.Scene, x: number, y: number, texture: string) {
     super(scene, x, y, texture);
-    // add to scene
     scene.add.existing(this);
 
     this.setOrigin(0.5, 0.5);
     this.setPosition(x, y);
     this.setDepth(10);
-    const scale = 0.2;
-    const width = 900 * scale;
-    const height = 600 * scale;
-    this.setDisplaySize(width, height);
+    this.setDisplaySize(this.getWidth(), this.getHeight());
+  }
 
-    // add to physics
-    scene.physics.add.existing(this);
+  getPosition(): { x: number; y: number } {
+    return { x: this.x, y: this.y };
+  }
+
+  getWidth(): number {
+    return this.renderScale * 900;
+  }
+
+  getHeight(): number {
+    return this.renderScale * 600;
   }
 
   setTarget(target: Phaser.GameObjects.Sprite): void {
@@ -34,7 +40,7 @@ export class BaseVehicle extends Phaser.Physics.Arcade.Sprite {
     this.updateDirectionalVectors();
     this.updateTurnWheel(delta);
     this.updateDirection(delta);
-    this.updateVelocity();
+    this.updatePosition(delta);
   }
 
   private updateDirectionalVectors(): void {
@@ -60,8 +66,9 @@ export class BaseVehicle extends Phaser.Physics.Arcade.Sprite {
     this.setRotation(newRotation);
   }
 
-  private updateVelocity(): void {
-    const speed = this.speed;
-    this.setVelocity(this.facingVector.x * speed, this.facingVector.y * speed);
+  private updatePosition(delta: number): void {
+    const newX = this.x + this.facingVector.x * this.speed * delta;
+    const newY = this.y + this.facingVector.y * this.speed * delta;
+    this.setPosition(newX, newY);
   }
 }

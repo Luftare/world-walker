@@ -1,5 +1,8 @@
 import Phaser from "phaser";
 import { BaseVehicle } from "./BaseVehicle";
+import { Character } from "./Character";
+import { WalkingZombie } from "./WalkingZombie";
+import { GameLogic } from "../utils/GameLogic";
 
 export class ZombieVehicleGroup extends Phaser.GameObjects.Group {
   constructor(scene: Phaser.Scene) {
@@ -37,6 +40,45 @@ export class ZombieVehicleGroup extends Phaser.GameObjects.Group {
       if (child instanceof BaseVehicle) {
         child.update(time, delta);
       }
+    });
+  }
+
+  checkCollisions(targets: (Character | WalkingZombie)[]): void {
+    const tractors = this.getChildren() as BaseVehicle[];
+    tractors.forEach((tractor) => {
+      targets.forEach((target) => {
+        const tractorPosition = tractor.getPosition();
+        const targetPosition = target.getPosition();
+        const tractorWidth = tractor.getWidth();
+        const tractorHeight = tractor.getHeight();
+
+        // Broad-phase: quick distance check
+        const tractorRadius = Math.max(tractorWidth, tractorHeight) * 0.708; // Handle rect corners in extreme case of square
+        const dx = targetPosition.x - tractorPosition.x;
+        const dy = targetPosition.y - tractorPosition.y;
+        const distanceSq = dx * dx + dy * dy;
+        const combinedRadius = tractorRadius + target.radius;
+
+        if (distanceSq > combinedRadius * combinedRadius) return; // too far, skip expensive check
+
+        const isCollision = GameLogic.checkAngledRectangleCollisionWithCircle(
+          targetPosition,
+          target.radius,
+          tractorWidth,
+          tractorHeight,
+          tractorPosition,
+          tractor.rotation
+        );
+        if (isCollision) {
+          const impact = new Phaser.Math.Vector2(
+            targetPosition.x - tractorPosition.x,
+            targetPosition.y - tractorPosition.y
+          )
+            .normalize()
+            .scale(1200);
+          target.applyPushback(impact);
+        }
+      });
     });
   }
 }
