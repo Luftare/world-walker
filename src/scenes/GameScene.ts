@@ -26,13 +26,8 @@ export class GameScene extends Phaser.Scene {
   projectiles: Projectile[] = [];
   spawnService: SpawnService | undefined;
   pickableItems: PickableItem[] = [];
-  systems: {
-    grid: GridSystem | undefined;
-    camera: FollowCamera | undefined;
-  } = {
-    grid: undefined,
-    camera: undefined,
-  };
+  followCamera: FollowCamera | undefined;
+  gridSystem: GridSystem | undefined;
   uiScene: UIScene | undefined;
   private geolocationService: GeolocationService | undefined;
   private compassService: CompassService | undefined;
@@ -105,7 +100,9 @@ export class GameScene extends Phaser.Scene {
       !this.positionMarker ||
       !this.zombieGroup ||
       !this.zombieVehicleGroup ||
-      !this.spawnService
+      !this.spawnService ||
+      !this.gridSystem ||
+      !this.followCamera
     )
       return;
     // Update character behaviors
@@ -151,11 +148,8 @@ export class GameScene extends Phaser.Scene {
     this.spawnService.update(this.character.x, this.character.y);
 
     // Update all systems
-    Object.values(this.systems).forEach((system) => {
-      if (system && typeof system.update === "function") {
-        system.update(time, delta);
-      }
-    });
+    this.gridSystem.update();
+    this.followCamera.update(time, delta);
 
     this.updateUI();
 
@@ -194,12 +188,12 @@ export class GameScene extends Phaser.Scene {
       // Update the compass heading callback for the game scene
       // Tracking is already started in the menu scene to maintain the user gesture call chain
       this.compassService.startCompassTracking((direction: number) => {
-        if (!this.systems.camera || !this.character) return;
+        if (!this.followCamera || !this.character) return;
         // Convert degrees to radians
         const radians = (direction * Math.PI) / 180;
 
         // Apply compass direction to camera rotation
-        this.systems.camera.setTargetRotation(-radians);
+        this.followCamera.setTargetRotation(-radians);
         this.character.setRotation(radians - Math.PI * 0.5);
 
         // Find all pickable items and update their rotation
@@ -287,12 +281,12 @@ export class GameScene extends Phaser.Scene {
   private initializeSystems(): void {
     // Initialize grid system
     if (this.character) {
-      this.systems.grid = new GridSystem(this, this.character);
+      this.gridSystem = new GridSystem(this, this.character);
     }
 
     // Initialize camera system
     if (this.character) {
-      this.systems.camera = new FollowCamera(this, this.character);
+      this.followCamera = new FollowCamera(this, this.character);
     }
   }
 
@@ -402,10 +396,10 @@ export class GameScene extends Phaser.Scene {
 
   private cleanupSystems(): void {
     // Clean up grid system - no destroy method needed
-    this.systems.grid = undefined;
+    this.gridSystem = undefined;
 
     // Clean up camera system - no destroy method needed
-    this.systems.camera = undefined;
+    this.followCamera = undefined;
 
     // Clean up spawn service
     this.spawnService = undefined;
