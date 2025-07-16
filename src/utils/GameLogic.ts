@@ -5,6 +5,9 @@ import { HealthPack } from "../entities/HealthPack";
 import { Character } from "../entities/Character";
 import { PickableItem } from "../entities/PickableItem";
 import { BaseEnemy } from "../entities/BaseEnemy";
+import { WalkingZombie } from "../entities/WalkingZombie";
+import { GameScene } from "../scenes/GameScene";
+import { TweenHelpers } from "./TweenHelpers";
 
 export class GameLogic {
   static updateProjectiles(
@@ -103,6 +106,31 @@ export class GameLogic {
       duration: 500,
       ease: "Power2",
     });
+  }
+
+  static handleZombieMeleeAttack(zombie: BaseEnemy, scene: GameScene): void {
+    if (!scene.character || scene.character.getIsDead()) return;
+
+    // Check if zombie is actually in attack range
+    if (!zombie.isInAttackRange()) return;
+
+    // Deal damage to player
+    scene.character.takeDamage(1);
+
+    // Apply pushback to the character
+    const impulse = new Phaser.Math.Vector2(
+      scene.character.x - zombie.x,
+      scene.character.y - zombie.y
+    )
+      .normalize()
+      .scale(400);
+    scene.character.applyPushback(impulse);
+
+    // Add screen shake for feedback
+    scene.cameras.main.shake(100, 0.002);
+
+    // Create hit effect on player
+    TweenHelpers.takeDamageAnimation(scene.character, scene);
   }
 
   static checkAngledRectangleCollisionWithCircle(

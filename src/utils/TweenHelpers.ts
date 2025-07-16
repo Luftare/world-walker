@@ -1,3 +1,5 @@
+import { GameScene } from "../scenes/GameScene";
+
 export class TweenHelpers {
   static spawnAnimation(
     scene: Phaser.Scene,
@@ -21,6 +23,24 @@ export class TweenHelpers {
           duration: 200,
           ease: "Power2",
         });
+      },
+    });
+  }
+
+  static takeDamageAnimation(
+    entity: Phaser.Physics.Arcade.Sprite,
+    scene: GameScene
+  ): void {
+    // Create a red flash effect on the player
+    entity.setTint(0xff0000);
+
+    scene.tweens.add({
+      targets: entity,
+      duration: 200,
+      yoyo: true,
+      ease: "Power2",
+      onComplete: () => {
+        entity.clearTint(); // Always clear tint to ensure it returns to normal
       },
     });
   }

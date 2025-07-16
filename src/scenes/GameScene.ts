@@ -294,49 +294,11 @@ export class GameScene extends Phaser.Scene {
     if (!this.character || !this.zombieGroup) return;
 
     // Set up melee attack event listener for the scene
-    this.events.on("zombieMeleeAttack", this.handleZombieMeleeAttack, this);
-  }
-
-  private handleZombieMeleeAttack(zombie: WalkingZombie): void {
-    if (!this.character || this.character.getIsDead()) return;
-
-    // Check if zombie is actually in attack range
-    if (!zombie.isInAttackRange()) return;
-
-    // Deal damage to player
-    this.character.takeDamage(1);
-
-    // Apply pushback to the character
-    const impulse = new Phaser.Math.Vector2(
-      this.character.x - zombie.x,
-      this.character.y - zombie.y
-    )
-      .normalize()
-      .scale(400);
-    this.character.applyPushback(impulse);
-
-    // Add screen shake for feedback
-    this.cameras.main.shake(100, 0.002);
-
-    // Create hit effect on player
-    this.createPlayerHitEffect();
-  }
-
-  private createPlayerHitEffect(): void {
-    if (!this.character) return;
-
-    // Create a red flash effect on the player
-    this.character.setTint(0xff0000);
-
-    this.tweens.add({
-      targets: this.character,
-      duration: 200,
-      yoyo: true,
-      ease: "Power2",
-      onComplete: () => {
-        this.character?.clearTint(); // Always clear tint to ensure it returns to normal
-      },
-    });
+    this.events.on(
+      "zombieMeleeAttack",
+      (zombie: BaseEnemy) => GameLogic.handleZombieMeleeAttack(zombie, this),
+      this
+    );
   }
 
   private handlePlayerDeath(): void {
