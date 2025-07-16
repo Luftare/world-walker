@@ -1,13 +1,16 @@
 import { HexagonCoord } from "./HexagonUtils";
 import { ZombieGroup } from "../entities/ZombieGroup";
 import { HexContentManager } from "./HexContentManager";
+import type { GameScene } from "../scenes/GameScene";
+import { BaseEnemy } from "../entities/BaseEnemy";
+import { PickableItem } from "../entities/PickableItem";
 
 export class SpawnService {
   private hexContentManager: HexContentManager;
   private zombieGroup: ZombieGroup;
-  private gameScene: Phaser.Scene;
+  private gameScene: GameScene;
 
-  constructor(zombieGroup: ZombieGroup, gameScene: Phaser.Scene) {
+  constructor(zombieGroup: ZombieGroup, gameScene: GameScene) {
     this.zombieGroup = zombieGroup;
     this.gameScene = gameScene;
     this.hexContentManager = new HexContentManager();
@@ -41,7 +44,7 @@ export class SpawnService {
     );
   }
 
-  onZombieKilled(zombie: any): void {
+  onZombieKilled(zombie: BaseEnemy): void {
     // Find which hex this zombie belonged to
     const hex = this.hexContentManager.findHexForEntity(zombie);
     if (hex) {
@@ -49,7 +52,7 @@ export class SpawnService {
     }
   }
 
-  onItemPickedUp(item: any): void {
+  onItemPickedUp(item: PickableItem): void {
     // Find which hex this item belonged to
     const hex = this.hexContentManager.findHexForEntity(item);
     if (hex) {
@@ -59,11 +62,10 @@ export class SpawnService {
 
   private getPlayerPosition(): { x: number; y: number } | null {
     // Get player position from the game scene
-    const gameScene = this.gameScene as any;
-    if (gameScene.character) {
+    if (this.gameScene.character) {
       return {
-        x: gameScene.character.x,
-        y: gameScene.character.y,
+        x: this.gameScene.character.x,
+        y: this.gameScene.character.y,
       };
     }
     return null;

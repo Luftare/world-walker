@@ -5,6 +5,9 @@ import { AmmoPack } from "../entities/AmmoPack";
 import { HealthPack } from "../entities/HealthPack";
 import { Coin } from "../entities/Coin";
 import { gameConfig } from "../config/gameConfig";
+import type { GameScene } from "../scenes/GameScene";
+import { BaseEnemy } from "../entities/BaseEnemy";
+import { ZombieGroup } from "../entities/ZombieGroup";
 
 export type HexContentType = "zombie" | "ammo" | "health" | "coin" | "empty";
 
@@ -55,8 +58,8 @@ export class HexContentManager {
 
   spawnContentInHex(
     hex: HexagonCoord,
-    gameScene: Phaser.Scene,
-    zombieGroup: any
+    gameScene: GameScene,
+    zombieGroup: ZombieGroup
   ): WalkingZombie | PickableItem | null {
     const hexKey = this.getHexKey(hex);
     const state = this.hexStates.get(hexKey);
@@ -77,20 +80,19 @@ export class HexContentManager {
     } else {
       // Spawn random pickable item
       const itemRoll = Math.random();
-      const gameSceneAny = gameScene as any;
       if (itemRoll < 0.33) {
         entity = new AmmoPack(gameScene, spawnPos.x, spawnPos.y);
         contentType = "ammo";
         // Add to game scene's ammo packs array
-        gameSceneAny.pickableItems.push(entity);
+        gameScene.pickableItems.push(entity);
       } else if (itemRoll < 0.66) {
         entity = new HealthPack(gameScene, spawnPos.x, spawnPos.y);
         contentType = "health";
-        gameSceneAny.pickableItems.push(entity);
+        gameScene.pickableItems.push(entity);
       } else {
         entity = new Coin(gameScene, spawnPos.x, spawnPos.y);
         contentType = "coin";
-        gameSceneAny.pickableItems.push(entity);
+        gameScene.pickableItems.push(entity);
       }
     }
 
@@ -121,8 +123,8 @@ export class HexContentManager {
   }
 
   checkRespawns(
-    gameScene: Phaser.Scene,
-    zombieGroup: any,
+    gameScene: GameScene,
+    zombieGroup: ZombieGroup,
     playerX: number,
     playerY: number
   ): void {
@@ -147,7 +149,7 @@ export class HexContentManager {
     return this.hexStates.get(hexKey);
   }
 
-  findHexForEntity(entity: WalkingZombie | PickableItem): HexagonCoord | null {
+  findHexForEntity(entity: BaseEnemy | PickableItem): HexagonCoord | null {
     for (const [hexKey, state] of this.hexStates.entries()) {
       if (state.entity === entity) {
         return this.parseHexKey(hexKey);

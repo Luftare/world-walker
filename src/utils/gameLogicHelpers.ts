@@ -1,6 +1,8 @@
 import { BaseEnemy } from "../entities/BaseEnemy";
 import { Character } from "../entities/Character";
 import { PickableItem } from "../entities/PickableItem";
+import { GameScene } from "../scenes/GameScene";
+import { Point } from "../types/types";
 
 export class GameLogicHelpers {
   /**
@@ -9,7 +11,10 @@ export class GameLogicHelpers {
    * @param currentEntity - The entity performing the check
    * @returns True if the entity should be avoided
    */
-  static shouldAvoidEntity(entity: any, currentEntity: any): boolean {
+  static shouldAvoidEntity(
+    entity: Character | BaseEnemy,
+    currentEntity: Character | BaseEnemy
+  ): boolean {
     return (
       GameLogicHelpers.isAvoidableEntity(entity) &&
       entity.active &&
@@ -42,12 +47,14 @@ export class GameLogicHelpers {
    * @returns Array of entities that should be avoided
    */
   static getAvoidableEntities(
-    scene: Phaser.Scene,
-    currentEntity: any
+    scene: GameScene,
+    currentEntity: Character | BaseEnemy
   ): (Character | BaseEnemy)[] {
-    return scene.children.list.filter((child: any) =>
-      GameLogicHelpers.shouldAvoidEntity(child, currentEntity)
-    ) as (Character | BaseEnemy)[];
+    return scene.children.list
+      .filter((child: any) =>
+        GameLogicHelpers.shouldAvoidEntity(child, currentEntity)
+      )
+      .map((child: any) => child as Character | BaseEnemy);
   }
 
   /**
@@ -121,7 +128,7 @@ export class GameLogicHelpers {
    * @param range - Maximum range to check
    * @returns True if entities are within range
    */
-  static isWithinRange(entity1: any, entity2: any, range: number): boolean {
+  static isWithinRange(entity1: Point, entity2: Point, range: number): boolean {
     const distance = GameLogicHelpers.calculateDistance(
       entity1.x,
       entity1.y,

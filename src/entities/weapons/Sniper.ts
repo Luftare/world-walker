@@ -1,6 +1,7 @@
 import { Weapon } from "./Weapon";
 import { Projectile } from "../Projectile";
 import { Character } from "../Character";
+import type { GameScene } from "../../scenes/GameScene";
 
 export class Sniper extends Weapon {
   constructor() {
@@ -8,7 +9,7 @@ export class Sniper extends Weapon {
   }
 
   shoot(
-    scene: Phaser.Scene,
+    scene: GameScene,
     x: number,
     y: number,
     direction: { x: number; y: number }
@@ -31,9 +32,6 @@ export class Sniper extends Weapon {
     }
 
     // Add to scene's projectile array
-    const gameScene = scene as any;
-    if (gameScene.projectiles) {
-      gameScene.projectiles.push(projectile);
-    }
+    scene.projectiles.push(projectile);
   }
 }

@@ -1,5 +1,6 @@
 import { gameConfig } from "../config/gameConfig";
 import { Character } from "../entities/Character";
+import { BaseEnemy } from "../entities/BaseEnemy";
 import { PositionMarker } from "../entities/PositionMarker";
 import { ZombieGroup } from "../entities/ZombieGroup";
 import { WalkingZombie } from "../entities/WalkingZombie";
@@ -19,11 +20,14 @@ import { GameLogic } from "../utils/GameLogic";
 import { ZombieVehicleGroup } from "../entities/ZombieVehicleGroup";
 
 export class GameScene extends Phaser.Scene {
-  private character: Character | undefined;
-  private positionMarker: PositionMarker | undefined;
-  private zombieGroup: ZombieGroup | undefined;
-  private zombieVehicleGroup: ZombieVehicleGroup | undefined;
-  private systems: {
+  character: Character | undefined;
+  positionMarker: PositionMarker | undefined;
+  zombieGroup: ZombieGroup | undefined;
+  zombieVehicleGroup: ZombieVehicleGroup | undefined;
+  projectiles: Projectile[] = [];
+  spawnService: SpawnService | undefined;
+  pickableItems: PickableItem[] = [];
+  systems: {
     grid: GridSystem | undefined;
     camera: CameraSystem | undefined;
     debug: DebugSystem | undefined;
@@ -32,12 +36,9 @@ export class GameScene extends Phaser.Scene {
     camera: undefined,
     debug: undefined,
   };
-  private uiScene: UIScene | undefined;
+  uiScene: UIScene | undefined;
   private geolocationService: GeolocationService | undefined;
   private compassService: CompassService | undefined;
-  private spawnService: SpawnService | undefined;
-  private projectiles: Projectile[] = [];
-  private pickableItems: PickableItem[] = [];
 
   constructor() {
     super({ key: "GameScene" });
@@ -366,7 +367,7 @@ export class GameScene extends Phaser.Scene {
     });
   }
 
-  private handleZombieDeath(x: number, y: number, zombie: any): void {
+  private handleZombieDeath(x: number, y: number, zombie: BaseEnemy): void {
     // Notify spawn service about zombie death for hex respawn
     if (this.spawnService) {
       this.spawnService.onZombieKilled(zombie);
@@ -490,7 +491,7 @@ export class GameScene extends Phaser.Scene {
 
   private setupEventListeners(): void {
     // Set up zombie death event listener
-    this.events.on("zombieDied", (x: number, y: number, zombie: any) => {
+    this.events.on("zombieDied", (x: number, y: number, zombie: BaseEnemy) => {
       this.handleZombieDeath(x, y, zombie);
     });
 

@@ -1,9 +1,12 @@
 import Phaser from "phaser";
 import { WalkingZombie } from "./WalkingZombie";
+import { GameScene } from "../scenes/GameScene";
 
 export class ZombieGroup extends Phaser.GameObjects.Group {
-  constructor(scene: Phaser.Scene) {
+  override scene: GameScene;
+  constructor(scene: GameScene) {
     super(scene);
+    this.scene = scene;
   }
 
   addZombie(x: number, y: number): WalkingZombie {

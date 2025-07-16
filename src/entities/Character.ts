@@ -2,6 +2,7 @@ import { gameConfig } from "../config/gameConfig";
 import { Point } from "../types/types";
 import { WeaponInventory } from "./weapons/WeaponInventory";
 import { GameLogicHelpers } from "../utils/gameLogicHelpers";
+import { GameScene } from "../scenes/GameScene";
 
 export class Character extends Phaser.Physics.Arcade.Sprite {
   public radius: number = gameConfig.playerRadius;
@@ -29,12 +30,13 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
   private health: number = 5;
   private maxHealth: number = 5;
   private isDead: boolean = false;
+  override scene: GameScene;
 
-  constructor(scene: Phaser.Scene, x: number = 0, y: number = 0) {
+  constructor(scene: GameScene, x: number = 0, y: number = 0) {
     super(scene, x, y, "character");
     scene.add.existing(this);
     scene.physics.add.existing(this);
-
+    this.scene = scene;
     this.setOrigin(0.5, 0.5);
     this.setPosition(x, y);
     this.setDepth(9);

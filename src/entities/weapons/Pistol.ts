@@ -1,5 +1,6 @@
 import { Weapon } from "./Weapon";
 import { Projectile } from "../Projectile";
+import type { GameScene } from "../../scenes/GameScene";
 
 export class Pistol extends Weapon {
   constructor() {
@@ -7,7 +8,7 @@ export class Pistol extends Weapon {
   }
 
   shoot(
-    scene: Phaser.Scene,
+    scene: GameScene,
     x: number,
     y: number,
     direction: { x: number; y: number }
@@ -16,10 +17,7 @@ export class Pistol extends Weapon {
     const projectile = new Projectile(scene, x, y, direction, this.damage);
 
     // Add to scene's projectile array
-    const gameScene = scene as any;
-    if (gameScene.projectiles) {
-      gameScene.projectiles.push(projectile);
-    }
+    scene.projectiles.push(projectile);
 
     scene.sound.play("gunshot", {
       volume: 0.5,

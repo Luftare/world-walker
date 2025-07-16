@@ -4,6 +4,7 @@ import { Coin } from "../entities/Coin";
 import { HealthPack } from "../entities/HealthPack";
 import { Character } from "../entities/Character";
 import { PickableItem } from "../entities/PickableItem";
+import { BaseEnemy } from "../entities/BaseEnemy";
 
 export class GameLogic {
   static updateProjectiles(
@@ -19,7 +20,7 @@ export class GameLogic {
 
   static checkProjectileCollisions(
     projectiles: Projectile[],
-    zombies: any[],
+    zombies: BaseEnemy[],
     projectilePushbackForce: number
   ): void {
     for (const projectile of projectiles) {

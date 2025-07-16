@@ -1,4 +1,5 @@
 import { gameConfig } from "../config/gameConfig";
+import { GameScene } from "../scenes/GameScene";
 import { Point } from "../types/types";
 import { GameLogicHelpers } from "../utils/gameLogicHelpers";
 import { TweenHelpers } from "../utils/TweenHelpers";
@@ -43,12 +44,12 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
 
   // Animation properties
   private currentAnimation: string = "idle";
-
+  override scene: GameScene;
   // Visual properties
   private aggroRing!: Phaser.GameObjects.Graphics;
 
   constructor(
-    scene: Phaser.Scene,
+    scene: GameScene,
     x: number = 0,
     y: number = 0,
     health: number = 3,
@@ -57,6 +58,7 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
     super(scene, x, y, "zombie-idle0");
     scene.add.existing(this);
     scene.physics.add.existing(this);
+    this.scene = scene;
 
     this.health = health;
     this.maxHealth = health;
