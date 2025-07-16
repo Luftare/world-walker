@@ -78,7 +78,6 @@ export class GameScene extends Phaser.Scene {
 
     this.setupWorld();
     this.createEntities();
-    this.setupHexEventListeners();
     this.setupEventListeners();
     this.initializeSystems();
     this.setupInput();
@@ -293,6 +292,10 @@ export class GameScene extends Phaser.Scene {
       this.zombieGroup.setAllTargets(this.character);
     }
 
+    if (this.zombieGroup) {
+      this.spawnService = new SpawnService(this.zombieGroup, this);
+    }
+
     // Set up collision detection
     this.setupCollisions();
   }
@@ -365,16 +368,6 @@ export class GameScene extends Phaser.Scene {
         this.character?.clearTint(); // Always clear tint to ensure it returns to normal
       },
     });
-  }
-
-  private handleZombieDeath(x: number, y: number, zombie: BaseEnemy): void {
-    // Notify spawn service about zombie death for hex respawn
-    if (this.spawnService) {
-      this.spawnService.onZombieKilled(zombie);
-    }
-
-    // Spawn loot using GameLogic
-    GameLogic.spawnLootFromZombie(x, y, this, this.pickableItems);
   }
 
   private handlePlayerDeath(): void {
@@ -492,7 +485,13 @@ export class GameScene extends Phaser.Scene {
   private setupEventListeners(): void {
     // Set up zombie death event listener
     this.events.on("zombieDied", (x: number, y: number, zombie: BaseEnemy) => {
-      this.handleZombieDeath(x, y, zombie);
+      // Notify spawn service about zombie death for hex respawn
+      if (this.spawnService) {
+        this.spawnService.onZombieKilled(zombie);
+      }
+
+      // Spawn loot using GameLogic
+      GameLogic.spawnLootFromZombie(x, y, this, this.pickableItems);
     });
 
     // Set up coin pickup event listener
@@ -506,13 +505,6 @@ export class GameScene extends Phaser.Scene {
     this.events.on("playerDied", () => {
       this.handlePlayerDeath();
     });
-  }
-
-  private setupHexEventListeners(): void {
-    // Initialize spawn service first
-    if (this.zombieGroup) {
-      this.spawnService = new SpawnService(this.zombieGroup, this);
-    }
 
     // Set up event listeners for hex discovery
     this.events.on("hexDiscovered", (hex: HexagonCoord) => {
