@@ -7,8 +7,7 @@ import { WalkingZombie } from "../entities/WalkingZombie";
 import { Projectile } from "../entities/Projectile";
 
 import { GridSystem } from "../systems/GridSystem";
-import { CameraSystem } from "../systems/CameraSystem";
-import { DebugSystem } from "../systems/DebugSystem";
+import { FollowCamera } from "../systems/FollowCamera";
 import { UIScene } from "../scenes/UIScene";
 import { GeolocationService } from "../utils/GeolocationService";
 import { CompassService } from "../utils/CompassService";
@@ -29,12 +28,10 @@ export class GameScene extends Phaser.Scene {
   pickableItems: PickableItem[] = [];
   systems: {
     grid: GridSystem | undefined;
-    camera: CameraSystem | undefined;
-    debug: DebugSystem | undefined;
+    camera: FollowCamera | undefined;
   } = {
     grid: undefined,
     camera: undefined,
-    debug: undefined,
   };
   uiScene: UIScene | undefined;
   private geolocationService: GeolocationService | undefined;
@@ -86,45 +83,43 @@ export class GameScene extends Phaser.Scene {
     if (this.uiScene) {
       // Set up weapon switch callback
       this.uiScene.setWeaponSwitchCallback(() => {
-        if (this.character) {
-          this.character.getWeaponInventory().cycleToNextWeapon();
-          // Update UI immediately after switching
-          const currentWeapon = this.character
-            .getWeaponInventory()
-            .getCurrentWeapon();
-          const weaponInventory = this.character.getWeaponInventory();
-          this.uiScene?.updateWeaponInfo(
-            currentWeapon.getWeaponName(),
-            weaponInventory.getAmmo()
-          );
-        }
+        if (!this.character) return;
+
+        this.character.getWeaponInventory().cycleToNextWeapon();
+        // Update UI immediately after switching
+        const currentWeapon = this.character
+          .getWeaponInventory()
+          .getCurrentWeapon();
+        const weaponInventory = this.character.getWeaponInventory();
+        this.uiScene?.updateWeaponInfo(
+          currentWeapon.getWeaponName(),
+          weaponInventory.getAmmo()
+        );
       });
     }
   }
 
   override update(time: number, delta: number): void {
+    if (
+      !this.character ||
+      !this.positionMarker ||
+      !this.zombieGroup ||
+      !this.zombieVehicleGroup ||
+      !this.spawnService
+    )
+      return;
     // Update character behaviors
-    if (this.character && this.positionMarker) {
-      const markerPos = this.positionMarker.getPosition();
-      this.character.setMovementTarget(markerPos.x, markerPos.y);
-      this.character.update(time, delta);
-    }
+    const markerPos = this.positionMarker.getPosition();
+    this.character.setMovementTarget(markerPos.x, markerPos.y);
+    this.character.update(time, delta);
 
     // Update zombie behaviors
-    if (this.zombieGroup) {
-      this.zombieGroup.update(time, delta);
-      if (this.character) {
-        this.zombieGroup.setAllTargets(this.character);
-      }
-    }
+    this.zombieGroup.update(time, delta);
+    this.zombieGroup.setAllTargets(this.character);
 
     // Update zombie vehicle behaviors
-    if (this.zombieVehicleGroup) {
-      this.zombieVehicleGroup.update(time, delta);
-      if (this.character) {
-        this.zombieVehicleGroup.setAllTargets(this.character);
-      }
-    }
+    this.zombieVehicleGroup.update(time, delta);
+    this.zombieVehicleGroup.setAllTargets(this.character);
 
     // Update projectiles using GameLogic
     this.projectiles = GameLogic.updateProjectiles(
@@ -133,35 +128,27 @@ export class GameScene extends Phaser.Scene {
     );
 
     // Check projectile collisions using GameLogic
-    if (this.zombieGroup) {
-      GameLogic.checkProjectileCollisions(
-        this.projectiles,
-        this.zombieGroup.getZombies(),
-        gameConfig.projectilePushbackForce
-      );
-    }
+    GameLogic.checkProjectileCollisions(
+      this.projectiles,
+      this.zombieGroup.getZombies(),
+      gameConfig.projectilePushbackForce
+    );
 
     // Check tractor collision using GameLogic
-    if (this.zombieVehicleGroup && this.character && this.zombieGroup) {
-      this.zombieVehicleGroup.checkCollisions([
-        this.character,
-        ...(this.zombieGroup.getChildren() as WalkingZombie[]),
-      ]);
-    }
+    this.zombieVehicleGroup.checkCollisions([
+      this.character,
+      ...(this.zombieGroup.getChildren() as WalkingZombie[]),
+    ]);
 
     // Check pickups using GameLogic
-    if (this.character) {
-      this.pickableItems = GameLogic.checkAllPickups(
-        this.pickableItems,
-        this.character,
-        this.spawnService
-      );
-    }
+    this.pickableItems = GameLogic.checkAllPickups(
+      this.pickableItems,
+      this.character,
+      this.spawnService
+    );
 
     // Update spawn service for respawns
-    if (this.spawnService && this.character) {
-      this.spawnService.update(this.character.x, this.character.y);
-    }
+    this.spawnService.update(this.character.x, this.character.y);
 
     // Update all systems
     Object.values(this.systems).forEach((system) => {
@@ -229,9 +216,6 @@ export class GameScene extends Phaser.Scene {
 
   private updateUI(): void {
     if (!this.uiScene) return;
-
-    const isDebugEnabled = this.systems.debug?.isDebugEnabled() || false;
-    this.uiScene.updateDebugButtonText(isDebugEnabled);
 
     // Update weapon info
     if (this.character) {
@@ -308,16 +292,7 @@ export class GameScene extends Phaser.Scene {
 
     // Initialize camera system
     if (this.character) {
-      this.systems.camera = new CameraSystem(this, this.character);
-    }
-
-    // Initialize debug system
-    if (this.character && this.positionMarker) {
-      this.systems.debug = new DebugSystem(
-        this,
-        this.character,
-        this.systems.camera
-      );
+      this.systems.camera = new FollowCamera(this, this.character);
     }
   }
 
@@ -431,14 +406,6 @@ export class GameScene extends Phaser.Scene {
 
     // Clean up camera system - no destroy method needed
     this.systems.camera = undefined;
-
-    // Clean up debug system
-    if (this.systems.debug) {
-      if (typeof this.systems.debug.destroy === "function") {
-        this.systems.debug.destroy();
-      }
-      this.systems.debug = undefined;
-    }
 
     // Clean up spawn service
     this.spawnService = undefined;
