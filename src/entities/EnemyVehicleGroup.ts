@@ -37,9 +37,7 @@ export class EnemyVehicleGroup extends Phaser.GameObjects.Group {
 
   update(time: number, delta: number): void {
     this.getChildren().forEach((child) => {
-      if (child instanceof BaseVehicle) {
-        child.update(time, delta);
-      }
+      child.update(time, delta);
     });
   }
 

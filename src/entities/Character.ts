@@ -10,8 +10,6 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
   // Movement properties
   private speed: number = gameConfig.movementSpeed;
   private finalTarget: Point | undefined;
-  private isMovingTowardsTarget: boolean = false;
-  private flockingEnabled: boolean = true;
   private avoidWeight: number = 2;
   private targetWeight: number = 1;
 
@@ -70,12 +68,10 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
   // Movement methods
   setMovementTarget(x: number, y: number): void {
     this.finalTarget = { x, y };
-    this.isMovingTowardsTarget = true;
   }
 
   clearMovementTarget(): void {
     this.finalTarget = undefined;
-    this.isMovingTowardsTarget = false;
   }
 
   applyPushback(impulse: Phaser.Math.Vector2): void {
@@ -137,7 +133,6 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
     this.isDead = true;
 
     // Disable movement and interactions
-    this.isMovingTowardsTarget = false;
     this.finalTarget = undefined;
 
     // Create death animation
@@ -258,53 +253,16 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
     }
 
     // Apply normal movement if moving towards target
-    if (this.isMovingTowardsTarget && this.finalTarget) {
-      if (this.flockingEnabled) {
-        // Use flocking to calculate adjusted target
-        const flockingDirection = this.calculateFlockingDirection();
+    if (this.finalTarget) {
+      // Use flocking to calculate adjusted target
+      const flockingDirection = this.calculateFlockingDirection();
 
-        if (flockingDirection.length() > 0) {
-          const moveDistance = this.speed * deltaTime;
-          const movementOffset = flockingDirection.clone().scale(moveDistance);
-          newPosition.add(movementOffset);
+      if (flockingDirection.length() > 0) {
+        const moveDistance = this.speed * deltaTime;
+        const movementOffset = flockingDirection.clone().scale(moveDistance);
+        newPosition.add(movementOffset);
 
-          // Update current target to the adjusted position for next frame
-        }
-      } else {
-        // Original movement logic without flocking
-        const distance = Phaser.Math.Distance.Between(
-          this.x,
-          this.y,
-          this.finalTarget.x,
-          this.finalTarget.y
-        );
-
-        if (distance <= 0.1) {
-          this.clearMovementTarget();
-        } else {
-          const moveDistance = this.speed * deltaTime;
-
-          if (distance > 0) {
-            const direction = new Phaser.Math.Vector2(
-              this.finalTarget.x - this.x,
-              this.finalTarget.y - this.y
-            ).normalize();
-
-            const movementOffset = direction.clone().scale(moveDistance);
-            newPosition.add(movementOffset);
-
-            const newDistance = Phaser.Math.Distance.Between(
-              newPosition.x,
-              newPosition.y,
-              this.finalTarget.x,
-              this.finalTarget.y
-            );
-
-            if (newDistance > distance) {
-              newPosition.set(this.finalTarget.x, this.finalTarget.y);
-            }
-          }
-        }
+        // Update current target to the adjusted position for next frame
       }
     }
 
