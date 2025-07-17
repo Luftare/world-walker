@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import { WalkingZombie } from "./WalkingZombie";
 import { GameScene } from "../scenes/GameScene";
+import { BaseEnemy } from "./BaseEnemy";
 
 export class ZombieGroup extends Phaser.GameObjects.Group {
   override scene: GameScene;
@@ -9,12 +10,12 @@ export class ZombieGroup extends Phaser.GameObjects.Group {
     this.scene = scene;
   }
 
-  addZombie(x: number, y: number): WalkingZombie {
+  addZombie(x: number, y: number): BaseEnemy {
     const zombie = new WalkingZombie(this.scene, x, y);
     this.add(zombie);
 
     // Set up melee attack event listener for the new zombie
-    zombie.on("meleeAttack", (attackingZombie: WalkingZombie) => {
+    zombie.on("meleeAttack", (attackingZombie: BaseEnemy) => {
       // Emit the event to the scene
       this.scene.events.emit("zombieMeleeAttack", attackingZombie);
     });
@@ -22,14 +23,14 @@ export class ZombieGroup extends Phaser.GameObjects.Group {
     return zombie;
   }
 
-  removeZombie(zombie: WalkingZombie): void {
+  removeZombie(zombie: BaseEnemy): void {
     zombie.destroy();
     this.remove(zombie);
   }
 
   setAllTargets(target: Phaser.GameObjects.Sprite): void {
     this.getChildren().forEach((child) => {
-      if (child instanceof WalkingZombie) {
+      if (child instanceof BaseEnemy) {
         child.setTarget(target);
       }
     });
@@ -37,7 +38,7 @@ export class ZombieGroup extends Phaser.GameObjects.Group {
 
   setAllSpeeds(speed: number): void {
     this.getChildren().forEach((child) => {
-      if (child instanceof WalkingZombie) {
+      if (child instanceof BaseEnemy) {
         child.setSpeed(speed);
       }
     });
@@ -45,21 +46,21 @@ export class ZombieGroup extends Phaser.GameObjects.Group {
 
   setAllFollowDistances(distance: number): void {
     this.getChildren().forEach((child) => {
-      if (child instanceof WalkingZombie) {
+      if (child instanceof BaseEnemy) {
         child.setFollowDistance(distance);
       }
     });
   }
 
-  getZombies(): WalkingZombie[] {
+  getZombies(): BaseEnemy[] {
     return this.getChildren().filter(
-      (child) => child instanceof WalkingZombie
-    ) as WalkingZombie[];
+      (child) => child instanceof BaseEnemy
+    ) as BaseEnemy[];
   }
 
   update(time: number, delta: number): void {
     this.getChildren().forEach((child) => {
-      if (child instanceof WalkingZombie) {
+      if (child instanceof BaseEnemy) {
         child.update(time, delta);
       }
     });

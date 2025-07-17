@@ -1,7 +1,7 @@
 import Phaser from "phaser";
 import { BaseVehicle } from "./BaseVehicle";
 import { Character } from "./Character";
-import { WalkingZombie } from "./WalkingZombie";
+import { BaseEnemy } from "./BaseEnemy";
 import { GameLogic } from "../utils/GameLogic";
 
 export class ZombieVehicleGroup extends Phaser.GameObjects.Group {
@@ -43,7 +43,7 @@ export class ZombieVehicleGroup extends Phaser.GameObjects.Group {
     });
   }
 
-  checkCollisions(targets: (Character | WalkingZombie)[]): void {
+  checkCollisions(targets: (Character | BaseEnemy)[]): void {
     const tractors = this.getChildren() as BaseVehicle[];
     tractors.forEach((tractor) => {
       targets.forEach((target) => {

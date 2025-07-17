@@ -1,5 +1,4 @@
 import { HexagonCoord, HexagonUtils } from "./HexagonUtils";
-import { WalkingZombie } from "../entities/WalkingZombie";
 import { PickableItem } from "../entities/PickableItem";
 import { AmmoPack } from "../entities/AmmoPack";
 import { HealthPack } from "../entities/HealthPack";
@@ -13,7 +12,7 @@ export type HexContentType = "zombie" | "ammo" | "health" | "coin" | "empty";
 
 interface HexContentState {
   type: HexContentType;
-  entity?: WalkingZombie | PickableItem;
+  entity?: BaseEnemy | PickableItem;
   respawnTime?: number;
   isActive: boolean;
 }
@@ -60,7 +59,7 @@ export class HexContentManager {
     hex: HexagonCoord,
     gameScene: GameScene,
     zombieGroup: ZombieGroup
-  ): WalkingZombie | PickableItem | null {
+  ): BaseEnemy | PickableItem | null {
     const hexKey = this.getHexKey(hex);
     const state = this.hexStates.get(hexKey);
 
@@ -70,7 +69,7 @@ export class HexContentManager {
     const spawnPos = this.getRandomSpawnPosition(hexWorldPos);
 
     const roll = Math.random();
-    let entity: WalkingZombie | PickableItem;
+    let entity: BaseEnemy | PickableItem;
     let contentType: HexContentType;
 
     if (roll < this.ZOMBIE_CHANCE) {

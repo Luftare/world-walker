@@ -3,7 +3,6 @@ import { Character } from "../entities/Character";
 import { BaseEnemy } from "../entities/BaseEnemy";
 import { PositionMarker } from "../entities/PositionMarker";
 import { ZombieGroup } from "../entities/ZombieGroup";
-import { WalkingZombie } from "../entities/WalkingZombie";
 import { Projectile } from "../entities/Projectile";
 
 import { GridSystem } from "../systems/GridSystem";
@@ -134,7 +133,7 @@ export class GameScene extends Phaser.Scene {
     // Check tractor collision using GameLogic
     this.zombieVehicleGroup.checkCollisions([
       this.character,
-      ...(this.zombieGroup.getChildren() as WalkingZombie[]),
+      ...(this.zombieGroup.getChildren() as BaseEnemy[]),
     ]);
 
     // Check pickups using GameLogic
