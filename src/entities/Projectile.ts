@@ -4,6 +4,7 @@ export class Projectile extends Phaser.Physics.Arcade.Sprite {
   private timeToLive: number = 1500;
   private startTime: number;
   private damage: number = 1;
+  public radius: number = 8;
 
   constructor(
     scene: Phaser.Scene,
@@ -18,29 +19,26 @@ export class Projectile extends Phaser.Physics.Arcade.Sprite {
 
     this.setOrigin(0.5, 0.5);
     this.setPosition(x, y);
-    this.setDepth(15); // Higher than character and zombies
+    this.setDepth(5);
 
     // Set up physics body
-    const size = 8 * 2;
     if (this.body) {
-      this.body.setSize(size, size); // Small collision box
-      this.body.setCircle(size * 0.5);
+      this.body.setSize(this.radius * 2, this.radius * 2);
+      this.body.setCircle(this.radius);
     }
 
-    // Set display size
-    this.setDisplaySize(size, size);
+    this.setDisplaySize(this.radius * 2, this.radius * 2);
 
-    // Set velocity based on direction
     const normalizedDirection = new Phaser.Math.Vector2(
       direction.x,
       direction.y
     ).normalize();
+
     this.setVelocity(
       normalizedDirection.x * this.speed,
       normalizedDirection.y * this.speed
     );
 
-    // Rotate projectile to face movement direction
     this.setRotation(Math.atan2(normalizedDirection.y, normalizedDirection.x));
 
     this.damage = damage;

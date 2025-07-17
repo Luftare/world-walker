@@ -150,15 +150,9 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
     const entities = GameLogicHelpers.getAvoidableEntities(this.scene, this);
 
     for (const otherEntity of entities) {
-      const distance = GameLogicHelpers.calculateDistance(
-        this.x,
-        this.y,
-        otherEntity.x,
-        otherEntity.y
-      );
       const centerDistance = this.radius + otherEntity.radius;
 
-      if (distance < centerDistance && distance > 0) {
+      if (GameLogicHelpers.isWithinRange(this, otherEntity, centerDistance)) {
         // Calculate vector pointing away from the other entity
         const awayVector = GameLogicHelpers.createAvoidanceVector(
           this.x,
@@ -167,12 +161,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
           otherEntity.y
         );
 
-        // Weight by distance (closer entities have stronger avoidance)
-        const weight = GameLogicHelpers.calculateDistanceWeight(
-          distance,
-          centerDistance
-        );
-        awayVector.scale(weight * this.avoidWeight);
+        awayVector.scale(this.avoidWeight);
 
         avoidanceVector.add(awayVector);
       }

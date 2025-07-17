@@ -7,6 +7,7 @@ import { PickableItem } from "../entities/PickableItem";
 import { BaseEnemy } from "../entities/BaseEnemy";
 import { GameScene } from "../scenes/GameScene";
 import { TweenHelpers } from "./TweenHelpers";
+import { GameLogicHelpers } from "./gameLogicHelpers";
 
 export class GameLogic {
   static updateProjectiles(
@@ -29,14 +30,10 @@ export class GameLogic {
       if (!projectile.active) continue;
       for (const zombie of zombies) {
         if (!zombie.active || zombie.getIsDead()) continue;
-        const distance = Phaser.Math.Distance.Between(
-          projectile.x,
-          projectile.y,
-          zombie.x,
-          zombie.y
-        );
-        const collisionRadius = 20;
-        if (distance < collisionRadius) {
+        const collisionRadius = projectile.radius + zombie.radius;
+        if (
+          GameLogicHelpers.isWithinRange(projectile, zombie, collisionRadius)
+        ) {
           const projectileDirection = projectile.getDirection();
           zombie.takeDamage(projectile.getDamage(), projectileDirection);
           zombie.applyPushback(
@@ -111,7 +108,7 @@ export class GameLogic {
     if (!scene.character || scene.character.getIsDead()) return;
 
     // Check if zombie is actually in attack range
-    if (!zombie.isInAttackRange()) return;
+    if (!zombie.targetIsInAttackRange()) return;
 
     // Deal damage to player
     scene.character.takeDamage(1);

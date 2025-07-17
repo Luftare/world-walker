@@ -324,19 +324,6 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
 
   protected abstract performAttack(): void;
 
-  isInAttackRange(): boolean {
-    if (!this.targetEntity || !this.isAggroed) return false;
-
-    const distance = Phaser.Math.Distance.Between(
-      this.x,
-      this.y,
-      this.targetEntity.x,
-      this.targetEntity.y
-    );
-
-    return distance <= this.attackRange;
-  }
-
   die(): void {
     if (this.isDead) return;
 
