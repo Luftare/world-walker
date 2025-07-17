@@ -7,32 +7,24 @@ import { Character } from "./Character";
 import { CircularEntity } from "./CircularEntity";
 
 export abstract class BaseEnemy extends CircularEntity {
-  // Core properties
   protected health: number;
   protected maxHealth: number;
   protected isDead: boolean = false;
 
-  // Movement properties
   protected target: Point | undefined;
-  protected directionDamp: number = 1;
-  protected forwardWeight: number = 1;
 
-  // Follow properties
   protected targetEntity: CircularEntity | undefined;
   private toMoveTarget: Phaser.Math.Vector2 = new Phaser.Math.Vector2(0, 0);
   private forwardVector: Phaser.Math.Vector2 = new Phaser.Math.Vector2(0, 0);
   protected aggroRange: number = gameConfig.aggroRange;
   protected isAggroed: boolean = false;
 
-  // Rotation properties
   protected targetRotation: number;
   protected angularVelocity: number = gameConfig.enemyRotationSpeed;
 
-  // Attack properties
   protected lastAttackTime: number = 0;
   protected attackCooldown: number = 1500;
 
-  // Visual properties
   private aggroRing!: Phaser.GameObjects.Graphics;
 
   constructor(
@@ -122,7 +114,7 @@ export abstract class BaseEnemy extends CircularEntity {
   }
 
   protected calculateDirectionDampFactor(): number {
-    if (this.directionDamp === 0 || !this.target) {
+    if (!this.target) {
       return 1;
     }
     this.forwardVector.set(Math.cos(this.rotation), Math.sin(this.rotation));
@@ -132,7 +124,7 @@ export abstract class BaseEnemy extends CircularEntity {
       .normalize();
 
     const dotProduct = this.forwardVector.dot(this.toMoveTarget);
-    const dampFactor = 1 - (this.directionDamp * (1 - dotProduct)) / 2;
+    const dampFactor = 1 - (1 - dotProduct) / 2;
     const weightedDampFactor = dampFactor ** gameConfig.enemyDirectionDamp;
 
     return Math.max(0, weightedDampFactor);
