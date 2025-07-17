@@ -128,13 +128,9 @@ export class GameLogicHelpers {
    * @param range - Maximum range to check
    * @returns True if entities are within range
    */
-  static isWithinRange(entity1: Point, entity2: Point, range: number): boolean {
-    const distance = GameLogicHelpers.calculateDistance(
-      entity1.x,
-      entity1.y,
-      entity2.x,
-      entity2.y
-    );
-    return distance <= range;
+  static isWithinRange(entity1: any, entity2: any, range: number): boolean {
+    const distanceSq =
+      (entity1.x - entity2.x) ** 2 + (entity1.y - entity2.y) ** 2;
+    return distanceSq <= range ** 2;
   }
 }

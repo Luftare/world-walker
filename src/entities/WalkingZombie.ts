@@ -9,10 +9,6 @@ export class WalkingZombie extends BaseEnemy {
   }
 
   protected performAttack(): void {
-    if (this.isAttacking) return;
-    if (!this.isFacingTarget()) return;
-
-    this.isAttacking = true;
     this.lastAttackTime = this.scene.time.now;
 
     const originalX = this.x;
@@ -50,9 +46,6 @@ export class WalkingZombie extends BaseEnemy {
           scaleY: originalScaleY,
           duration: 200,
           ease: "Power2",
-          onComplete: () => {
-            this.isAttacking = false;
-          },
         });
       },
     });

@@ -14,7 +14,6 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
 
   // Movement properties
   protected target: Point | undefined;
-  protected isMoving: boolean = false;
   protected directionDamp: number = 1;
   protected avoidWeight: number = 2;
   protected forwardWeight: number = 1;
@@ -40,10 +39,8 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
   protected lastAttackTime: number = 0;
   protected attackCooldown: number = 1500;
   protected attackRange: number = gameConfig.playerRadius * 2;
-  protected isAttacking: boolean = false;
 
   // Animation properties
-  private currentAnimation: string = "idle";
   override scene: GameScene;
   // Visual properties
   private aggroRing!: Phaser.GameObjects.Graphics;
@@ -102,10 +99,7 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
       targetAnimation = "zombie-walk";
     }
 
-    if (this.currentAnimation !== targetAnimation) {
-      this.play(targetAnimation);
-      this.currentAnimation = targetAnimation;
-    }
+    this.play(targetAnimation, true);
   }
 
   private createAggroRing(): void {
@@ -162,16 +156,15 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
     const entities = GameLogicHelpers.getAvoidableEntities(this.scene, this);
 
     for (const otherEntity of entities) {
-      const distance = GameLogicHelpers.calculateDistance(
-        this.x,
-        this.y,
-        otherEntity.x,
-        otherEntity.y
-      );
-
       const centerDistance = this.radius + otherEntity.radius;
 
-      if (distance < centerDistance && distance > 0) {
+      const isWithinRange = GameLogicHelpers.isWithinRange(
+        this,
+        otherEntity,
+        centerDistance
+      );
+
+      if (isWithinRange) {
         const awayVector = GameLogicHelpers.createAvoidanceVector(
           this.x,
           this.y,
@@ -179,11 +172,7 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
           otherEntity.y
         );
 
-        const weight = GameLogicHelpers.calculateDistanceWeight(
-          distance,
-          centerDistance
-        );
-        awayVector.scale(weight * this.avoidWeight);
+        awayVector.scale(this.avoidWeight);
 
         avoidanceVector.add(awayVector);
       }
@@ -245,24 +234,20 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
     }
 
     // Apply normal movement if moving
-    if (this.isMoving) {
-      const movementDirection = this.calculateMovementDirection();
 
-      if (movementDirection.length() > 0) {
-        const dampFactor = this.calculateDirectionDampFactor();
-        const moveDistance = this.speed * deltaTime * dampFactor;
-        const movementOffset = movementDirection.clone().scale(moveDistance);
-        newPosition.add(movementOffset);
-      }
+    const movementDirection = this.calculateMovementDirection();
+
+    if (movementDirection.length() > 0) {
+      const dampFactor = this.calculateDirectionDampFactor();
+      const moveDistance = this.speed * deltaTime * dampFactor;
+      const movementOffset = movementDirection.clone().scale(moveDistance);
+      newPosition.add(movementOffset);
     }
 
     // Update position
     this.setPosition(newPosition.x, newPosition.y);
 
-    // Update target if moving
-    if (this.isMoving) {
-      this.target = { x: newPosition.x, y: newPosition.y };
-    }
+    this.target = { x: newPosition.x, y: newPosition.y };
 
     // Decay pushback velocity
     this.pushbackVelocity.scale(this.pushbackDecayRate);
@@ -271,15 +256,11 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
   protected updateFollow(): void {
     if (!this.targetEntity) return;
 
-    const distance = Phaser.Math.Distance.Between(
-      this.x,
-      this.y,
-      this.targetEntity.x,
-      this.targetEntity.y
-    );
-
     // Check if player is within aggro range
-    if (!this.isAggroed && distance <= this.aggroRange) {
+    if (
+      !this.isAggroed &&
+      GameLogicHelpers.isWithinRange(this, this.targetEntity, this.aggroRange)
+    ) {
       this.isAggroed = true;
       const sampleName = Math.random() < 0.5 ? "zombie-growl" : "zombie-moan";
       this.scene.sound.play(sampleName, {
@@ -289,16 +270,7 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
 
     // Only follow if aggroed
     if (this.isAggroed) {
-      if (distance > this.followDistance) {
-        this.target = { x: this.targetEntity.x, y: this.targetEntity.y };
-        this.isMoving = true;
-      } else {
-        this.target = undefined;
-        this.isMoving = false;
-      }
-    } else {
-      this.target = undefined;
-      this.isMoving = false;
+      this.target = { x: this.targetEntity.x, y: this.targetEntity.y };
     }
   }
 
@@ -324,23 +296,30 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
   }
 
   protected updateAttack(): void {
-    if (!this.targetEntity || this.isDead || !this.isAggroed) return;
-
-    const distance = Phaser.Math.Distance.Between(
-      this.x,
-      this.y,
-      this.targetEntity.x,
-      this.targetEntity.y
-    );
-
-    const currentTime = this.scene.time.now;
+    if (this.isDead || !this.isAggroed) return;
 
     if (
-      distance <= this.attackRange &&
-      currentTime - this.lastAttackTime >= this.attackCooldown
+      this.attackIsReady() &&
+      this.targetIsInAttackRange() &&
+      this.isFacingTarget()
     ) {
       this.performAttack();
     }
+  }
+
+  attackIsReady(): boolean {
+    const currentTime = this.scene.time.now;
+    return currentTime - this.lastAttackTime >= this.attackCooldown;
+  }
+
+  targetIsInAttackRange(): boolean {
+    if (!this.targetEntity) return false;
+
+    return GameLogicHelpers.isWithinRange(
+      this,
+      this.targetEntity,
+      this.attackRange
+    );
   }
 
   protected abstract performAttack(): void;
