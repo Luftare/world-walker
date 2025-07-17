@@ -17,9 +17,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
   private pushbackVelocity: Phaser.Math.Vector2 = new Phaser.Math.Vector2(0, 0);
   private pushbackDecayRate: number = 0.85;
 
-  // Follow properties
   private followTarget: Phaser.GameObjects.Sprite | undefined;
-  private followDistance: number = 5;
 
   // Weapon properties
   private weaponInventory: WeaponInventory;
@@ -56,11 +54,6 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
     this.updateMovementBehavior(delta);
   }
 
-  override setPosition(x: number, y: number): this {
-    super.setPosition(x, y);
-    return this;
-  }
-
   getPosition(): { x: number; y: number } {
     return { x: this.x, y: this.y };
   }
@@ -70,29 +63,12 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
     this.finalTarget = { x, y };
   }
 
-  clearMovementTarget(): void {
-    this.finalTarget = undefined;
-  }
-
   applyPushback(impulse: Phaser.Math.Vector2): void {
     this.pushbackVelocity.add(impulse);
   }
 
   setHealth(health: number): void {
     this.health = Math.max(0, Math.min(health, this.maxHealth));
-  }
-
-  // Follow methods
-  setFollowTarget(targetEntity: Phaser.GameObjects.Sprite): void {
-    this.followTarget = targetEntity;
-  }
-
-  getFollowTarget(): Phaser.GameObjects.Sprite | undefined {
-    return this.followTarget;
-  }
-
-  setFollowDistance(distance: number): void {
-    this.followDistance = distance;
   }
 
   // Weapon methods
@@ -164,18 +140,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
   private updateFollowBehavior(): void {
     if (!this.followTarget) return;
 
-    const distance = Phaser.Math.Distance.Between(
-      this.x,
-      this.y,
-      this.followTarget.x,
-      this.followTarget.y
-    );
-
-    if (distance > this.followDistance) {
-      this.setMovementTarget(this.followTarget.x, this.followTarget.y);
-    } else {
-      this.clearMovementTarget();
-    }
+    this.setMovementTarget(this.followTarget.x, this.followTarget.y);
   }
 
   private calculateAvoidanceVector(): Phaser.Math.Vector2 {
