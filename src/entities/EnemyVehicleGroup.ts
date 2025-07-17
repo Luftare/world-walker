@@ -1,7 +1,5 @@
 import Phaser from "phaser";
 import { BaseVehicle } from "./BaseVehicle";
-import { Character } from "./Character";
-import { BaseEnemy } from "./BaseEnemy";
 import { GameLogic } from "../utils/GameLogic";
 import { CircularEntity } from "./CircularEntity";
 
