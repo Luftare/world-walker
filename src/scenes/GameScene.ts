@@ -15,7 +15,7 @@ import { HexagonCoord } from "../utils/HexagonUtils";
 import { PickableItem } from "../entities/PickableItem";
 import { DebugLogger } from "../utils/DebugLogger";
 import { GameLogic } from "../utils/GameLogic";
-import { EnemyVehicleGroup } from "../entities/ZombieVehicleGroup";
+import { EnemyVehicleGroup } from "../entities/EnemyVehicleGroup";
 
 export class GameScene extends Phaser.Scene {
   character: Character | undefined;
