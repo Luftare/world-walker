@@ -14,12 +14,10 @@ export abstract class PickableItem extends Phaser.GameObjects.Container {
     super(scene, x, y);
     scene.add.existing(this);
 
-    this.setDepth(3);
-
     // Create the sprite as a child of the container
     this.sprite = scene.physics.add.sprite(0, 0, texture);
     this.sprite.setOrigin(0.5, 0.5);
-    this.sprite.setDepth(3);
+    this.sprite.setDepth(5);
     this.add(this.sprite);
 
     // Set up physics body for the container
@@ -39,7 +37,7 @@ export abstract class PickableItem extends Phaser.GameObjects.Container {
 
   private createPickupRing(): void {
     this.pickupRing = this.scene.add.graphics();
-    this.pickupRing.setDepth(2);
+    this.pickupRing.setDepth(3);
     this.add(this.pickupRing);
 
     const itemRadius = gameConfig.itemRadius;

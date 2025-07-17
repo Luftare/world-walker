@@ -16,7 +16,7 @@ export class BaseVehicle extends Phaser.Physics.Arcade.Sprite {
 
     this.setOrigin(0.5, 0.5);
     this.setPosition(x, y);
-    this.setDepth(10);
+    this.setDepth(20);
     this.setDisplaySize(this.getWidth(), this.getHeight());
   }
 

@@ -5,6 +5,7 @@ export class Projectile extends Phaser.Physics.Arcade.Sprite {
   private startTime: number;
   private damage: number = 1;
   public radius: number = 8;
+  public direction: Phaser.Math.Vector2;
 
   constructor(
     scene: Phaser.Scene,
@@ -16,10 +17,11 @@ export class Projectile extends Phaser.Physics.Arcade.Sprite {
     super(scene, x, y, "projectile");
     scene.add.existing(this);
     scene.physics.add.existing(this);
+    this.direction = new Phaser.Math.Vector2(direction.x, direction.y);
 
     this.setOrigin(0.5, 0.5);
     this.setPosition(x, y);
-    this.setDepth(5);
+    this.setDepth(6);
 
     // Set up physics body
     if (this.body) {
@@ -71,10 +73,9 @@ export class Projectile extends Phaser.Physics.Arcade.Sprite {
 
   getDirection(): Phaser.Math.Vector2 {
     if (this.body) {
-      return new Phaser.Math.Vector2(
-        this.body.velocity.x,
-        this.body.velocity.y
-      ).normalize();
+      return this.direction
+        .set(this.body.velocity.x, this.body.velocity.y)
+        .normalize();
     }
     return new Phaser.Math.Vector2(0, 0);
   }

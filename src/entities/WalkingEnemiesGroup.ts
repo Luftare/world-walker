@@ -37,22 +37,6 @@ export class WalkingEnemiesGroup extends Phaser.GameObjects.Group {
     });
   }
 
-  setAllSpeeds(speed: number): void {
-    this.getChildren().forEach((child) => {
-      if (child instanceof BaseEnemy) {
-        child.setSpeed(speed);
-      }
-    });
-  }
-
-  setAllFollowDistances(distance: number): void {
-    this.getChildren().forEach((child) => {
-      if (child instanceof BaseEnemy) {
-        child.setFollowDistance(distance);
-      }
-    });
-  }
-
   getEntities(): BaseEnemy[] {
     return this.getChildren().filter(
       (child) => child instanceof BaseEnemy

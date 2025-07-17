@@ -16,6 +16,7 @@ import { PickableItem } from "../entities/PickableItem";
 import { DebugLogger } from "../utils/DebugLogger";
 import { GameLogic } from "../utils/GameLogic";
 import { EnemyVehicleGroup } from "../entities/EnemyVehicleGroup";
+import { CircularEntity } from "../entities/CircularEntity";
 
 export class GameScene extends Phaser.Scene {
   character: Character | undefined;
@@ -106,7 +107,7 @@ export class GameScene extends Phaser.Scene {
       return;
     // Update character behaviors
     const markerPos = this.positionMarker.getPosition();
-    this.character.setMovementTarget(markerPos.x, markerPos.y);
+    this.character.moveTarget.set(markerPos.x, markerPos.y);
     this.character.update(time, delta);
 
     // Update zombie behaviors
@@ -133,7 +134,7 @@ export class GameScene extends Phaser.Scene {
     // Check tractor collision using GameLogic
     this.zombieVehicleGroup.checkCollisions([
       this.character,
-      ...(this.zombieGroup.getChildren() as BaseEnemy[]),
+      ...(this.zombieGroup.getChildren() as CircularEntity[]),
     ]);
 
     // Check pickups using GameLogic
