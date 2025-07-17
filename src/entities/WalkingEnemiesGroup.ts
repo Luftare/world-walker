@@ -3,7 +3,7 @@ import { WalkingZombie } from "./WalkingZombie";
 import { GameScene } from "../scenes/GameScene";
 import { BaseEnemy } from "./BaseEnemy";
 
-export class ZombieGroup extends Phaser.GameObjects.Group {
+export class WalkingEnemiesGroup extends Phaser.GameObjects.Group {
   override scene: GameScene;
   constructor(scene: GameScene) {
     super(scene);
@@ -23,9 +23,9 @@ export class ZombieGroup extends Phaser.GameObjects.Group {
     return zombie;
   }
 
-  removeZombie(zombie: BaseEnemy): void {
-    zombie.destroy();
-    this.remove(zombie);
+  removeEntity(entity: BaseEnemy): void {
+    entity.destroy();
+    this.remove(entity);
   }
 
   setAllTargets(target: Phaser.GameObjects.Sprite): void {
@@ -52,7 +52,7 @@ export class ZombieGroup extends Phaser.GameObjects.Group {
     });
   }
 
-  getZombies(): BaseEnemy[] {
+  getEntities(): BaseEnemy[] {
     return this.getChildren().filter(
       (child) => child instanceof BaseEnemy
     ) as BaseEnemy[];

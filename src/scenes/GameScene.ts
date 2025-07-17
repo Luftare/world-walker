@@ -2,7 +2,7 @@ import { gameConfig } from "../config/gameConfig";
 import { Character } from "../entities/Character";
 import { BaseEnemy } from "../entities/BaseEnemy";
 import { PositionMarker } from "../entities/PositionMarker";
-import { ZombieGroup } from "../entities/ZombieGroup";
+import { WalkingEnemiesGroup } from "../entities/WalkingEnemiesGroup";
 import { Projectile } from "../entities/Projectile";
 
 import { GridSystem } from "../systems/GridSystem";
@@ -20,7 +20,7 @@ import { ZombieVehicleGroup } from "../entities/ZombieVehicleGroup";
 export class GameScene extends Phaser.Scene {
   character: Character | undefined;
   positionMarker: PositionMarker | undefined;
-  zombieGroup: ZombieGroup | undefined;
+  zombieGroup: WalkingEnemiesGroup | undefined;
   zombieVehicleGroup: ZombieVehicleGroup | undefined;
   projectiles: Projectile[] = [];
   spawnService: SpawnService | undefined;
@@ -126,7 +126,7 @@ export class GameScene extends Phaser.Scene {
     // Check projectile collisions using GameLogic
     GameLogic.checkProjectileCollisions(
       this.projectiles,
-      this.zombieGroup.getZombies(),
+      this.zombieGroup.getEntities(),
       gameConfig.projectilePushbackForce
     );
 
@@ -253,7 +253,7 @@ export class GameScene extends Phaser.Scene {
     );
 
     // Create zombie group
-    this.zombieGroup = new ZombieGroup(this);
+    this.zombieGroup = new WalkingEnemiesGroup(this);
 
     // Create zombie vehicle group
     this.zombieVehicleGroup = new ZombieVehicleGroup(this);

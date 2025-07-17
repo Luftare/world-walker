@@ -1,5 +1,5 @@
 import { HexagonCoord } from "./HexagonUtils";
-import { ZombieGroup } from "../entities/ZombieGroup";
+import { WalkingEnemiesGroup } from "../entities/WalkingEnemiesGroup";
 import { HexContentManager } from "./HexContentManager";
 import type { GameScene } from "../scenes/GameScene";
 import { BaseEnemy } from "../entities/BaseEnemy";
@@ -7,10 +7,10 @@ import { PickableItem } from "../entities/PickableItem";
 
 export class SpawnService {
   private hexContentManager: HexContentManager;
-  private zombieGroup: ZombieGroup;
+  private zombieGroup: WalkingEnemiesGroup;
   private gameScene: GameScene;
 
-  constructor(zombieGroup: ZombieGroup, gameScene: GameScene) {
+  constructor(zombieGroup: WalkingEnemiesGroup, gameScene: GameScene) {
     this.zombieGroup = zombieGroup;
     this.gameScene = gameScene;
     this.hexContentManager = new HexContentManager();

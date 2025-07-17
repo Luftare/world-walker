@@ -6,7 +6,7 @@ import { Coin } from "../entities/Coin";
 import { gameConfig } from "../config/gameConfig";
 import type { GameScene } from "../scenes/GameScene";
 import { BaseEnemy } from "../entities/BaseEnemy";
-import { ZombieGroup } from "../entities/ZombieGroup";
+import { WalkingEnemiesGroup } from "../entities/WalkingEnemiesGroup";
 
 export type HexContentType = "zombie" | "ammo" | "health" | "coin" | "empty";
 
@@ -58,7 +58,7 @@ export class HexContentManager {
   spawnContentInHex(
     hex: HexagonCoord,
     gameScene: GameScene,
-    zombieGroup: ZombieGroup
+    zombieGroup: WalkingEnemiesGroup
   ): BaseEnemy | PickableItem | null {
     const hexKey = this.getHexKey(hex);
     const state = this.hexStates.get(hexKey);
@@ -123,7 +123,7 @@ export class HexContentManager {
 
   checkRespawns(
     gameScene: GameScene,
-    zombieGroup: ZombieGroup,
+    zombieGroup: WalkingEnemiesGroup,
     playerX: number,
     playerY: number
   ): void {
