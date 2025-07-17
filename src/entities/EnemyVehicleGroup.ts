@@ -4,7 +4,7 @@ import { Character } from "./Character";
 import { BaseEnemy } from "./BaseEnemy";
 import { GameLogic } from "../utils/GameLogic";
 
-export class ZombieVehicleGroup extends Phaser.GameObjects.Group {
+export class EnemyVehicleGroup extends Phaser.GameObjects.Group {
   constructor(scene: Phaser.Scene) {
     super(scene);
   }
@@ -16,7 +16,7 @@ export class ZombieVehicleGroup extends Phaser.GameObjects.Group {
     return vehicle;
   }
 
-  removeZombieVehicle(vehicle: BaseVehicle): void {
+  removeVehicle(vehicle: BaseVehicle): void {
     vehicle.destroy();
     this.remove(vehicle);
   }
@@ -29,7 +29,7 @@ export class ZombieVehicleGroup extends Phaser.GameObjects.Group {
     });
   }
 
-  getZombies(): BaseVehicle[] {
+  getEntities(): BaseVehicle[] {
     return this.getChildren().filter(
       (child) => child instanceof BaseVehicle
     ) as BaseVehicle[];

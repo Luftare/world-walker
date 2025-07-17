@@ -15,13 +15,13 @@ import { HexagonCoord } from "../utils/HexagonUtils";
 import { PickableItem } from "../entities/PickableItem";
 import { DebugLogger } from "../utils/DebugLogger";
 import { GameLogic } from "../utils/GameLogic";
-import { ZombieVehicleGroup } from "../entities/ZombieVehicleGroup";
+import { EnemyVehicleGroup } from "../entities/ZombieVehicleGroup";
 
 export class GameScene extends Phaser.Scene {
   character: Character | undefined;
   positionMarker: PositionMarker | undefined;
   zombieGroup: WalkingEnemiesGroup | undefined;
-  zombieVehicleGroup: ZombieVehicleGroup | undefined;
+  zombieVehicleGroup: EnemyVehicleGroup | undefined;
   projectiles: Projectile[] = [];
   spawnService: SpawnService | undefined;
   pickableItems: PickableItem[] = [];
@@ -256,7 +256,7 @@ export class GameScene extends Phaser.Scene {
     this.zombieGroup = new WalkingEnemiesGroup(this);
 
     // Create zombie vehicle group
-    this.zombieVehicleGroup = new ZombieVehicleGroup(this);
+    this.zombieVehicleGroup = new EnemyVehicleGroup(this);
 
     // Add a zombie vehicle to the group
     this.zombieVehicleGroup.addZombieVehicle(
