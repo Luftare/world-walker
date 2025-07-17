@@ -3,6 +3,7 @@ import { GameScene } from "../scenes/GameScene";
 import { Point } from "../types/types";
 import { GameLogicHelpers } from "../utils/gameLogicHelpers";
 import { TweenHelpers } from "../utils/TweenHelpers";
+import { Character } from "./Character";
 
 export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
   // Core properties
@@ -26,7 +27,7 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
   protected pushbackDecayRate: number = 0.85;
 
   // Follow properties
-  protected targetEntity: Phaser.GameObjects.Sprite | undefined;
+  protected targetEntity: Character | undefined;
   protected followDistance: number = gameConfig.playerRadius * 2;
   protected aggroRange: number = gameConfig.aggroRange;
   protected isAggroed: boolean = false;
@@ -38,7 +39,6 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
   // Attack properties
   protected lastAttackTime: number = 0;
   protected attackCooldown: number = 1500;
-  protected attackRange: number = gameConfig.playerRadius * 2;
 
   // Animation properties
   override scene: GameScene;
@@ -134,7 +134,7 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
     return { x: this.x, y: this.y };
   }
 
-  setTarget(target: Phaser.GameObjects.Sprite): void {
+  setTarget(target: Character): void {
     this.targetEntity = target;
   }
 
@@ -315,10 +315,13 @@ export abstract class BaseEnemy extends Phaser.Physics.Arcade.Sprite {
   targetIsInAttackRange(): boolean {
     if (!this.targetEntity) return false;
 
+    const centerDistance = this.radius + this.targetEntity.radius;
+    const attackRange = 5;
+
     return GameLogicHelpers.isWithinRange(
       this,
       this.targetEntity,
-      this.attackRange
+      centerDistance + attackRange
     );
   }
 

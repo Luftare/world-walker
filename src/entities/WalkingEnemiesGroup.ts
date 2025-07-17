@@ -2,6 +2,7 @@ import Phaser from "phaser";
 import { WalkingZombie } from "./WalkingZombie";
 import { GameScene } from "../scenes/GameScene";
 import { BaseEnemy } from "./BaseEnemy";
+import { Character } from "./Character";
 
 export class WalkingEnemiesGroup extends Phaser.GameObjects.Group {
   override scene: GameScene;
@@ -28,7 +29,7 @@ export class WalkingEnemiesGroup extends Phaser.GameObjects.Group {
     this.remove(entity);
   }
 
-  setAllTargets(target: Phaser.GameObjects.Sprite): void {
+  setAllTargets(target: Character): void {
     this.getChildren().forEach((child) => {
       if (child instanceof BaseEnemy) {
         child.setTarget(target);

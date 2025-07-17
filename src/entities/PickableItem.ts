@@ -1,4 +1,5 @@
 import { gameConfig } from "../config/gameConfig";
+import { GameLogicHelpers } from "../utils/gameLogicHelpers";
 import { TweenHelpers } from "../utils/TweenHelpers";
 
 export abstract class PickableItem extends Phaser.GameObjects.Container {
@@ -65,14 +66,8 @@ export abstract class PickableItem extends Phaser.GameObjects.Container {
   checkPickup(player: Phaser.GameObjects.Sprite): boolean {
     if (this.isPickedUp) return false;
 
-    const distance = Phaser.Math.Distance.Between(
-      this.x,
-      this.y,
-      player.x,
-      player.y
-    );
-
-    if (distance <= this.pickupRadius + gameConfig.playerRadius) {
+    const centerDistance = this.pickupRadius + gameConfig.playerRadius;
+    if (GameLogicHelpers.isWithinRange(this, player, centerDistance)) {
       this.pickup(player);
       return true;
     }
