@@ -51,7 +51,8 @@ export class UniversalCompass {
 
     window.addEventListener(
       deviceOrientationEventName,
-      this.onDeviceOrientation.bind(this)
+      this.onDeviceOrientation.bind(this),
+      true
     );
 
     this.listenersAdded = true;
