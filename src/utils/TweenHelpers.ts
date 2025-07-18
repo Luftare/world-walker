@@ -1,3 +1,4 @@
+import { PickableItem } from "../entities/PickableItem";
 import { GameScene } from "../scenes/GameScene";
 
 export class TweenHelpers {
@@ -42,6 +43,24 @@ export class TweenHelpers {
       onComplete: () => {
         entity.clearTint(); // Always clear tint to ensure it returns to normal
       },
+    });
+  }
+
+  static bounceAtRandomDirection(
+    entity: Phaser.Physics.Arcade.Sprite | PickableItem,
+    scene: GameScene
+  ): void {
+    const randomAngle = Math.random() * 2 * Math.PI;
+    const randomDistance = 20 + Math.random() * 20;
+    const targetX = entity.x + Math.cos(randomAngle) * randomDistance;
+    const targetY = entity.y + Math.sin(randomAngle) * randomDistance;
+
+    scene.tweens.add({
+      targets: entity,
+      x: targetX,
+      y: targetY,
+      duration: 500,
+      ease: "Power2",
     });
   }
 }

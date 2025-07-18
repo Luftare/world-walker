@@ -399,9 +399,6 @@ export class GameScene extends Phaser.Scene {
       if (this.spawnService) {
         this.spawnService.onZombieKilled(zombie);
       }
-
-      // Spawn loot using GameLogic
-      GameLogic.spawnLootFromZombie(x, y, this, this.pickableItems);
     });
 
     // Set up coin pickup event listener

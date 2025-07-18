@@ -66,22 +66,21 @@ export class GameLogic {
   static spawnLootFromZombie(
     x: number,
     y: number,
-    scene: Phaser.Scene,
+    scene: GameScene,
     pickableItems: PickableItem[]
   ): void {
-    const { tweens } = scene;
     const randomValue = Math.random();
-    let item: AmmoPack | Coin | HealthPack | undefined;
+    let item: PickableItem | undefined;
 
-    if (randomValue < 0.1) {
+    if (randomValue < 0.02) {
       // Spawn coin
       item = new Coin(scene, x, y);
       pickableItems.push(item);
-    } else if (randomValue < 0.2) {
+    } else if (randomValue < 0.05) {
       // Spawn health pack
       item = new HealthPack(scene, x, y);
       pickableItems.push(item);
-    } else if (randomValue < 0.6) {
+    } else if (randomValue < 0.4) {
       // Spawn ammo pack
       item = new AmmoPack(scene, x, y);
       pickableItems.push(item);
@@ -89,19 +88,7 @@ export class GameLogic {
 
     if (!item) return;
 
-    // Tween item to random direction
-    const randomAngle = Math.random() * 2 * Math.PI;
-    const randomDistance = 20 + Math.random() * 20;
-    const targetX = x + Math.cos(randomAngle) * randomDistance;
-    const targetY = y + Math.sin(randomAngle) * randomDistance;
-
-    tweens.add({
-      targets: item,
-      x: targetX,
-      y: targetY,
-      duration: 500,
-      ease: "Power2",
-    });
+    TweenHelpers.bounceAtRandomDirection(item, scene);
   }
 
   static handleZombieMeleeAttack(zombie: BaseEnemy, scene: GameScene): void {

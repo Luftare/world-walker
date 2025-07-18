@@ -4,6 +4,7 @@ import { HexContentManager } from "./HexContentManager";
 import type { GameScene } from "../scenes/GameScene";
 import { BaseEnemy } from "../entities/BaseEnemy";
 import { PickableItem } from "../entities/PickableItem";
+import { GameLogic } from "./GameLogic";
 
 export class SpawnService {
   private hexContentManager: HexContentManager;
@@ -19,6 +20,7 @@ export class SpawnService {
   handleHexDiscovered(hex: HexagonCoord): void {
     // Register the hex with the content manager
     this.hexContentManager.registerHex(hex);
+    this.hexContentManager.spawnHexInitContent(hex, this.gameScene);
 
     // Get player position for distance checking
     const playerPos = this.getPlayerPosition();
@@ -50,6 +52,19 @@ export class SpawnService {
     if (hex) {
       this.hexContentManager.onContentConsumed(hex);
     }
+
+    [...Array(4)].forEach(() => {
+      this.spawnLoot(zombie);
+    });
+  }
+
+  spawnLoot(zombie: BaseEnemy): void {
+    GameLogic.spawnLootFromZombie(
+      zombie.x,
+      zombie.y,
+      this.gameScene,
+      this.gameScene.pickableItems
+    );
   }
 
   onItemPickedUp(item: PickableItem): void {

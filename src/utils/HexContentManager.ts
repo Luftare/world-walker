@@ -7,6 +7,7 @@ import { gameConfig } from "../config/gameConfig";
 import type { GameScene } from "../scenes/GameScene";
 import { BaseEnemy } from "../entities/BaseEnemy";
 import { WalkingEnemiesGroup } from "../entities/WalkingEnemiesGroup";
+import { Point } from "../types/types";
 
 export type HexContentType = "zombie" | "ammo" | "health" | "coin" | "empty";
 
@@ -19,8 +20,8 @@ interface HexContentState {
 
 export class HexContentManager {
   private hexStates: Map<string, HexContentState> = new Map();
-  private readonly RESPAWN_DELAY = 10000; // 10 seconds
-  private readonly ZOMBIE_CHANCE = 0.8; // 80% chance for zombie
+  private readonly RESPAWN_DELAY = 20000;
+  private readonly ZOMBIE_CHANCE = 0.85; // 80% chance for zombie
 
   constructor() {
     // Initialize hex content manager
@@ -34,6 +35,12 @@ export class HexContentManager {
         isActive: false,
       });
     }
+  }
+
+  spawnHexInitContent(hex: HexagonCoord, gameScene: GameScene): void {
+    const potatoPosition = this.calculateRandomHexPosition(hex);
+    const potato = new AmmoPack(gameScene, potatoPosition.x, potatoPosition.y);
+    gameScene.pickableItems.push(potato);
   }
 
   canSpawnInHex(hex: HexagonCoord, playerX: number, playerY: number): boolean {
@@ -65,8 +72,7 @@ export class HexContentManager {
 
     if (!state || state.isActive) return null;
 
-    const hexWorldPos = this.getHexWorldPosition(hex);
-    const spawnPos = this.getRandomSpawnPosition(hexWorldPos);
+    const spawnPos = this.calculateRandomHexPosition(hex);
 
     const roll = Math.random();
     let entity: BaseEnemy | PickableItem;
@@ -79,12 +85,7 @@ export class HexContentManager {
     } else {
       // Spawn random pickable item
       const itemRoll = Math.random();
-      if (itemRoll < 0.33) {
-        entity = new AmmoPack(gameScene, spawnPos.x, spawnPos.y);
-        contentType = "ammo";
-        // Add to game scene's ammo packs array
-        gameScene.pickableItems.push(entity);
-      } else if (itemRoll < 0.66) {
+      if (itemRoll < 0.5) {
         entity = new HealthPack(gameScene, spawnPos.x, spawnPos.y);
         contentType = "health";
         gameScene.pickableItems.push(entity);
@@ -103,6 +104,11 @@ export class HexContentManager {
     });
 
     return entity;
+  }
+
+  calculateRandomHexPosition(hex: HexagonCoord): Point {
+    const hexWorldPos = this.getHexWorldPosition(hex);
+    return this.getRandomSpawnPosition(hexWorldPos);
   }
 
   onContentConsumed(hex: HexagonCoord): void {
