@@ -61,7 +61,8 @@ export class UniversalCompass {
       this.headingCallback?.(e.webkitCompassHeading);
     } else if (typeof e.alpha !== "undefined") {
       // Android Chrome
-      const heading = 360 - e.alpha;
+      let heading = -(e.alpha + (e.beta * e.gamma) / 90);
+      heading -= Math.floor(heading / 360) * 360; // Wrap into range [0,360].
       this.headingCallback?.(heading);
     }
     // If neither webkitCompassHeading nor alpha is available, ignore the event
