@@ -1,4 +1,4 @@
-import { CircularEntity } from "../entities/CircularEntity";
+import { MovingAgent } from "../entities/MovingAgent";
 import { PickableItem } from "../entities/PickableItem";
 import { GameScene } from "../scenes/GameScene";
 
@@ -10,8 +10,8 @@ export class GameLogicHelpers {
    * @returns True if the entity should be avoided
    */
   static shouldAvoidEntity(
-    entity: CircularEntity,
-    currentEntity: CircularEntity
+    entity: MovingAgent,
+    currentEntity: MovingAgent
   ): boolean {
     return (
       GameLogicHelpers.isAvoidableEntity(entity) &&
@@ -35,7 +35,7 @@ export class GameLogicHelpers {
    * @returns True if the entity is an avoidable entity
    */
   static isAvoidableEntity(entity: any): boolean {
-    return entity instanceof CircularEntity;
+    return entity instanceof MovingAgent;
   }
 
   /**
@@ -46,13 +46,13 @@ export class GameLogicHelpers {
    */
   static getAvoidableEntities(
     scene: GameScene,
-    currentEntity: CircularEntity
-  ): CircularEntity[] {
+    currentEntity: MovingAgent
+  ): MovingAgent[] {
     return scene.children.list
       .filter((child: any) =>
         GameLogicHelpers.shouldAvoidEntity(child, currentEntity)
       )
-      .map((child: any) => child as CircularEntity);
+      .map((child: any) => child as MovingAgent);
   }
 
   /**

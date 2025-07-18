@@ -1,9 +1,9 @@
 import { gameConfig } from "../config/gameConfig";
 import { WeaponInventory } from "./weapons/WeaponInventory";
 import { GameScene } from "../scenes/GameScene";
-import { CircularEntity } from "./CircularEntity";
+import { MovingAgent } from "./MovingAgent";
 
-export class Character extends CircularEntity {
+export class Character extends MovingAgent {
   private weaponInventory: WeaponInventory;
   private health: number = 5;
   private maxHealth: number = 5;

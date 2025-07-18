@@ -1,7 +1,7 @@
 import Phaser from "phaser";
 import { BaseVehicle } from "./BaseVehicle";
 import { GameLogic } from "../utils/GameLogic";
-import { CircularEntity } from "./CircularEntity";
+import { MovingAgent } from "./MovingAgent";
 
 export class EnemyVehicleGroup extends Phaser.GameObjects.Group {
   constructor(scene: Phaser.Scene) {
@@ -40,7 +40,7 @@ export class EnemyVehicleGroup extends Phaser.GameObjects.Group {
     });
   }
 
-  checkCollisions(targets: CircularEntity[]): void {
+  checkCollisions(targets: MovingAgent[]): void {
     const tractors = this.getChildren() as BaseVehicle[];
     tractors.forEach((tractor) => {
       targets.forEach((target) => {

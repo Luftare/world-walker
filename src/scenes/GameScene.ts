@@ -16,7 +16,7 @@ import { PickableItem } from "../entities/PickableItem";
 import { DebugLogger } from "../utils/DebugLogger";
 import { GameLogic } from "../utils/GameLogic";
 import { EnemyVehicleGroup } from "../entities/EnemyVehicleGroup";
-import { CircularEntity } from "../entities/CircularEntity";
+import { MovingAgent } from "../entities/MovingAgent";
 
 export class GameScene extends Phaser.Scene {
   character: Character | undefined;
@@ -134,7 +134,7 @@ export class GameScene extends Phaser.Scene {
     // Check tractor collision using GameLogic
     this.zombieVehicleGroup.checkCollisions([
       this.character,
-      ...(this.zombieGroup.getChildren() as CircularEntity[]),
+      ...(this.zombieGroup.getChildren() as MovingAgent[]),
     ]);
 
     // Check pickups using GameLogic

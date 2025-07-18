@@ -4,16 +4,16 @@ import { Point } from "../types/types";
 import { GameLogicHelpers } from "../utils/gameLogicHelpers";
 import { TweenHelpers } from "../utils/TweenHelpers";
 import { Character } from "./Character";
-import { CircularEntity } from "./CircularEntity";
+import { MovingAgent } from "./MovingAgent";
 
-export abstract class BaseEnemy extends CircularEntity {
+export abstract class BaseEnemy extends MovingAgent {
   protected health: number;
   protected maxHealth: number;
   protected isDead: boolean = false;
 
   protected target: Point | undefined;
 
-  protected targetEntity: CircularEntity | undefined;
+  protected targetEntity: MovingAgent | undefined;
   private toMoveTarget: Phaser.Math.Vector2 = new Phaser.Math.Vector2(0, 0);
   private forwardVector: Phaser.Math.Vector2 = new Phaser.Math.Vector2(0, 0);
   protected aggroRange: number = gameConfig.aggroRange;
