@@ -262,10 +262,10 @@ export class GameScene extends Phaser.Scene {
     this.zombieVehicleGroup = new EnemyVehicleGroup(this);
 
     // Add a zombie vehicle to the group
-    this.zombieVehicleGroup.addZombieVehicle(
-      gameConfig.world.startLocation.x - 250,
-      gameConfig.world.startLocation.y - 100
-    );
+    // this.zombieVehicleGroup.addZombieVehicle(
+    //   gameConfig.world.startLocation.x - 250,
+    //   gameConfig.world.startLocation.y - 100
+    // );
 
     // Set all zombies to follow the player
     if (this.character) {
