@@ -1,3 +1,5 @@
+import { debugLog } from "./DebugLogger";
+
 type HeadingCallback = (heading: number) => void;
 
 export class UniversalCompass {
@@ -58,11 +60,19 @@ export class UniversalCompass {
   private onDeviceOrientation(e: any): void {
     if (typeof e.webkitCompassHeading !== "undefined") {
       // iOS Safari
+      debugLog(`${e.webkitCompassHeading}`);
       this.headingCallback?.(e.webkitCompassHeading);
     } else if (typeof e.alpha !== "undefined") {
       // Android Chrome
       let heading = -(e.alpha + (e.beta * e.gamma) / 90);
       heading -= Math.floor(heading / 360) * 360; // Wrap into range [0,360].
+      debugLog(
+        `H: ${Math.floor(heading * 10) / 10} A-: ${
+          Math.floor((360 - e.alpha) * 10) / 10
+        } B: ${Math.floor(e.beta * 10) / 10} G: ${
+          Math.floor(e.gamma * 10) / 10
+        }`
+      );
       this.headingCallback?.(heading);
     }
     // If neither webkitCompassHeading nor alpha is available, ignore the event
