@@ -4,7 +4,7 @@ export class Projectile extends Phaser.Physics.Arcade.Sprite {
   private timeToLive: number = 1500;
   private startTime: number;
   private damage: number = 1;
-  public radius: number = 8;
+  public radius: number = 12;
   public direction: Phaser.Math.Vector2;
 
   constructor(
