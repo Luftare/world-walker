@@ -394,7 +394,7 @@ export class GameScene extends Phaser.Scene {
 
   private setupEventListeners(): void {
     // Set up zombie death event listener
-    this.events.on("zombieDied", (x: number, y: number, zombie: BaseEnemy) => {
+    this.events.on("zombieDied", (zombie: BaseEnemy) => {
       // Notify spawn service about zombie death for hex respawn
       if (this.spawnService) {
         this.spawnService.onZombieKilled(zombie);

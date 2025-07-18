@@ -1,4 +1,3 @@
-import ammoPackUrl from "../assets/ammo-pack.png";
 import coinUrl from "../assets/coin.png";
 import debugCompassSquare from "../assets/debug-compass-square.png";
 import debugCompassCircle from "../assets/debug-compass-circle.png";
