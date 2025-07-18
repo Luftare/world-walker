@@ -4,13 +4,10 @@ import { Point } from "../types/types";
 import { GameLogicHelpers } from "../utils/gameLogicHelpers";
 import { TweenHelpers } from "../utils/TweenHelpers";
 import { Character } from "./Character";
+import { LivingAgent } from "./LivingAgent";
 import { MovingAgent } from "./MovingAgent";
 
-export abstract class BaseEnemy extends MovingAgent {
-  protected health: number;
-  protected maxHealth: number;
-  protected isDead: boolean = false;
-
+export abstract class BaseEnemy extends LivingAgent {
   protected target: Point | undefined;
 
   protected targetEntity: MovingAgent | undefined;
@@ -33,7 +30,7 @@ export abstract class BaseEnemy extends MovingAgent {
     y: number = 0,
     health: number = 3
   ) {
-    super(scene, x, y, gameConfig.enemyRadius, "zombie-idle0");
+    super(scene, x, y, gameConfig.enemyRadius, health, "zombie-idle0");
     this.setDepth(10);
 
     this.health = health;
@@ -211,14 +208,11 @@ export abstract class BaseEnemy extends MovingAgent {
 
   protected abstract performAttack(): void;
 
-  die(): void {
-    if (this.isDead) return;
+  override die(): void {
+    super.die();
 
-    this.isDead = true;
+    this.createStainEffect(12, undefined);
 
-    if (this.body) {
-      this.body.enable = false;
-    }
     this.targetEntity = undefined;
     this.target = undefined;
 
@@ -241,27 +235,14 @@ export abstract class BaseEnemy extends MovingAgent {
     });
   }
 
-  getIsDead(): boolean {
-    return this.isDead;
-  }
-
-  takeDamage(
+  override takeDamage(
     damage: number = 1,
     projectileDirection?: Phaser.Math.Vector2
   ): void {
-    if (this.isDead) return;
-
-    this.health = Math.max(0, this.health - damage);
-    const willDie = this.health <= 0;
-
-    // Aggro the enemy when it takes damage
+    super.takeDamage(damage);
     this.isAggroed = true;
 
-    this.createStainEffect(willDie ? 12 : 5, projectileDirection);
-
-    if (willDie) {
-      this.die();
-    }
+    this.createStainEffect(5, projectileDirection);
   }
 
   protected createStainEffect(
@@ -281,14 +262,15 @@ export abstract class BaseEnemy extends MovingAgent {
     const stain = this.scene.add.circle(stainX, stainY, baseRadius, 0x006400);
     stain.setDepth(2);
 
+    let fanSpread = Math.PI / 3;
     let baseAngle: number;
     if (projectileDirection) {
       baseAngle = Math.atan2(projectileDirection.y, projectileDirection.x);
     } else {
-      baseAngle = this.rotation + Math.PI;
+      fanSpread = Math.PI * 2;
+      baseAngle = 0;
     }
 
-    const fanSpread = Math.PI / 3;
     const randomAngle = baseAngle + (Math.random() - 0.5) * fanSpread;
 
     const distance = 30 + Math.random() * 60;
@@ -319,14 +301,6 @@ export abstract class BaseEnemy extends MovingAgent {
         });
       },
     });
-  }
-
-  getHealth(): number {
-    return this.health;
-  }
-
-  getMaxHealth(): number {
-    return this.maxHealth;
   }
 
   isFacingTarget(): boolean {
