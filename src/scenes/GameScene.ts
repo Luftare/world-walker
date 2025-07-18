@@ -301,19 +301,6 @@ export class GameScene extends Phaser.Scene {
     );
   }
 
-  private handlePlayerDeath(): void {
-    // Stop the UI scene
-    this.scene.stop("UIScene");
-    this.tearDown();
-
-    // Transition to lobby with game over state
-    this.scene.start("LobbyScene", {
-      geolocationService: this.geolocationService,
-      compassService: this.compassService,
-      isGameOver: true,
-    });
-  }
-
   tearDown(): void {
     this.cleanupEntities();
     this.cleanupSystems();
@@ -426,7 +413,15 @@ export class GameScene extends Phaser.Scene {
 
     // Set up player death event listener
     this.events.on("playerDied", () => {
-      this.handlePlayerDeath();
+      this.scene.stop("UIScene");
+      this.tearDown();
+
+      // Transition to lobby with game over state
+      this.scene.start("LobbyScene", {
+        geolocationService: this.geolocationService,
+        compassService: this.compassService,
+        isGameOver: true,
+      });
     });
 
     // Set up event listeners for hex discovery
