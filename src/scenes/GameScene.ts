@@ -13,7 +13,7 @@ import { CompassService } from "../utils/CompassService";
 import { SpawnService } from "../utils/SpawnService";
 import { HexagonCoord } from "../utils/HexagonUtils";
 import { PickableItem } from "../entities/PickableItem";
-import { DebugLogger } from "../utils/DebugLogger";
+import { debugLog, DebugLogger } from "../utils/DebugLogger";
 import { GameLogic } from "../utils/GameLogic";
 import { EnemyVehicleGroup } from "../entities/EnemyVehicleGroup";
 import { MovingAgent } from "../entities/MovingAgent";
@@ -191,6 +191,8 @@ export class GameScene extends Phaser.Scene {
         if (!this.followCamera || !this.character) return;
         // Convert degrees to radians
         const radians = (direction * Math.PI) / 180;
+
+        debugLog(`${radians}`);
 
         // Apply compass direction to camera rotation
         this.followCamera.setTargetRotation(-radians);
