@@ -135,7 +135,6 @@ export abstract class BaseEnemy extends LivingAgent {
   }
 
   protected updateAggro(): void {
-    return; // TODO: REMOVE ME!
     if (!this.targetEntity) return;
 
     // Check if player is within aggro range
