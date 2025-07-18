@@ -45,7 +45,7 @@ export class UniversalCompass {
     if (this.listenersAdded) return;
 
     const deviceOrientationEventName =
-      "deviceorientationabsolute" in window
+      "ondeviceorientationabsolute" in window
         ? "deviceorientationabsolute"
         : "deviceorientation";
 
