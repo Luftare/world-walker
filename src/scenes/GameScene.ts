@@ -195,13 +195,6 @@ export class GameScene extends Phaser.Scene {
         // Apply compass direction to camera rotation
         this.followCamera.setTargetRotation(-radians);
         this.character.setRotation(radians - Math.PI * 0.5);
-
-        // Find all pickable items and update their rotation
-        this.children.list.forEach((child) => {
-          if (child instanceof PickableItem) {
-            child.spriteRotation = radians;
-          }
-        });
       });
     } catch (error) {
       console.error("Failed to initialize compass for game scene:", error);

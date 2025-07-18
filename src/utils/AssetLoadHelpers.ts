@@ -5,7 +5,7 @@ import zombieIdle0Url from "../assets/zombie-idle0.png";
 import zombieIdle1Url from "../assets/zombie-idle1.png";
 import zombieWalk0Url from "../assets/zombie-walk0.png";
 import zombieWalk1Url from "../assets/zombie-walk1.png";
-import healthPackUrl from "../assets/health-pack.png";
+import healthPackUrl from "../assets/healthpack.png";
 import potatoUrl from "../assets/potato.png";
 import characterUrl from "../assets/character.png";
 import zombieTractorUrl from "../assets/zombie-tractor.png";
