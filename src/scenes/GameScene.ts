@@ -27,6 +27,7 @@ export class GameScene extends Phaser.Scene {
   spawnService: SpawnService | undefined;
   pickableItems: PickableItem[] = [];
   followCamera: FollowCamera | undefined;
+  tileSprite: Phaser.GameObjects.TileSprite | undefined;
   gridSystem: GridSystem | undefined;
   uiScene: UIScene | undefined;
   private geolocationService: GeolocationService | undefined;
@@ -155,6 +156,14 @@ export class GameScene extends Phaser.Scene {
 
     // Handle continuous firing
     this.handleContinuousFiring();
+
+    if (this.tileSprite) {
+      const tileSize = 128;
+      const tileX = Math.round(this.character.x / tileSize) * tileSize;
+      const tileY = Math.round(this.character.y / tileSize) * tileSize;
+      this.tileSprite.x = tileX;
+      this.tileSprite.y = tileY;
+    }
   }
 
   private async initializeGeolocation(): Promise<void> {
@@ -228,7 +237,17 @@ export class GameScene extends Phaser.Scene {
     this.physics.world.setBounds(-10000, -10000, 20000, 20000);
 
     // Set background color
-    this.cameras.main.setBackgroundColor(gameConfig.colors.background);
+    // this.cameras.main.setBackgroundColor(gameConfig.colors.background);
+
+    const screenSize = Math.max(innerHeight, innerWidth) * 2 + 128 * 2;
+    this.tileSprite = this.add.tileSprite(
+      0,
+      0,
+      screenSize,
+      screenSize,
+      "field-tile"
+    );
+    this.tileSprite.scale = 0.5;
   }
 
   private createEntities(): void {

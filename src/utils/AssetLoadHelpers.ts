@@ -9,6 +9,7 @@ import healthPackUrl from "../assets/healthpack.png";
 import potatoUrl from "../assets/potato.png";
 import characterUrl from "../assets/character.png";
 import zombieTractorUrl from "../assets/zombie-tractor.png";
+import fieldTileUrl from "../assets/field-tile.png";
 
 import gunshotUrl from "../assets/audio/gunshot.m4a";
 import themeUrl from "../assets/audio/theme.m4a";
@@ -28,6 +29,7 @@ export const loadAssets = (scene: Phaser.Scene) => {
   scene.load.image("projectile", potatoUrl);
   scene.load.image("health-pack", healthPackUrl);
   scene.load.image("zombie-tractor", zombieTractorUrl);
+  scene.load.image("field-tile", fieldTileUrl);
 
   scene.load.audio("gunshot", gunshotUrl);
   scene.load.audio("theme", themeUrl);

@@ -17,7 +17,9 @@ export class GridSystem {
   }
 
   private initializeGrid(): void {
-    this.gridGraphics = this.scene.add.graphics();
+    if (gameConfig.devMode) {
+      this.gridGraphics = this.scene.add.graphics();
+    }
 
     // Populate initial hexagons around character's starting position
     const characterPos = this.character.getPosition();
@@ -80,6 +82,7 @@ export class GridSystem {
   }
 
   private updateGridVisualization(): void {
+    if (!gameConfig.devMode) return;
     if (!this.gridGraphics) return;
 
     this.gridGraphics.clear();
@@ -103,6 +106,7 @@ export class GridSystem {
   }
 
   private drawHexagon(hex: HexagonCoord): void {
+    if (!gameConfig.devMode) return;
     const graphics = this.gridGraphics;
     if (!graphics) return;
 
