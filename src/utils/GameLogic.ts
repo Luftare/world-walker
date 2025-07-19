@@ -1,6 +1,6 @@
 import { Projectile } from "../entities/Projectile";
 import { AmmoPack } from "../entities/AmmoPack";
-import { Coin } from "../entities/Coin";
+import { Cogwheel } from "../entities/Cogwheel";
 import { HealthPack } from "../entities/HealthPack";
 import { Character } from "../entities/Character";
 import { PickableItem } from "../entities/PickableItem";
@@ -72,15 +72,15 @@ export class GameLogic {
     const randomValue = Math.random();
     let item: PickableItem | undefined;
 
-    if (randomValue < 0.02) {
-      // Spawn coin
-      item = new Coin(scene, x, y);
+    if (randomValue < 0.05) {
+      // Spawn cogwheel
+      item = new Cogwheel(scene, x, y);
       pickableItems.push(item);
-    } else if (randomValue < 0.05) {
+    } else if (randomValue < 0.1) {
       // Spawn health pack
       item = new HealthPack(scene, x, y);
       pickableItems.push(item);
-    } else if (randomValue < 0.4) {
+    } else if (randomValue < 0.5) {
       // Spawn ammo pack
       item = new AmmoPack(scene, x, y);
       pickableItems.push(item);

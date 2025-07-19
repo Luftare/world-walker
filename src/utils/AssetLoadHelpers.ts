@@ -1,4 +1,4 @@
-import coinUrl from "../assets/coin.png";
+import cogwheelUrl from "../assets/cogwheel.png";
 import debugCompassSquare from "../assets/debug-compass-square.png";
 import debugCompassCircle from "../assets/debug-compass-circle.png";
 import zombieIdle0Url from "../assets/zombie-idle0.png";
@@ -25,7 +25,7 @@ export const loadAssets = (scene: Phaser.Scene) => {
   scene.load.image("zombie-walk0", zombieWalk0Url);
   scene.load.image("zombie-walk1", zombieWalk1Url);
   scene.load.image("ammo-pack", potatoUrl);
-  scene.load.image("coin", coinUrl);
+  scene.load.image("cogwheel", cogwheelUrl);
   scene.load.image("projectile", potatoUrl);
   scene.load.image("health-pack", healthPackUrl);
   scene.load.image("zombie-tractor", zombieTractorUrl);

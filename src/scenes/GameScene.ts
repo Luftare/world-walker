@@ -369,7 +369,7 @@ export class GameScene extends Phaser.Scene {
   private cleanupEventListeners(): void {
     // Remove all event listeners
     this.events.off("zombieDied");
-    this.events.off("coinPickedUp");
+    this.events.off("cogwheelPickedUp");
     this.events.off("playerDied");
     this.events.off("hexDiscovered");
     this.events.off("zombieMeleeAttack");
@@ -413,10 +413,9 @@ export class GameScene extends Phaser.Scene {
       }
     });
 
-    // Set up coin pickup event listener
-    this.events.on("coinPickedUp", () => {
+    this.events.on("cogwheelPickedUp", () => {
       if (this.uiScene) {
-        this.uiScene.addCoin();
+        this.uiScene.addCogwheel();
       }
     });
 

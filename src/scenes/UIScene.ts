@@ -5,13 +5,13 @@ export class UIScene extends Phaser.Scene {
   private shootButton?: Phaser.GameObjects.Text;
   private weaponInfoText?: Phaser.GameObjects.Text;
   private healthText?: Phaser.GameObjects.Text;
-  private coinCounterText?: Phaser.GameObjects.Text;
+  private cogwheelCounterText?: Phaser.GameObjects.Text;
   private debugLogText?: Phaser.GameObjects.Text;
   private isVisible: boolean = true;
   private onWeaponSwitch?: () => void;
   private devicePixelRatio: number;
   private isShooting: boolean = false;
-  private coinCount: number = 0;
+  private cogwheelCount: number = 0;
   private debugLogTimer: Phaser.Time.TimerEvent | undefined;
 
   constructor() {
@@ -112,11 +112,10 @@ export class UIScene extends Phaser.Scene {
     this.healthText.setScrollFactor(0);
     this.healthText.setDepth(1000);
 
-    // Create coin counter text (top-right)
-    this.coinCounterText = this.add.text(
+    this.cogwheelCounterText = this.add.text(
       gameWidth - padding,
       padding,
-      "Coins: 0",
+      "Cogwheels: 0",
       {
         fontSize: fontSize.score,
         color: "#ffffff",
@@ -124,9 +123,9 @@ export class UIScene extends Phaser.Scene {
         padding: { x: 8 * this.devicePixelRatio, y: 4 * this.devicePixelRatio },
       }
     );
-    this.coinCounterText.setOrigin(1, 0); // Right-align
-    this.coinCounterText.setScrollFactor(0);
-    this.coinCounterText.setDepth(1000);
+    this.cogwheelCounterText.setOrigin(1, 0); // Right-align
+    this.cogwheelCounterText.setScrollFactor(0);
+    this.cogwheelCounterText.setDepth(1000);
   }
 
   setWeaponSwitchCallback(callback: () => void): void {
@@ -174,19 +173,15 @@ export class UIScene extends Phaser.Scene {
     }
   }
 
-  addCoin(): void {
-    this.coinCount++;
-    this.updateCoinCounter();
+  addCogwheel(): void {
+    this.cogwheelCount++;
+    this.updateCogwheelCounter();
   }
 
-  private updateCoinCounter(): void {
-    if (this.coinCounterText && this.isVisible) {
-      this.coinCounterText.setText(`Coins: ${this.coinCount}`);
+  private updateCogwheelCounter(): void {
+    if (this.cogwheelCounterText && this.isVisible) {
+      this.cogwheelCounterText.setText(`Cogwheels: ${this.cogwheelCount}`);
     }
-  }
-
-  getCoinCount(): number {
-    return this.coinCount;
   }
 
   logDebug(message: string): void {
@@ -225,7 +220,7 @@ export class UIScene extends Phaser.Scene {
     if (this.shootButton) this.shootButton.setVisible(visible);
     if (this.weaponInfoText) this.weaponInfoText.setVisible(visible);
     if (this.healthText) this.healthText.setVisible(visible);
-    if (this.coinCounterText) this.coinCounterText.setVisible(visible);
+    if (this.cogwheelCounterText) this.cogwheelCounterText.setVisible(visible);
     if (this.debugLogText && visible === false) {
       this.debugLogText.setVisible(false);
     }
@@ -259,7 +254,7 @@ export class UIScene extends Phaser.Scene {
     if (this.shootButton) this.shootButton.destroy();
     if (this.weaponInfoText) this.weaponInfoText.destroy();
     if (this.healthText) this.healthText.destroy();
-    if (this.coinCounterText) this.coinCounterText.destroy();
+    if (this.cogwheelCounterText) this.cogwheelCounterText.destroy();
     if (this.debugLogText) this.debugLogText.destroy();
     if (this.debugLogTimer) this.debugLogTimer.destroy();
   }

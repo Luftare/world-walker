@@ -2,14 +2,19 @@ import { HexagonCoord, HexagonUtils } from "./HexagonUtils";
 import { PickableItem } from "../entities/PickableItem";
 import { AmmoPack } from "../entities/AmmoPack";
 import { HealthPack } from "../entities/HealthPack";
-import { Coin } from "../entities/Coin";
+import { Cogwheel } from "../entities/Cogwheel";
 import { gameConfig } from "../config/gameConfig";
 import type { GameScene } from "../scenes/GameScene";
 import { BaseEnemy } from "../entities/BaseEnemy";
 import { WalkingEnemiesGroup } from "../entities/WalkingEnemiesGroup";
 import { Point } from "../types/types";
 
-export type HexContentType = "zombie" | "ammo" | "health" | "coin" | "empty";
+export type HexContentType =
+  | "zombie"
+  | "ammo"
+  | "health"
+  | "cogwheel"
+  | "empty";
 
 interface HexContentState {
   type: HexContentType;
@@ -90,8 +95,8 @@ export class HexContentManager {
         contentType = "health";
         gameScene.pickableItems.push(entity);
       } else {
-        entity = new Coin(gameScene, spawnPos.x, spawnPos.y);
-        contentType = "coin";
+        entity = new Cogwheel(gameScene, spawnPos.x, spawnPos.y);
+        contentType = "cogwheel";
         gameScene.pickableItems.push(entity);
       }
     }
