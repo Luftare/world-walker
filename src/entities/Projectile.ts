@@ -1,10 +1,10 @@
 // Projectile class for shooting mechanics
 export class Projectile extends Phaser.Physics.Arcade.Sprite {
-  private speed: number = 8 * 100;
-  private timeToLive: number = 1500;
+  private speed: number;
+  private timeToLive: number = 1000;
   private startTime: number;
   private damage: number = 1;
-  public radius: number = 12;
+  public radius: number = 8;
   public direction: Phaser.Math.Vector2;
 
   constructor(
@@ -12,9 +12,11 @@ export class Projectile extends Phaser.Physics.Arcade.Sprite {
     x: number,
     y: number,
     direction: { x: number; y: number },
-    damage: number = 1
+    damage: number = 1,
+    speed: number = 800
   ) {
     super(scene, x, y, "projectile");
+    this.speed = speed;
     scene.add.existing(this);
     scene.physics.add.existing(this);
     this.direction = new Phaser.Math.Vector2(direction.x, direction.y);

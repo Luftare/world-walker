@@ -80,7 +80,7 @@ export class UIScene extends Phaser.Scene {
     });
 
     // Create weapon info text (top-left)
-    this.weaponInfoText = this.add.text(padding, padding, "Pistol - ∞", {
+    this.weaponInfoText = this.add.text(padding, padding, "Potato Throw - ∞", {
       fontSize: fontSize.button,
       color: "#ffffff",
       backgroundColor: "#333333",
