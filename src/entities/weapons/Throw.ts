@@ -4,7 +4,7 @@ import type { GameScene } from "../../scenes/GameScene";
 
 export class Throw extends Weapon {
   constructor() {
-    super(1000, 1, "Potato Throw", 0, 10);
+    super(800, 1, "Potato Throw", 0, 10, "character-throw");
   }
 
   shoot(
@@ -14,13 +14,9 @@ export class Throw extends Weapon {
     direction: { x: number; y: number }
   ): void {
     // Create a single projectile with weapon damage
-    const projectile = new Projectile(scene, x, y, direction, this.damage, 200);
+    const projectile = new Projectile(scene, x, y, direction, this.damage, 150);
 
     // Add to scene's projectile array
     scene.projectiles.push(projectile);
-
-    // scene.sound.play("gunshot", {
-    //   volume: 0.5,
-    // });
   }
 }

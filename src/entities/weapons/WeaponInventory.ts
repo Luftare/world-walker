@@ -4,20 +4,23 @@ import { Throw } from "./Throw";
 import { FullAutoGun } from "./FullAutoGun";
 import { Sniper } from "./Sniper";
 import { Shotgun } from "./Shotgun";
+import { GameScene } from "../../scenes/GameScene";
 
 export class WeaponInventory {
   private currentWeapon: Weapon;
   private weapons: Map<string, Weapon> = new Map();
   private sharedAmmo: number = 10; // Initial ammo pool
+  private scene: GameScene;
 
-  constructor() {
+  constructor(scene: GameScene) {
+    this.scene = scene;
     this.currentWeapon = new Sniper();
     this.weapons.set("sniper", this.currentWeapon);
     this.weapons.set("fullautogun", new FullAutoGun());
     this.weapons.set("pistol", new Pistol());
     this.weapons.set("shotgun", new Shotgun());
     this.weapons.set("throw", new Throw());
-    this.setCurrentWeapon("throw");
+    this.setCurrentWeapon("pistol");
   }
 
   getCurrentWeapon(): Weapon {
@@ -28,6 +31,10 @@ export class WeaponInventory {
     const weapon = this.weapons.get(weaponName);
     if (weapon) {
       this.currentWeapon = weapon;
+      if (this.scene.character) {
+        this.scene.character.setTexture(weapon.characterTexture);
+        console.log("set texture to", weapon.characterTexture);
+      }
       return true;
     }
     return false;

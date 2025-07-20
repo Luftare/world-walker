@@ -4,7 +4,7 @@ import type { GameScene } from "../../scenes/GameScene";
 
 export class Pistol extends Weapon {
   constructor() {
-    super(500, 1, "SpudBlaster", 0.002, 80); // Light shake for pistol
+    super(500, 1, "SpudBlaster", 0.002, 80, "character-spudblaster");
   }
 
   shoot(
@@ -14,7 +14,7 @@ export class Pistol extends Weapon {
     direction: { x: number; y: number }
   ): void {
     // Create a single projectile with weapon damage
-    const projectile = new Projectile(scene, x, y, direction, this.damage);
+    const projectile = new Projectile(scene, x, y, direction, this.damage, 400);
 
     // Add to scene's projectile array
     scene.projectiles.push(projectile);

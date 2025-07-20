@@ -7,7 +7,7 @@ export abstract class PickableItem extends Phaser.GameObjects.Container {
   protected isPickedUp: boolean = false;
   protected tweenDuration: number = 500;
   private pickupRing!: Phaser.GameObjects.Graphics;
-  private sprite!: Phaser.Physics.Arcade.Sprite;
+  public sprite!: Phaser.Physics.Arcade.Sprite;
   declare body: Phaser.Physics.Arcade.Body;
 
   constructor(scene: Phaser.Scene, x: number, y: number, texture: string) {

@@ -5,19 +5,22 @@ export abstract class Weapon {
   protected weaponName: string = "Unknown Weapon";
   protected shakeIntensity: number = 0.003; // Screen shake intensity
   protected shakeDuration: number = 100; // Screen shake duration in milliseconds
+  public characterTexture: string;
 
   constructor(
     fireRate: number = 1000,
     damage: number = 1,
     weaponName: string = "Unknown Weapon",
     shakeIntensity: number = 0.003,
-    shakeDuration: number = 100
+    shakeDuration: number = 100,
+    characterTexture: string = "character-throw"
   ) {
     this.fireRate = fireRate;
     this.damage = damage;
     this.weaponName = weaponName;
     this.shakeIntensity = shakeIntensity;
     this.shakeDuration = shakeDuration;
+    this.characterTexture = characterTexture;
   }
 
   abstract shoot(

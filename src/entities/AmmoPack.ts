@@ -11,6 +11,8 @@ export class AmmoPack extends PickableItem {
     texture: string = "ammo-pack"
   ) {
     super(scene, x, y, texture);
+    this.sprite.scaleX *= 0.7;
+    this.sprite.scaleY *= 0.7;
   }
 
   protected onPickupComplete(): void {

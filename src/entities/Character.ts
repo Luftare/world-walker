@@ -18,7 +18,9 @@ export class Character extends LivingAgent {
     this.scene = scene;
 
     // Initialize weapon inventory
-    this.weaponInventory = new WeaponInventory();
+    this.weaponInventory = new WeaponInventory(scene);
+
+    this.setTexture(this.weaponInventory.getCurrentWeapon().characterTexture);
   }
 
   override update(time: number, delta: number) {
