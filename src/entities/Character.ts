@@ -10,7 +10,7 @@ export class Character extends LivingAgent {
   private toMoveTarget: Phaser.Math.Vector2 = new Phaser.Math.Vector2(0, 0);
 
   constructor(scene: GameScene, x: number = 0, y: number = 0) {
-    super(scene, x, y, gameConfig.playerRadius, 5, "character");
+    super(scene, x, y, gameConfig.playerRadius, 5, "character-spudblaster");
 
     this.moveTarget = new Phaser.Math.Vector2(x, y);
     scene.add.existing(this);

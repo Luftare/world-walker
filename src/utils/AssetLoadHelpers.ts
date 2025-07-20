@@ -8,6 +8,7 @@ import zombieWalk1Url from "../assets/zombie-walk1.png";
 import healthPackUrl from "../assets/healthpack.png";
 import potatoUrl from "../assets/potato.png";
 import characterUrl from "../assets/character.png";
+import characterSpudblasterUrl from "../assets/character-spudblaster.png";
 import zombieTractorUrl from "../assets/zombie-tractor.png";
 import fieldTileUrl from "../assets/field-tile.png";
 
@@ -18,6 +19,7 @@ import zombieMoanUrl from "../assets/audio/zombie-moan.m4a";
 
 export const loadAssets = (scene: Phaser.Scene) => {
   scene.load.image("character", characterUrl);
+  scene.load.image("character-spudblaster", characterSpudblasterUrl);
   scene.load.image("compass-square", debugCompassSquare);
   scene.load.image("compass-circle", debugCompassCircle);
   scene.load.image("zombie-idle0", zombieIdle0Url);

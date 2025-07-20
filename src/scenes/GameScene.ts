@@ -414,9 +414,7 @@ export class GameScene extends Phaser.Scene {
     });
 
     this.events.on("cogwheelPickedUp", () => {
-      if (this.uiScene) {
-        this.uiScene.addCogwheel();
-      }
+      // TODO: Add cogwheel to inventory
     });
 
     // Set up player death event listener
