@@ -11,6 +11,7 @@ import characterUrl from "../assets/character.png";
 import characterThrowUrl from "../assets/character-throw.png";
 import characterAutoGunUrl from "../assets/character-auto-gun.png";
 import characterSingleFireUrl from "../assets/character-single-fire.png";
+import characterThunderGunUrl from "../assets/character-thunder.png";
 import characterMultiGunUrl from "../assets/character-multi-gun.png";
 import characterNoGunUrl from "../assets/character-no-gun.png";
 import characterSpudblasterUrl from "../assets/character-spudblaster.png";
@@ -26,6 +27,7 @@ export const loadAssets = (scene: Phaser.Scene) => {
   scene.load.image("character", characterUrl);
   scene.load.image("character-auto-gun", characterAutoGunUrl);
   scene.load.image("character-single-fire", characterSingleFireUrl);
+  scene.load.image("character-thunder", characterThunderGunUrl);
   scene.load.image("character-multi-gun", characterMultiGunUrl);
   scene.load.image("character-no-gun", characterNoGunUrl);
   scene.load.image("character-spudblaster", characterSpudblasterUrl);

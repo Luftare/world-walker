@@ -4,7 +4,7 @@ import type { GameScene } from "../../scenes/GameScene";
 
 export class Shotgun extends Weapon {
   constructor() {
-    super(800, 1, "Shotgun", 0.006, 120, "character-multi-gun");
+    super(3000, 1, "SpudMultiplier", 0.006, 120, "character-multi-gun");
   }
 
   shoot(
@@ -30,7 +30,8 @@ export class Shotgun extends Weapon {
         x,
         y,
         rotatedDirection,
-        this.damage
+        this.damage,
+        200
       );
 
       // Add to scene's projectile array

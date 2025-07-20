@@ -4,7 +4,7 @@ import type { GameScene } from "../../scenes/GameScene";
 
 export class Throw extends Weapon {
   constructor() {
-    super(800, 1, "Potato Throw", 0, 10, "character-throw");
+    super(800, 1, "Throw-a-Spud", 0, 10, "character-throw");
   }
 
   shoot(
