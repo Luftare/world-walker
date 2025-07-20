@@ -1,3 +1,7 @@
+import { GameScene } from "../scenes/GameScene";
+import { TweenHelpers } from "../utils/TweenHelpers";
+import { AmmoPack } from "./AmmoPack";
+
 // Projectile class for shooting mechanics
 export class Projectile extends Phaser.Physics.Arcade.Sprite {
   private speed: number;
@@ -6,9 +10,10 @@ export class Projectile extends Phaser.Physics.Arcade.Sprite {
   private damage: number = 1;
   public radius: number = 8;
   public direction: Phaser.Math.Vector2;
+  override scene: GameScene;
 
   constructor(
-    scene: Phaser.Scene,
+    scene: GameScene,
     x: number,
     y: number,
     direction: { x: number; y: number },
@@ -16,6 +21,7 @@ export class Projectile extends Phaser.Physics.Arcade.Sprite {
     speed: number = 800
   ) {
     super(scene, x, y, "projectile");
+    this.scene = scene;
     this.speed = speed;
     scene.add.existing(this);
     scene.physics.add.existing(this);
@@ -45,13 +51,43 @@ export class Projectile extends Phaser.Physics.Arcade.Sprite {
 
     this.setRotation(Math.atan2(normalizedDirection.y, normalizedDirection.x));
 
+    const startScaleX = this.scaleX;
+    const startScaleY = this.scaleY;
+
+    // Rotate projectile randomly
+    this.scene.tweens.add({
+      targets: this,
+      rotation: this.rotation + (Math.random() - 0.5) * Math.PI * 4,
+      duration: this.timeToLive,
+      ease: "Linear",
+      repeat: -1,
+    });
+
+    // Illusion of flight in arc
+    this.scene.tweens.add({
+      targets: this,
+      scaleX: startScaleX * 1.4,
+      scaleY: startScaleY * 1.4,
+      duration: this.timeToLive / 2,
+      yoyo: true,
+      repeat: -1,
+      ease: "Linear",
+    });
+
     this.damage = damage;
     this.startTime = scene.time.now;
+  }
+
+  bounceAsPickableItem(): void {
+    const potato = new AmmoPack(this.scene, this.x, this.y);
+    this.scene.pickableItems.push(potato);
+    TweenHelpers.bounceAtRandomDirection(potato, this.scene);
   }
 
   override update(time: number): void {
     // Check if projectile has exceeded time to live
     if (time - this.startTime > this.timeToLive) {
+      this.bounceAsPickableItem();
       this.destroy();
     }
     // Any additional per-frame logic can go here
