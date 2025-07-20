@@ -63,4 +63,28 @@ export class TweenHelpers {
       ease: "Power2",
     });
   }
+
+  static bounceAtDirection(
+    entity: Phaser.Physics.Arcade.Sprite | PickableItem,
+    scene: GameScene,
+    direction: Phaser.Math.Vector2
+  ): void {
+    const randomDistance = 20 + Math.random() * 20;
+    const targetVector = direction
+      .clone()
+      .normalize()
+      .rotate(Math.random() - 0.5)
+      .scale(randomDistance);
+
+    const targetX = entity.x + targetVector.x;
+    const targetY = entity.y + targetVector.y;
+
+    scene.tweens.add({
+      targets: entity,
+      x: targetX,
+      y: targetY,
+      duration: 500,
+      ease: "Power2",
+    });
+  }
 }

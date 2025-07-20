@@ -81,7 +81,7 @@ export class Projectile extends Phaser.Physics.Arcade.Sprite {
   bounceAsPickableItem(): void {
     const potato = new AmmoPack(this.scene, this.x, this.y);
     this.scene.pickableItems.push(potato);
-    TweenHelpers.bounceAtRandomDirection(potato, this.scene);
+    TweenHelpers.bounceAtDirection(potato, this.scene, this.direction);
   }
 
   override update(time: number): void {

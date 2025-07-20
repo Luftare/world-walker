@@ -5,7 +5,7 @@ import type { GameScene } from "../../scenes/GameScene";
 
 export class Sniper extends Weapon {
   constructor() {
-    super(2000, 3, "Sniper", 0.005, 150);
+    super(4000, 3, "SpudCannon", 0.006, 150, "character-single-fire");
   }
 
   shoot(
@@ -15,19 +15,18 @@ export class Sniper extends Weapon {
     direction: { x: number; y: number }
   ): void {
     // Create a single projectile with weapon damage
-    const projectile = new Projectile(scene, x, y, direction, this.damage);
+    const projectile = new Projectile(scene, x, y, direction, this.damage, 800);
 
     // Apply pushback to the character
     const character = scene.children
       .getChildren()
       .find((c) => c instanceof Character) as Character;
     if (character) {
-      console.log("PUSHBACK");
       // direction is a vector2, opposite of where the character is facing
       const impulse = new Phaser.Math.Vector2(1, 0)
         .rotate(character.rotation + Math.PI)
         .normalize()
-        .scale(500);
+        .scale(600);
       character.applyPushback(impulse);
     }
 

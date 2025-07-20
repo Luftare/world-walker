@@ -4,7 +4,7 @@ import type { GameScene } from "../../scenes/GameScene";
 
 export class Shotgun extends Weapon {
   constructor() {
-    super(800, 1, "Shotgun", 0.006, 120); // Medium fire rate, medium damage, heavy shake
+    super(800, 1, "Shotgun", 0.006, 120, "character-multi-gun");
   }
 
   shoot(

@@ -4,7 +4,7 @@ import type { GameScene } from "../../scenes/GameScene";
 
 export class FullAutoGun extends Weapon {
   constructor() {
-    super(150, 1, "Full Auto Gun", 0.002, 60); // Medium shake for full auto
+    super(150, 1, "SpudSow3000", 0.0025, 60, "character-spudblaster");
   }
 
   shoot(
@@ -14,7 +14,7 @@ export class FullAutoGun extends Weapon {
     direction: { x: number; y: number }
   ): void {
     // Create a single projectile with weapon damage
-    const projectile = new Projectile(scene, x, y, direction, this.damage);
+    const projectile = new Projectile(scene, x, y, direction, this.damage, 400);
 
     // Add to scene's projectile array
     scene.projectiles.push(projectile);

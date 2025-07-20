@@ -14,27 +14,30 @@ export class WeaponInventory {
 
   constructor(scene: GameScene) {
     this.scene = scene;
-    this.currentWeapon = new Sniper();
-    this.weapons.set("sniper", this.currentWeapon);
-    this.weapons.set("fullautogun", new FullAutoGun());
+    this.currentWeapon = new Throw();
+    this.weapons.set("throw", this.currentWeapon);
     this.weapons.set("pistol", new Pistol());
+    this.weapons.set("fullautogun", new FullAutoGun());
+    this.weapons.set("sniper", new Sniper());
     this.weapons.set("shotgun", new Shotgun());
-    this.weapons.set("throw", new Throw());
-    this.setCurrentWeapon("pistol");
+    this.setCurrentWeapon("throw");
   }
 
   getCurrentWeapon(): Weapon {
     return this.currentWeapon;
   }
 
+  private updateCharacterTexture(): void {
+    if (this.scene.character) {
+      this.scene.character.setTexture(this.currentWeapon.characterTexture);
+    }
+  }
+
   setCurrentWeapon(weaponName: string): boolean {
     const weapon = this.weapons.get(weaponName);
     if (weapon) {
       this.currentWeapon = weapon;
-      if (this.scene.character) {
-        this.scene.character.setTexture(weapon.characterTexture);
-        console.log("set texture to", weapon.characterTexture);
-      }
+      this.updateCharacterTexture();
       return true;
     }
     return false;
@@ -74,6 +77,7 @@ export class WeaponInventory {
     const nextWeapon = weapons[nextIndex];
     if (nextWeapon) {
       this.currentWeapon = nextWeapon;
+      this.updateCharacterTexture();
     }
   }
 
