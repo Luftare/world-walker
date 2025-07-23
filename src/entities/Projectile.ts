@@ -9,6 +9,7 @@ export class Projectile extends Phaser.Physics.Arcade.Sprite {
   private startTime: number;
   private damage: number = 1;
   public radius: number = 6;
+  public isPiercing: boolean = false;
   public direction: Phaser.Math.Vector2;
   override scene: GameScene;
 
@@ -18,9 +19,11 @@ export class Projectile extends Phaser.Physics.Arcade.Sprite {
     y: number,
     direction: { x: number; y: number },
     damage: number = 1,
-    speed: number = 800
+    speed: number = 800,
+    isPiercing: boolean = false
   ) {
     super(scene, x, y, "projectile");
+    this.isPiercing = isPiercing;
     this.scene = scene;
     this.speed = speed;
     scene.add.existing(this);

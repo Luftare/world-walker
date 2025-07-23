@@ -15,7 +15,15 @@ export class Sniper extends Weapon {
     direction: { x: number; y: number }
   ): void {
     // Create a single projectile with weapon damage
-    const projectile = new Projectile(scene, x, y, direction, this.damage, 800);
+    const projectile = new Projectile(
+      scene,
+      x,
+      y,
+      direction,
+      this.damage,
+      800,
+      true
+    );
 
     // Apply pushback to the character
     const character = scene.children
