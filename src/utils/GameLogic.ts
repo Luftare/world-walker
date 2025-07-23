@@ -34,14 +34,22 @@ export class GameLogic {
         if (
           GameLogicHelpers.isWithinRange(projectile, zombie, collisionRadius)
         ) {
-          const projectileDirection = projectile.getDirection();
-          zombie.takeDamage(projectile.getDamage(), projectileDirection);
-          zombie.applyPushback(
-            projectileDirection.clone().scale(projectilePushbackForce)
-          );
-          if (projectile.isPiercing && !projectile.hasHitZombie(zombie)) {
-            projectile.markZombieHit(zombie);
+          if (projectile.isPiercing) {
+            if (!projectile.hasHitZombie(zombie)) {
+              const projectileDirection = projectile.getDirection();
+              zombie.takeDamage(projectile.getDamage(), projectileDirection);
+              zombie.applyPushback(
+                projectileDirection.clone().scale(projectilePushbackForce)
+              );
+              projectile.markZombieHit(zombie);
+            }
+            // Do not destroy the projectile, let it persist until TTL
           } else {
+            const projectileDirection = projectile.getDirection();
+            zombie.takeDamage(projectile.getDamage(), projectileDirection);
+            zombie.applyPushback(
+              projectileDirection.clone().scale(projectilePushbackForce)
+            );
             projectile.destroy();
             break;
           }

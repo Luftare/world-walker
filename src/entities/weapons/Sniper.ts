@@ -5,7 +5,7 @@ import type { GameScene } from "../../scenes/GameScene";
 
 export class Sniper extends Weapon {
   constructor() {
-    super(4000, 3, "SpudThunder", 0.006, 150, "character-thunder");
+    super(1000, 1, "SpudPiercer", 0.006, 150, "character-thunder");
   }
 
   shoot(
@@ -21,7 +21,7 @@ export class Sniper extends Weapon {
       y,
       direction,
       this.damage,
-      800,
+      500,
       true
     );
 
