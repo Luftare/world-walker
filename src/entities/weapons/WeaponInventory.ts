@@ -97,6 +97,8 @@ export class WeaponInventory {
       this.currentWeapon.fire(currentTime);
       this.currentWeapon.shoot(scene, x, y, direction);
       this.sharedAmmo--;
+      // Emit playerShot event with fireRate
+      this.scene.events.emit("playerShot", this.currentWeapon.getFireRate());
       return true;
     }
     return false;

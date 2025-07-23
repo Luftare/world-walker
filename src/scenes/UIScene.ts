@@ -11,6 +11,8 @@ export class UIScene extends Phaser.Scene {
   private devicePixelRatio: number;
   private isShooting: boolean = false;
   private debugLogTimer: Phaser.Time.TimerEvent | undefined;
+  private reloadBar?: Phaser.GameObjects.Graphics;
+  private reloadTween?: Phaser.Tweens.Tween;
 
   constructor() {
     super({ key: "UIScene" });
@@ -19,6 +21,10 @@ export class UIScene extends Phaser.Scene {
 
   create(): void {
     this.createUIElements();
+    // Listen for playerShot event
+    this.scene
+      .get("GameScene")
+      .events.on("playerShot", this.startReloadBar, this);
   }
 
   private createUIElements(): void {
@@ -78,6 +84,21 @@ export class UIScene extends Phaser.Scene {
     this.shootButton.on("pointerout", () => {
       this.stopShooting();
     });
+
+    // Create reload bar overlaying the shoot button
+    if (this.shootButton) {
+      this.reloadBar = this.add.graphics();
+      this.reloadBar.fillStyle(0x444444, 0.8);
+      this.reloadBar.fillRect(
+        this.shootButton.x - this.shootButton.displayWidth,
+        this.shootButton.y - this.shootButton.displayHeight,
+        this.shootButton.displayWidth,
+        this.shootButton.displayHeight
+      );
+      this.reloadBar.setDepth(1001);
+      this.reloadBar.setScrollFactor(0);
+      this.reloadBar.setVisible(false);
+    }
 
     // Create weapon info text (top-left)
     this.weaponInfoText = this.add.text(padding, padding, "Potato Throw - ∞", {
@@ -186,6 +207,39 @@ export class UIScene extends Phaser.Scene {
     }
   }
 
+  private startReloadBar(fireRate: number): void {
+    if (!this.shootButton || !this.reloadBar) return;
+    // Stop any existing tween
+    if (this.reloadTween) {
+      this.reloadTween.stop();
+    }
+    // Set bar to full width, visible, overlaying the button
+    const x = this.shootButton.x - this.shootButton.displayWidth;
+    const y = this.shootButton.y - this.shootButton.displayHeight;
+    const width = this.shootButton.displayWidth;
+    const height = this.shootButton.displayHeight;
+    this.reloadBar.clear();
+    this.reloadBar.fillStyle(0x444444, 0.8);
+    this.reloadBar.fillRect(x, y, width, height);
+    this.reloadBar.setVisible(true);
+    // Animate bar width from full to 0 (right to left)
+    this.reloadTween = this.tweens.add({
+      targets: { w: width },
+      w: 0,
+      duration: fireRate,
+      onUpdate: (_, target) => {
+        const w = (target as any).w;
+        this.reloadBar!.clear();
+        this.reloadBar!.fillStyle(0x444444, 0.8);
+        // Draw from right to left
+        this.reloadBar!.fillRect(x + (width - w), y, w, height);
+      },
+      onComplete: () => {
+        this.reloadBar!.setVisible(false);
+      },
+    });
+  }
+
   setVisible(visible: boolean): void {
     this.isVisible = visible;
     if (this.debugButton) this.debugButton.setVisible(visible);
@@ -195,6 +249,7 @@ export class UIScene extends Phaser.Scene {
     if (this.debugLogText && visible === false) {
       this.debugLogText.setVisible(false);
     }
+    if (this.reloadBar) this.reloadBar.setVisible(visible);
   }
 
   toggleVisibility(): void {
@@ -218,6 +273,12 @@ export class UIScene extends Phaser.Scene {
         this.cameras.main.height - padding - 40 * this.devicePixelRatio
       );
     }
+    if (this.shootButton && this.reloadBar) {
+      this.reloadBar.setPosition(
+        this.shootButton.x - this.shootButton.displayWidth,
+        this.shootButton.y - this.shootButton.displayHeight
+      );
+    }
   }
 
   destroy(): void {
@@ -227,5 +288,7 @@ export class UIScene extends Phaser.Scene {
     if (this.healthText) this.healthText.destroy();
     if (this.debugLogText) this.debugLogText.destroy();
     if (this.debugLogTimer) this.debugLogTimer.destroy();
+    if (this.reloadBar) this.reloadBar.destroy();
+    if (this.reloadTween) this.reloadTween.stop();
   }
 }
