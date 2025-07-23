@@ -48,6 +48,10 @@ export class LivingAgent extends MovingAgent {
   die(): void {
     if (this.isDead) return;
 
+    this.scene.sound.play("fx-kill", {
+      volume: 0.5,
+    });
+
     this.isDead = true;
   }
 }

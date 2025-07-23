@@ -18,5 +18,9 @@ export class Throw extends Weapon {
 
     // Add to scene's projectile array
     scene.projectiles.push(projectile);
+
+    scene.sound.play("fx-throw", {
+      volume: 0.5,
+    });
   }
 }

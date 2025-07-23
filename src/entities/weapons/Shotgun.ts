@@ -36,6 +36,10 @@ export class Shotgun extends Weapon {
 
       // Add to scene's projectile array
       scene.projectiles.push(projectile);
+
+      scene.sound.play("fx-spud-multiplier", {
+        volume: 0.5,
+      });
     }
   }
 }

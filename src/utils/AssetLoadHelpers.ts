@@ -22,6 +22,15 @@ import gunshotUrl from "../assets/audio/gunshot.m4a";
 import themeUrl from "../assets/audio/theme.m4a";
 import zombieGrowlUrl from "../assets/audio/zombie-growl.m4a";
 import zombieMoanUrl from "../assets/audio/zombie-moan.m4a";
+import FXHitUrl from "../assets/audio/FXHit.m4a";
+import FXKillUrl from "../assets/audio/FXKill.m4a";
+import FXPickPotatoUrl from "../assets/audio/FXPickPotato.m4a";
+import FXPickPowerUpUrl from "../assets/audio/FXPickPowerUp.m4a";
+import FXSpudBlasterUrl from "../assets/audio/FXSpudBlaster.m4a";
+import FXSpudMultiplierUrl from "../assets/audio/FXSpudMultiplier.m4a";
+import FXSpudSower3000Url from "../assets/audio/FXSpudSower3000.m4a";
+import FXSpudThunderUrl from "../assets/audio/FXSpudThunder.m4a";
+import FXThrowUrl from "../assets/audio/FXThrow.m4a";
 
 export const loadAssets = (scene: Phaser.Scene) => {
   scene.load.image("character", characterUrl);
@@ -49,6 +58,15 @@ export const loadAssets = (scene: Phaser.Scene) => {
   scene.load.audio("theme", themeUrl);
   scene.load.audio("zombie-growl", zombieGrowlUrl);
   scene.load.audio("zombie-moan", zombieMoanUrl);
+  scene.load.audio("fx-hit", FXHitUrl);
+  scene.load.audio("fx-kill", FXKillUrl);
+  scene.load.audio("fx-pick-potato", FXPickPotatoUrl);
+  scene.load.audio("fx-pick-power-up", FXPickPowerUpUrl);
+  scene.load.audio("fx-spud-blaster", FXSpudBlasterUrl);
+  scene.load.audio("fx-spud-multiplier", FXSpudMultiplierUrl);
+  scene.load.audio("fx-spud-sower-3000", FXSpudSower3000Url);
+  scene.load.audio("fx-spud-thunder", FXSpudThunderUrl);
+  scene.load.audio("fx-throw", FXThrowUrl);
 };
 
 export const createAnimations = (scene: Phaser.Scene) => {

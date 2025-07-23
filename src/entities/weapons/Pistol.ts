@@ -19,7 +19,7 @@ export class Pistol extends Weapon {
     // Add to scene's projectile array
     scene.projectiles.push(projectile);
 
-    scene.sound.play("gunshot", {
+    scene.sound.play("fx-spud-blaster", {
       volume: 0.5,
     });
   }

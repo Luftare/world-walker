@@ -24,7 +24,8 @@ export class GameLogic {
   static checkProjectileCollisions(
     projectiles: Projectile[],
     zombies: BaseEnemy[],
-    projectilePushbackForce: number
+    projectilePushbackForce: number,
+    scene: GameScene
   ): void {
     for (const projectile of projectiles) {
       if (!projectile.active) continue;
@@ -42,6 +43,9 @@ export class GameLogic {
                 projectileDirection.clone().scale(projectilePushbackForce)
               );
               projectile.markZombieHit(zombie);
+              scene.sound.play("fx-hit", {
+                volume: 0.5,
+              });
             }
             // Do not destroy the projectile, let it persist until TTL
           } else {
@@ -51,6 +55,9 @@ export class GameLogic {
               projectileDirection.clone().scale(projectilePushbackForce)
             );
             projectile.destroy();
+            scene.sound.play("fx-hit", {
+              volume: 0.5,
+            });
             break;
           }
         }
@@ -61,6 +68,7 @@ export class GameLogic {
   static checkAllPickups(
     pickableItems: PickableItem[],
     character: Character,
+    scene: GameScene,
     spawnService?: any
   ): PickableItem[] {
     const filteredPickableItems = pickableItems.filter((item) => {
@@ -68,6 +76,15 @@ export class GameLogic {
       const wasPickedUp = item.checkPickup(character);
       if (wasPickedUp && spawnService) {
         spawnService.onItemPickedUp(item);
+        if (item instanceof AmmoPack) {
+          scene.sound.play("fx-pick-potato", {
+            volume: 0.5,
+          });
+        } else if (item instanceof HealthPack) {
+          scene.sound.play("fx-pick-power-up", {
+            volume: 0.5,
+          });
+        }
       }
       return !wasPickedUp;
     });

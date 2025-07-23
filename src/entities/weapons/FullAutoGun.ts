@@ -18,5 +18,9 @@ export class FullAutoGun extends Weapon {
 
     // Add to scene's projectile array
     scene.projectiles.push(projectile);
+
+    scene.sound.play("fx-spud-sower-3000", {
+      volume: 0.5,
+    });
   }
 }

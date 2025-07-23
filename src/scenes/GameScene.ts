@@ -129,7 +129,8 @@ export class GameScene extends Phaser.Scene {
     GameLogic.checkProjectileCollisions(
       this.projectiles,
       this.zombieGroup.getEntities(),
-      gameConfig.projectilePushbackForce
+      gameConfig.projectilePushbackForce,
+      this
     );
 
     // Check tractor collision using GameLogic
@@ -142,6 +143,7 @@ export class GameScene extends Phaser.Scene {
     this.pickableItems = GameLogic.checkAllPickups(
       this.pickableItems,
       this.character,
+      this,
       this.spawnService
     );
 
