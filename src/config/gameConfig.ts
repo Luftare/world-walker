@@ -6,7 +6,7 @@
 export const gameConfig = {
   spawnMinDistance: 250,
   geoPixelsPerMeter: 10,
-  playerSpeed: 30,
+  playerSpeed: 50,
   playerRadius: 20,
   markerRadius: 20,
   itemRadius: 12,
