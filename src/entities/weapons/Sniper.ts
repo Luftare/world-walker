@@ -2,18 +2,14 @@ import { Weapon } from "./Weapon";
 import { Projectile } from "../Projectile";
 import { Character } from "../Character";
 import type { GameScene } from "../../scenes/GameScene";
+import { Point } from "../../types/types";
 
 export class Sniper extends Weapon {
   constructor() {
     super(1000, 1, "SpudPiercer", 0.006, 150, "character-thunder");
   }
 
-  shoot(
-    scene: GameScene,
-    x: number,
-    y: number,
-    direction: { x: number; y: number }
-  ): void {
+  shoot(scene: GameScene, x: number, y: number, direction: Point): void {
     // Create a single projectile with weapon damage
     const projectile = new Projectile(
       scene,
