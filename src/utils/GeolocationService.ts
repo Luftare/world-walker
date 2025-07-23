@@ -148,4 +148,9 @@ export class GeolocationService {
   isTracking(): boolean {
     return this.watchId !== null;
   }
+
+  calibrateGameOrigo(newOrigo: GeoLocation): void {
+    this.initialLocation = newOrigo;
+    this.calculateGeoScale(newOrigo);
+  }
 }

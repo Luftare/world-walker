@@ -10,6 +10,7 @@ export class LobbyScene extends Phaser.Scene {
   private startGameButton?: HTMLButtonElement;
   private titleText?: HTMLHeadingElement;
   private isGameOver: boolean = false;
+  private locationWatchId: number | null = null;
 
   constructor() {
     super({ key: "LobbyScene" });
@@ -34,6 +35,11 @@ export class LobbyScene extends Phaser.Scene {
     }
     if (data?.isGameOver !== undefined) {
       this.isGameOver = data.isGameOver;
+    }
+
+    // Start listening to location updates and calibrate origo
+    if (this.geolocationService) {
+      this.startLobbyLocationCalibration();
     }
 
     this.createHTMLLobby();
@@ -88,11 +94,37 @@ export class LobbyScene extends Phaser.Scene {
     document.body.appendChild(this.lobbyContainer);
   }
 
+  private startLobbyLocationCalibration(): void {
+    if (!this.geolocationService) return;
+    // Use browser geolocation directly for lobby calibration
+    this.locationWatchId = window.navigator.geolocation.watchPosition(
+      (position) => {
+        const newOrigo = {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          accuracy: position.coords.accuracy,
+          timestamp: position.timestamp,
+        };
+        this.geolocationService!.calibrateGameOrigo(newOrigo);
+      },
+      undefined,
+      { enableHighAccuracy: true, timeout: 99999999999, maximumAge: 3000 }
+    );
+  }
+
+  private stopLobbyLocationCalibration(): void {
+    if (this.locationWatchId !== null) {
+      window.navigator.geolocation.clearWatch(this.locationWatchId);
+      this.locationWatchId = null;
+    }
+  }
+
   private startGame(): void {
     this.sound.stopAll();
     // Clean up HTML elements before starting the game
     this.cleanupHTMLLobby();
-
+    // Stop lobby calibration before starting the game
+    this.stopLobbyLocationCalibration();
     // Pass the services to the game scene
     this.scene.start("GameScene", {
       geolocationService: this.geolocationService,
