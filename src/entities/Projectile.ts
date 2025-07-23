@@ -1,6 +1,7 @@
 import { GameScene } from "../scenes/GameScene";
 import { TweenHelpers } from "../utils/TweenHelpers";
 import { AmmoPack } from "./AmmoPack";
+import { BaseEnemy } from "./BaseEnemy";
 
 // Projectile class for shooting mechanics
 export class Projectile extends Phaser.Physics.Arcade.Sprite {
@@ -12,6 +13,7 @@ export class Projectile extends Phaser.Physics.Arcade.Sprite {
   public isPiercing: boolean = false;
   public direction: Phaser.Math.Vector2;
   override scene: GameScene;
+  private hitZombies: Set<BaseEnemy> = new Set();
 
   constructor(
     scene: GameScene,
@@ -26,6 +28,7 @@ export class Projectile extends Phaser.Physics.Arcade.Sprite {
     this.isPiercing = isPiercing;
     this.scene = scene;
     this.speed = speed;
+    this.hitZombies = new Set();
     scene.add.existing(this);
     scene.physics.add.existing(this);
     this.direction = new Phaser.Math.Vector2(direction.x, direction.y);
@@ -123,5 +126,13 @@ export class Projectile extends Phaser.Physics.Arcade.Sprite {
 
   getDamage(): number {
     return this.damage;
+  }
+
+  hasHitZombie(zombie: BaseEnemy): boolean {
+    return this.hitZombies.has(zombie);
+  }
+
+  markZombieHit(zombie: BaseEnemy): void {
+    this.hitZombies.add(zombie);
   }
 }

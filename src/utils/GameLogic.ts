@@ -39,8 +39,12 @@ export class GameLogic {
           zombie.applyPushback(
             projectileDirection.clone().scale(projectilePushbackForce)
           );
-          projectile.destroy();
-          break;
+          if (projectile.isPiercing && !projectile.hasHitZombie(zombie)) {
+            projectile.markZombieHit(zombie);
+          } else {
+            projectile.destroy();
+            break;
+          }
         }
       }
     }
