@@ -134,6 +134,12 @@ export abstract class BaseEnemy extends LivingAgent {
     );
   }
 
+  setAggro(target: MovingAgent) {
+    this.targetEntity = target;
+    this.isAggroed = true;
+    this.playAggroSound();
+  }
+
   protected updateAggro(): void {
     if (!this.targetEntity) return;
 
@@ -143,16 +149,20 @@ export abstract class BaseEnemy extends LivingAgent {
       GameLogicHelpers.isWithinRange(this, this.targetEntity, this.aggroRange)
     ) {
       this.isAggroed = true;
-      const sampleName = Math.random() < 0.5 ? "zombie-growl" : "zombie-moan";
-      this.scene.sound.play(sampleName, {
-        volume: 0.5,
-      });
+      this.playAggroSound();
     }
 
     // Only follow if aggroed
     if (this.isAggroed) {
       this.target = { x: this.targetEntity.x, y: this.targetEntity.y };
     }
+  }
+
+  playAggroSound(): void {
+    const sampleName = Math.random() < 0.5 ? "zombie-growl" : "zombie-moan";
+    this.scene.sound.play(sampleName, {
+      volume: 0.5,
+    });
   }
 
   protected updateRotation(delta: number): void {

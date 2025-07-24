@@ -2,7 +2,6 @@ import { HexagonCoord, HexagonUtils } from "./HexagonUtils";
 import { PickableItem } from "../entities/PickableItem";
 import { AmmoPack } from "../entities/AmmoPack";
 import { HealthPack } from "../entities/HealthPack";
-import { Cogwheel } from "../entities/Cogwheel";
 import { gameConfig } from "../config/gameConfig";
 import type { GameScene } from "../scenes/GameScene";
 import { BaseEnemy } from "../entities/BaseEnemy";
@@ -25,8 +24,9 @@ interface HexContentState {
 
 export class HexContentManager {
   private hexStates: Map<string, HexContentState> = new Map();
-  private readonly RESPAWN_DELAY = 20000;
-  private readonly ZOMBIE_CHANCE = 0.85; // 80% chance for zombie
+  private readonly RESPAWN_DELAY = 30000;
+  private readonly ZOMBIE_CHANCE = 0.05;
+  private readonly HEALTHPACK_CHANCE = 0.05;
 
   constructor() {
     // Initialize hex content manager
@@ -80,26 +80,21 @@ export class HexContentManager {
     const spawnPos = this.calculateRandomHexPosition(hex);
 
     const roll = Math.random();
-    let entity: BaseEnemy | PickableItem;
-    let contentType: HexContentType;
+    let entity: BaseEnemy | PickableItem | undefined;
+    let contentType: HexContentType | undefined;
 
     if (roll < this.ZOMBIE_CHANCE) {
       // Spawn zombie
       entity = zombieGroup.addZombie(spawnPos.x, spawnPos.y);
       contentType = "zombie";
-    } else {
-      // Spawn random pickable item
-      const itemRoll = Math.random();
-      if (itemRoll < 0.5) {
-        entity = new HealthPack(gameScene, spawnPos.x, spawnPos.y);
-        contentType = "health";
-        gameScene.pickableItems.push(entity);
-      } else {
-        entity = new Cogwheel(gameScene, spawnPos.x, spawnPos.y);
-        contentType = "cogwheel";
-        gameScene.pickableItems.push(entity);
-      }
+    } else if (roll < this.ZOMBIE_CHANCE + this.HEALTHPACK_CHANCE) {
+      // Spawn health pack
+      entity = new HealthPack(gameScene, spawnPos.x, spawnPos.y);
+      contentType = "health";
+      gameScene.pickableItems.push(entity);
     }
+
+    if (!entity || !contentType) return null;
 
     // Update hex state
     this.hexStates.set(hexKey, {

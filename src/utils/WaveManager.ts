@@ -1,4 +1,5 @@
 import { GameScene } from "../scenes/GameScene";
+import { Point } from "../types/types";
 
 interface WaveState {
   waveIndex: number;
@@ -8,6 +9,7 @@ interface WaveState {
 export class WaveManager {
   private scene: GameScene;
   private timeSeconds: number = 0;
+  private lastSpawnTimeSeconds: number = 0;
   private waveDurationSeconds: number = 30;
   private waveGapSeconds: number = 10;
   public onWaveStart: (waveIndex: number, waveSeconds: number) => void =
@@ -21,6 +23,7 @@ export class WaveManager {
 
   reset() {
     this.timeSeconds = 0;
+    this.lastSpawnTimeSeconds = 0;
   }
 
   update(delta: number): void {
@@ -28,6 +31,52 @@ export class WaveManager {
     const nowSeconds = thenSeconds + delta * 0.001;
     this.timeSeconds = nowSeconds;
     this.handleStateChange(thenSeconds, nowSeconds);
+    this.handleWaveSpawning();
+  }
+
+  handleWaveSpawning() {
+    const { waveIndex, isGap } = this.getWaveStateAt(this.timeSeconds);
+    if (isGap) return;
+
+    const isSpawnReady = this.checkIsSpawnReady(waveIndex);
+    if (!isSpawnReady) return;
+
+    this.spawn();
+  }
+
+  spawn() {
+    this.lastSpawnTimeSeconds = this.timeSeconds;
+    if (!this.scene.zombieGroup) return;
+
+    const zombiePosition = this.getRandomPositionAroundCharacter();
+    const zombie = this.scene.zombieGroup?.addZombie(
+      zombiePosition.x,
+      zombiePosition.y
+    );
+    if (zombie && this.scene.character) {
+      zombie.setAggro(this.scene.character);
+    }
+  }
+
+  getRandomPositionAroundCharacter(): Point {
+    if (!this.scene.character) return { x: 0, y: 0 };
+
+    const angle = Math.random() * Math.PI * 2;
+    const distance = 500;
+    return {
+      x: this.scene.character.x + Math.cos(angle) * distance,
+      y: this.scene.character.y + Math.sin(angle) * distance,
+    };
+  }
+
+  getSpawnGapSeconds(waveIndex: number): number {
+    return Math.max(0.5, 10 - waveIndex * 0.5);
+  }
+
+  checkIsSpawnReady(waveIndex: number): boolean {
+    const spawnGap = this.getSpawnGapSeconds(waveIndex);
+    const secondsSinceLastSpawn = this.timeSeconds - this.lastSpawnTimeSeconds;
+    return spawnGap <= secondsSinceLastSpawn;
   }
 
   handleStateChange(thenSeconds: number, nowSeconds: number) {
