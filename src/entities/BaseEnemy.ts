@@ -159,10 +159,18 @@ export abstract class BaseEnemy extends LivingAgent {
   }
 
   playAggroSound(): void {
-    const sampleName = Math.random() < 0.5 ? "zombie-growl" : "zombie-moan";
-    this.scene.sound.play(sampleName, {
-      volume: 0.5,
-    });
+    const sampleName = GameLogicHelpers.randomElement([
+      "fx-zombie-1",
+      "fx-zombie-2",
+      "fx-zombie-3",
+      "fx-zombie-4",
+      "fx-zombie-5",
+    ]);
+    if (sampleName) {
+      this.scene.sound.play(sampleName, {
+        volume: 0.5,
+      });
+    }
   }
 
   protected updateRotation(delta: number): void {
@@ -196,6 +204,18 @@ export abstract class BaseEnemy extends LivingAgent {
     ) {
       this.performAttack();
     }
+  }
+
+  override playHitSound(): void {
+    this.scene.sound.play("fx-hit", {
+      volume: 0.5,
+    });
+  }
+
+  override playKilledSound(): void {
+    this.scene.sound.play("fx-kill", {
+      volume: 0.5,
+    });
   }
 
   attackIsReady(): boolean {

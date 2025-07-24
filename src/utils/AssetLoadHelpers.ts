@@ -19,19 +19,23 @@ import characterSpudblasterUrl from "../assets/character-spudblaster.png";
 import zombieTractorUrl from "../assets/zombie-tractor.png";
 import fieldTileUrl from "../assets/field-tile.png";
 
-import gunshotUrl from "../assets/audio/gunshot.m4a";
 import themeUrl from "../assets/audio/theme.m4a";
-import zombieGrowlUrl from "../assets/audio/zombie-growl.m4a";
-import zombieMoanUrl from "../assets/audio/zombie-moan.m4a";
-import FXHitUrl from "../assets/audio/FXHit.m4a";
-import FXKillUrl from "../assets/audio/FXKill.m4a";
-import FXPickPotatoUrl from "../assets/audio/FXPickPotato.m4a";
-import FXPickPowerUpUrl from "../assets/audio/FXPickPowerUp.m4a";
-import FXSpudBlasterUrl from "../assets/audio/FXSpudBlaster.m4a";
-import FXSpudMultiplierUrl from "../assets/audio/FXSpudMultiplier.m4a";
-import FXSpudSower3000Url from "../assets/audio/FXSpudSower3000.m4a";
-import FXSpudThunderUrl from "../assets/audio/FXSpudThunder.m4a";
-import FXThrowUrl from "../assets/audio/FXThrow.m4a";
+import fxZombie1Url from "../assets/audio/fx-zombie-1.m4a";
+import fxZombie2Url from "../assets/audio/fx-zombie-2.m4a";
+import fxZombie3Url from "../assets/audio/fx-zombie-3.m4a";
+import fxZombie4Url from "../assets/audio/fx-zombie-4.m4a";
+import fxZombie5Url from "../assets/audio/fx-zombie-5.m4a";
+import FXHitUrl from "../assets/audio/fx-hit.m4a";
+import FXPlayerHitUrl from "../assets/audio/fx-player-hit.m4a";
+import FXPlayerKilledUrl from "../assets/audio/fx-player-killed.m4a";
+import FXKillUrl from "../assets/audio/fx-kill.m4a";
+import FXPickPotatoUrl from "../assets/audio/fx-pick-potato.m4a";
+import FXPickPowerUpUrl from "../assets/audio/fx-pick-powerup.m4a";
+import FXSpudBlasterUrl from "../assets/audio/fx-spud-blaster.m4a";
+import FXSpudMultiplierUrl from "../assets/audio/fx-spud-multiplier.m4a";
+import FXSpudSower3000Url from "../assets/audio/fx-spud-sower-3000.m4a";
+import FXSpudThunderUrl from "../assets/audio/fx-spud-thunder.m4a";
+import FXThrowUrl from "../assets/audio/fx-throw.m4a";
 
 export const loadAssets = (scene: Phaser.Scene) => {
   scene.load.image("character", characterUrl);
@@ -57,10 +61,15 @@ export const loadAssets = (scene: Phaser.Scene) => {
   scene.load.image("zombie-tractor", zombieTractorUrl);
   scene.load.image("field-tile", fieldTileUrl);
 
-  scene.load.audio("gunshot", gunshotUrl);
   scene.load.audio("theme", themeUrl);
-  scene.load.audio("zombie-growl", zombieGrowlUrl);
-  scene.load.audio("zombie-moan", zombieMoanUrl);
+  scene.load.audio("death-music", themeUrl);
+  scene.load.audio("fx-zombie-1", fxZombie1Url);
+  scene.load.audio("fx-zombie-2", fxZombie2Url);
+  scene.load.audio("fx-zombie-3", fxZombie3Url);
+  scene.load.audio("fx-zombie-4", fxZombie4Url);
+  scene.load.audio("fx-zombie-5", fxZombie5Url);
+  scene.load.audio("fx-player-hit", FXPlayerHitUrl);
+  scene.load.audio("fx-player-killed", FXPlayerKilledUrl);
   scene.load.audio("fx-hit", FXHitUrl);
   scene.load.audio("fx-kill", FXKillUrl);
   scene.load.audio("fx-pick-potato", FXPickPotatoUrl);

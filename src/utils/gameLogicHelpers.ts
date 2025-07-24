@@ -131,4 +131,11 @@ export class GameLogicHelpers {
       (entity1.x - entity2.x) ** 2 + (entity1.y - entity2.y) ** 2;
     return distanceSq <= range ** 2;
   }
+
+  static randomElement<T>(arr: T[]): T | undefined {
+    if (arr.length === 0) return undefined;
+
+    const i = Math.floor(arr.length * Math.random());
+    return arr[i];
+  }
 }

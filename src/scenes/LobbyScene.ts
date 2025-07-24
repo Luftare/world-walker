@@ -44,7 +44,9 @@ export class LobbyScene extends Phaser.Scene {
 
     this.createHTMLLobby();
 
-    this.sound.play("theme", { loop: true, volume: 0.5 });
+    const music = data?.isGameOver ?? false ? "death-music" : "theme";
+
+    this.sound.play(music, { loop: true, volume: 0.5 });
   }
 
   private createHTMLLobby(): void {

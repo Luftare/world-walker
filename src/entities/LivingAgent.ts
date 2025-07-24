@@ -42,15 +42,27 @@ export class LivingAgent extends MovingAgent {
     this.health = Math.max(0, this.health - damage);
     if (this.health <= 0) {
       this.die();
+    } else {
+      this.playHitSound();
     }
+  }
+
+  playHitSound() {
+    this.scene.sound.play("fx-player-hit", {
+      volume: 0.5,
+    });
+  }
+
+  playKilledSound() {
+    this.scene.sound.play("fx-player-killed", {
+      volume: 0.5,
+    });
   }
 
   die(): void {
     if (this.isDead) return;
 
-    this.scene.sound.play("fx-kill", {
-      volume: 0.5,
-    });
+    this.playKilledSound();
 
     this.isDead = true;
   }
