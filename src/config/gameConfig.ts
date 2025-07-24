@@ -13,7 +13,7 @@ export const gameConfig = {
   itemPickupRadius: 60,
   markerAlpha: 0.8,
   projectilePushbackForce: 500,
-  hexagonRadius: 100,
+  hexagonRadius: 70,
   populateDistance: 250,
   devMode: false,
   rotationSpeed: 2.0,
