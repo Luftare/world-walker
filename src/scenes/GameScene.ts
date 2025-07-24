@@ -17,6 +17,7 @@ import { DebugLogger } from "../utils/DebugLogger";
 import { GameLogic } from "../utils/GameLogic";
 import { EnemyVehicleGroup } from "../entities/EnemyVehicleGroup";
 import { MovingAgent } from "../entities/MovingAgent";
+import { WaveManager } from "../utils/WaveManager";
 
 export class GameScene extends Phaser.Scene {
   character: Character | undefined;
@@ -30,17 +31,27 @@ export class GameScene extends Phaser.Scene {
   tileSprite: Phaser.GameObjects.TileSprite | undefined;
   gridSystem: GridSystem | undefined;
   uiScene: UIScene | undefined;
+  waveManger: WaveManager;
   private geolocationService: GeolocationService | undefined;
   private compassService: CompassService | undefined;
 
   constructor() {
     super({ key: "GameScene" });
+    this.waveManger = new WaveManager(this);
   }
 
   async create(data?: {
     geolocationService?: GeolocationService;
     compassService?: CompassService;
   }): Promise<void> {
+    this.waveManger.reset();
+    this.waveManger.onWaveStart = (waveIndex: number, waveSeconds: number) => {
+      console.log("start", waveIndex, waveSeconds);
+    };
+    this.waveManger.onWaveEnd = (waveIndex: number, gapSeconds: number) => {
+      console.log("end", waveIndex, gapSeconds);
+    };
+
     // Clean up any existing state first
     this.cleanupEntities();
     this.cleanupSystems();
@@ -106,6 +117,8 @@ export class GameScene extends Phaser.Scene {
       !this.followCamera
     )
       return;
+
+    this.waveManger.update(delta);
     // Update character behaviors
     const markerPos = this.positionMarker.getPosition();
     this.character.moveTarget.set(markerPos.x, markerPos.y);
