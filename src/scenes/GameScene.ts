@@ -18,6 +18,7 @@ import { GameLogic } from "../utils/GameLogic";
 import { EnemyVehicleGroup } from "../entities/EnemyVehicleGroup";
 import { MovingAgent } from "../entities/MovingAgent";
 import { WaveManager } from "../utils/WaveManager";
+import { Sapling } from "../entities/Sapling";
 
 export class GameScene extends Phaser.Scene {
   character: Character | undefined;
@@ -25,6 +26,7 @@ export class GameScene extends Phaser.Scene {
   zombieGroup: WalkingEnemiesGroup | undefined;
   zombieVehicleGroup: EnemyVehicleGroup | undefined;
   projectiles: Projectile[] = [];
+  saplings: Sapling[] = [];
   spawnService: SpawnService | undefined;
   pickableItems: PickableItem[] = [];
   followCamera: FollowCamera | undefined;
@@ -131,6 +133,8 @@ export class GameScene extends Phaser.Scene {
     // Update zombie vehicle behaviors
     this.zombieVehicleGroup.update(time, delta);
     this.zombieVehicleGroup.setAllTargets(this.character);
+
+    this.saplings.forEach((sapling) => sapling.update(delta));
 
     // Update projectiles using GameLogic
     this.projectiles = GameLogic.updateProjectiles(

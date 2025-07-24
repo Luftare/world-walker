@@ -1,12 +1,13 @@
 import cogwheelUrl from "../assets/cogwheel.png";
-import debugCompassSquare from "../assets/debug-compass-square.png";
-import debugCompassCircle from "../assets/debug-compass-circle.png";
 import zombieIdle0Url from "../assets/zombie-idle0.png";
 import zombieIdle1Url from "../assets/zombie-idle1.png";
 import zombieWalk0Url from "../assets/zombie-walk0.png";
 import zombieWalk1Url from "../assets/zombie-walk1.png";
 import healthPackUrl from "../assets/healthpack.png";
 import potatoUrl from "../assets/potato.png";
+import sapling0 from "../assets/sapling0.png";
+import sapling1 from "../assets/sapling1.png";
+import sapling2 from "../assets/sapling2.png";
 import characterUrl from "../assets/character.png";
 import characterThrowUrl from "../assets/character-throw.png";
 import characterAutoGunUrl from "../assets/character-auto-gun.png";
@@ -41,13 +42,15 @@ export const loadAssets = (scene: Phaser.Scene) => {
   scene.load.image("character-no-gun", characterNoGunUrl);
   scene.load.image("character-spudblaster", characterSpudblasterUrl);
   scene.load.image("character-throw", characterThrowUrl);
-  scene.load.image("compass-square", debugCompassSquare);
-  scene.load.image("compass-circle", debugCompassCircle);
   scene.load.image("zombie-idle0", zombieIdle0Url);
   scene.load.image("zombie-idle1", zombieIdle1Url);
   scene.load.image("zombie-walk0", zombieWalk0Url);
   scene.load.image("zombie-walk1", zombieWalk1Url);
   scene.load.image("ammo-pack", potatoUrl);
+
+  scene.load.image("sapling-0", sapling0);
+  scene.load.image("sapling-1", sapling1);
+  scene.load.image("sapling-2", sapling2);
   scene.load.image("cogwheel", cogwheelUrl);
   scene.load.image("projectile", potatoUrl);
   scene.load.image("health-pack", healthPackUrl);

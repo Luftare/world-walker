@@ -1,5 +1,6 @@
 import { GameScene } from "../scenes/GameScene";
 import { Point } from "../types/types";
+import { HexagonUtils } from "./HexagonUtils";
 
 interface WaveState {
   waveIndex: number;
