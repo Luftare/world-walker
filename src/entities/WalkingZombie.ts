@@ -3,7 +3,7 @@ import { GameScene } from "../scenes/GameScene";
 
 export class WalkingZombie extends BaseEnemy {
   constructor(scene: GameScene, x: number = 0, y: number = 0) {
-    super(scene, x, y, 3);
+    super(scene, x, y, 100);
     this.scene = scene;
   }
 

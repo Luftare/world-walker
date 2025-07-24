@@ -4,7 +4,7 @@ import type { GameScene } from "../../scenes/GameScene";
 
 export class Pistol extends Weapon {
   constructor(scene: GameScene) {
-    super(scene, 600, 1, "SpudBlaster", 0.002, 80, "character-auto-gun");
+    super(scene, 600, 35, "SpudBlaster", 0.002, 80, "character-auto-gun");
   }
 
   shoot(

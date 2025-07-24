@@ -4,7 +4,7 @@ import type { GameScene } from "../../scenes/GameScene";
 
 export class Shotgun extends Weapon {
   constructor(scene: GameScene) {
-    super(scene, 3000, 1, "SpudMultiplier", 0.006, 120, "character-multi-gun");
+    super(scene, 3000, 35, "SpudMultiplier", 0.006, 120, "character-multi-gun");
   }
 
   shoot(

@@ -6,7 +6,7 @@ import { Point } from "../../types/types";
 
 export class Sniper extends Weapon {
   constructor(scene: GameScene) {
-    super(scene, 1000, 1, "SpudThunder", 0.006, 150, "character-thunder");
+    super(scene, 1000, 45, "SpudThunder", 0.006, 150, "character-thunder");
   }
 
   shoot(scene: GameScene, x: number, y: number, direction: Point): void {
