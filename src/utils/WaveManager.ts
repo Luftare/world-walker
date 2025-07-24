@@ -1,6 +1,5 @@
 import { GameScene } from "../scenes/GameScene";
 import { Point } from "../types/types";
-import { HexagonUtils } from "./HexagonUtils";
 
 interface WaveState {
   waveIndex: number;
@@ -13,9 +12,13 @@ export class WaveManager {
   private lastSpawnTimeSeconds: number = 0;
   private waveDurationSeconds: number = 30;
   private waveGapSeconds: number = 60;
-  public onWaveStart: (waveIndex: number, waveSeconds: number) => void =
-    () => {};
-  public onWaveEnd: (waveIndex: number, gapSeconds: number) => void = () => {};
+  public onWaveStart:
+    | ((waveIndex: number, waveSeconds: number) => void)
+    | undefined;
+
+  public onWaveEnd:
+    | ((waveIndex: number, gapSeconds: number) => void)
+    | undefined;
 
   constructor(scene: GameScene) {
     this.scene = scene;
@@ -71,7 +74,7 @@ export class WaveManager {
   }
 
   getSpawnGapSeconds(waveIndex: number): number {
-    return Math.max(0.5, 10 - waveIndex * 0.5);
+    return Math.max(0.5, 10 - waveIndex);
   }
 
   checkIsSpawnReady(waveIndex: number): boolean {
@@ -93,9 +96,13 @@ export class WaveManager {
     }
 
     if (!indexMatches) {
-      this.onWaveEnd(currentWaveState.waveIndex, this.waveGapSeconds);
+      if (this.onWaveEnd) {
+        this.onWaveEnd(currentWaveState.waveIndex, this.waveGapSeconds);
+      }
     } else {
-      this.onWaveStart(currentWaveState.waveIndex, this.waveDurationSeconds);
+      if (this.onWaveStart) {
+        this.onWaveStart(currentWaveState.waveIndex, this.waveDurationSeconds);
+      }
     }
   }
 

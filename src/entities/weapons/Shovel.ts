@@ -12,7 +12,7 @@ export class Shovel extends Weapon {
     scene: GameScene,
     x: number,
     y: number,
-    direction: { x: number; y: number }
+    _direction: { x: number; y: number }
   ): void {
     const sapling = new Sapling(scene, x, y);
     scene.saplings.push(sapling);
