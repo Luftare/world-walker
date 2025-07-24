@@ -11,7 +11,7 @@ export class WaveManager {
   private timeSeconds: number = 0;
   private lastSpawnTimeSeconds: number = 0;
   private waveDurationSeconds: number = 30;
-  private waveGapSeconds: number = 10;
+  private waveGapSeconds: number = 60;
   public onWaveStart: (waveIndex: number, waveSeconds: number) => void =
     () => {};
   public onWaveEnd: (waveIndex: number, gapSeconds: number) => void = () => {};
