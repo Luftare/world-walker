@@ -1,3 +1,4 @@
+import { gameConfig } from "../config/gameConfig";
 import { GameScene } from "../scenes/GameScene";
 import { TweenHelpers } from "../utils/TweenHelpers";
 import { AmmoPack } from "./AmmoPack";
@@ -5,8 +6,9 @@ import { CircularGameObject } from "./CircularGameObject";
 
 export class Sapling extends CircularGameObject {
   public ageSeconds: number;
+
   constructor(scene: GameScene, x: number, y: number) {
-    super(scene, x, y, 20, "sapling-0");
+    super(scene, x, y, gameConfig.saplingRadius, "sapling-0");
     this.ageSeconds = 0;
     this.setDepth(4);
     this.rotation = Math.random() * Math.PI * 2;
@@ -33,7 +35,7 @@ export class Sapling extends CircularGameObject {
     if (this.ageSeconds >= 60) {
       this.scene.saplings = this.scene.saplings.filter((s) => s !== this);
 
-      const count = Math.floor(Math.random() * 5) + 2;
+      const count = Math.floor(Math.random() * 2) + 2;
 
       [...Array(count)].forEach(() => {
         this.spawnPotato();

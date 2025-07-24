@@ -3,8 +3,8 @@ import { Projectile } from "../Projectile";
 import type { GameScene } from "../../scenes/GameScene";
 
 export class FullAutoGun extends Weapon {
-  constructor() {
-    super(150, 1, "SpudSower3000", 0.0025, 60, "character-spudblaster");
+  constructor(scene: GameScene) {
+    super(scene, 150, 1, "SpudSower3000", 0.0025, 60, "character-spudblaster");
   }
 
   shoot(

@@ -24,6 +24,7 @@ export const gameConfig = {
   enemyRadius: 25,
   aggroRange: 240,
   featureRadius: 24,
+  saplingRadius: 20,
   colors: {
     player: 0x666666,
     playerBorder: 0x404040,

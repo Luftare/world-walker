@@ -3,8 +3,8 @@ import { Projectile } from "../Projectile";
 import type { GameScene } from "../../scenes/GameScene";
 
 export class Shotgun extends Weapon {
-  constructor() {
-    super(3000, 1, "SpudMultiplier", 0.006, 120, "character-multi-gun");
+  constructor(scene: GameScene) {
+    super(scene, 3000, 1, "SpudMultiplier", 0.006, 120, "character-multi-gun");
   }
 
   shoot(

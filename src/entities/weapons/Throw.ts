@@ -3,8 +3,8 @@ import { Projectile } from "../Projectile";
 import type { GameScene } from "../../scenes/GameScene";
 
 export class Throw extends Weapon {
-  constructor() {
-    super(800, 1, "Throw-a-Spud", 0, 10, "character-throw");
+  constructor(scene: GameScene) {
+    super(scene, 800, 1, "Throw-a-Spud", 0, 10, "character-throw");
   }
 
   shoot(
