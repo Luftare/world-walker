@@ -29,7 +29,9 @@ export abstract class PickableItem extends Phaser.GameObjects.Container {
     const radius = gameConfig.itemRadius;
     this.sprite.setDisplaySize(radius * 2, radius * 2);
 
-    this.createPickupRing();
+    setTimeout(() => {
+      this.createPickupRing();
+    }, Math.random() * 1000);
 
     TweenHelpers.spawnAnimation(scene, this, this.scaleX, this.scaleY);
   }
