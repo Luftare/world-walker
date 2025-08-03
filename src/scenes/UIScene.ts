@@ -331,13 +331,15 @@ export class UIScene extends Phaser.Scene {
     modalWidth: number
   ): Phaser.GameObjects.Text[] {
     const unlockedWeapons = this.getUnlockedWeapons();
+    console.log("Unlocked weapons: ", unlockedWeapons);
+    const currentAmmo = this.getCurrentAmmo();
 
     const weapons = [
       {
         name: "Throw-a-Spud",
         icon: "character-throw",
         unlocked: unlockedWeapons.has(Throw.id),
-        cost: null,
+        cost: 0,
         id: Throw.id,
       },
       {
@@ -351,28 +353,28 @@ export class UIScene extends Phaser.Scene {
         name: "SpudBlaster",
         icon: "character-auto-gun",
         unlocked: unlockedWeapons.has(Pistol.id),
-        cost: 15,
+        cost: 20,
         id: Pistol.id,
       },
       {
         name: "SpudSower3000",
         icon: "character-spudblaster",
         unlocked: unlockedWeapons.has(FullAutoGun.id),
-        cost: 15,
+        cost: 30,
         id: FullAutoGun.id,
       },
       {
         name: "Spud Multiplier",
         icon: "character-multi-gun",
         unlocked: unlockedWeapons.has(Shotgun.id),
-        cost: 15,
+        cost: 50,
         id: Shotgun.id,
       },
       {
         name: "Spud Thunder",
         icon: "character-thunder",
         unlocked: unlockedWeapons.has(Sniper.id),
-        cost: 15,
+        cost: 100,
         id: Sniper.id,
       },
     ];
@@ -383,6 +385,8 @@ export class UIScene extends Phaser.Scene {
 
     weapons.forEach((weapon, index) => {
       const itemY = startY + index * itemHeight;
+      const canAfford = currentAmmo >= weapon.cost;
+      const isLocked = !weapon.unlocked;
 
       // Create weapon icon
       const weaponIcon = this.add.image(
@@ -391,18 +395,31 @@ export class UIScene extends Phaser.Scene {
         weapon.icon
       );
       weaponIcon.setScale(0.1 * this.devicePixelRatio);
+
+      // Set opacity for unaffordable weapons
+      if (isLocked && !canAfford) {
+        weaponIcon.setAlpha(0.5);
+      }
+
       items.push(weaponIcon as any);
 
-      // Create weapon name
+      // Create weapon name with lock emoji for locked weapons
+      const displayName = isLocked ? `🔒 ${weapon.name}` : weapon.name;
       const weaponName = this.add.text(
         modalX + 70 * this.devicePixelRatio, // Adjusted for smaller icon
         itemY + 10 * this.devicePixelRatio,
-        weapon.name,
+        displayName,
         {
           fontSize: `${14 * this.devicePixelRatio}px`,
           color: weapon.unlocked ? "#000000" : "#666666",
         }
       );
+
+      // Set opacity for unaffordable weapons
+      if (isLocked && !canAfford) {
+        weaponName.setAlpha(0.5);
+      }
+
       items.push(weaponName);
 
       // Create selection indicator or cost
@@ -425,6 +442,12 @@ export class UIScene extends Phaser.Scene {
           "ammo-pack"
         );
         costIcon.setScale(0.15 * this.devicePixelRatio); // 0.5x of 0.3
+
+        // Set opacity for unaffordable weapons
+        if (!canAfford) {
+          costIcon.setAlpha(0.5);
+        }
+
         items.push(costIcon as any);
 
         const costText = this.add.text(
@@ -433,9 +456,15 @@ export class UIScene extends Phaser.Scene {
           `x${weapon.cost}`,
           {
             fontSize: `${12 * this.devicePixelRatio}px`,
-            color: "#666666",
+            color: canAfford ? "#666666" : "#999999",
           }
         );
+
+        // Set opacity for unaffordable weapons
+        if (!canAfford) {
+          costText.setAlpha(0.5);
+        }
+
         items.push(costText);
       }
 
@@ -628,7 +657,7 @@ export class UIScene extends Phaser.Scene {
 
   private getUnlockedWeapons(): Set<string> {
     const gameScene = this.scene.get("GameScene") as any;
-    if (!gameScene?.character) return new Set(["throw-a-spud"]); // Default to throw weapon
+    if (!gameScene?.character) return new Set([Throw.id]); // Default to throw weapon
 
     const weaponInventory = gameScene.character.getWeaponInventory();
     const unlockedWeapons = new Set<string>();
@@ -639,6 +668,13 @@ export class UIScene extends Phaser.Scene {
     });
 
     return unlockedWeapons;
+  }
+
+  private getCurrentAmmo(): number {
+    const gameScene = this.scene.get("GameScene") as any;
+    if (!gameScene?.character) return 0;
+
+    return gameScene.character.getWeaponInventory().getAmmo();
   }
 
   resize(): void {
