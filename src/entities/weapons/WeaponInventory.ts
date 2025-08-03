@@ -1,11 +1,6 @@
 import { Weapon } from "./Weapon";
-import { Pistol } from "./Pistol";
 import { Throw } from "./Throw";
-import { FullAutoGun } from "./FullAutoGun";
-import { Sniper } from "./Sniper";
-import { Shotgun } from "./Shotgun";
 import { GameScene } from "../../scenes/GameScene";
-import { Shovel } from "./Shovel";
 
 export class WeaponInventory {
   private currentWeapon: Weapon;
@@ -17,12 +12,6 @@ export class WeaponInventory {
     this.scene = scene;
     this.currentWeapon = new Throw(this.scene);
     this.weapons.set("throw", this.currentWeapon);
-    // this.weapons.set("shovel", new Shovel(this.scene));
-    // this.weapons.set("pistol", new Pistol(this.scene));
-    // this.weapons.set("fullautogun", new FullAutoGun(this.scene));
-    // this.weapons.set("sniper", new Sniper(this.scene));
-    // this.weapons.set("shotgun", new Shotgun(this.scene));
-    // this.setCurrentWeapon("throw");
   }
 
   getCurrentWeapon(): Weapon {

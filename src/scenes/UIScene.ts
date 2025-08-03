@@ -16,7 +16,6 @@ export class UIScene extends Phaser.Scene {
   private weaponModal?: Phaser.GameObjects.Container;
   private isVisible: boolean = true;
   private isModalOpen: boolean = false;
-  private onWeaponSwitch?: () => void;
   private devicePixelRatio: number;
   private isShooting: boolean = false;
   private debugLogTimer: Phaser.Time.TimerEvent | undefined;
@@ -475,22 +474,12 @@ export class UIScene extends Phaser.Scene {
     this.closeWeaponModal();
   }
 
-  setWeaponSwitchCallback(callback: () => void): void {
-    this.onWeaponSwitch = callback;
-  }
-
   private startShooting(): void {
     this.isShooting = true;
   }
 
   private stopShooting(): void {
     this.isShooting = false;
-  }
-
-  private switchWeapon(): void {
-    if (this.onWeaponSwitch) {
-      this.onWeaponSwitch();
-    }
   }
 
   isShootingActive(): boolean {
