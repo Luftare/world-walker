@@ -14,6 +14,8 @@ export class UIScene extends Phaser.Scene {
   private debugLogText?: Phaser.GameObjects.Text;
   private ammoDisplay?: Phaser.GameObjects.Container;
   private weaponModal?: Phaser.GameObjects.Container;
+  private modalAmmoCountText?: Phaser.GameObjects.Text;
+  private currentAmmo: number = 0;
   private isVisible: boolean = true;
   private isModalOpen: boolean = false;
   private devicePixelRatio: number;
@@ -252,7 +254,7 @@ export class UIScene extends Phaser.Scene {
       "ammo-pack"
     );
     ammoIcon.setScale(0.2 * this.devicePixelRatio); // 0.5x of 0.4
-    const ammoCount = this.add.text(
+    this.modalAmmoCountText = this.add.text(
       modalX + modalWidth - 50 * this.devicePixelRatio,
       modalY + 25 * this.devicePixelRatio,
       "x15",
@@ -312,7 +314,7 @@ export class UIScene extends Phaser.Scene {
       weaponIcon,
       weaponName,
       ammoIcon,
-      ammoCount,
+      this.modalAmmoCountText,
       listContainer,
       ...weaponItems,
       closeButton,
@@ -458,6 +460,8 @@ export class UIScene extends Phaser.Scene {
     if (this.weaponModal && this.isVisible) {
       this.weaponModal.setVisible(true);
       this.isModalOpen = true;
+      // Update modal ammo count when opening
+      this.updateModalAmmoCount(this.currentAmmo);
     }
   }
 
@@ -499,7 +503,9 @@ export class UIScene extends Phaser.Scene {
     if (this.weaponInfoText && this.isVisible) {
       this.weaponInfoText.setText(weaponName);
     }
+    this.currentAmmo = ammo;
     this.updateAmmoDisplay(ammo);
+    this.updateModalAmmoCount(ammo);
   }
 
   private updateAmmoDisplay(ammo: number): void {
@@ -508,6 +514,12 @@ export class UIScene extends Phaser.Scene {
     const ammoText = this.ammoDisplay.getAt(1) as Phaser.GameObjects.Text;
     if (ammoText) {
       ammoText.setText(ammo.toString());
+    }
+  }
+
+  private updateModalAmmoCount(ammo: number): void {
+    if (this.modalAmmoCountText) {
+      this.modalAmmoCountText.setText(`x${ammo}`);
     }
   }
 
