@@ -17,12 +17,12 @@ export class WeaponInventory {
     this.scene = scene;
     this.currentWeapon = new Throw(this.scene);
     this.weapons.set("throw", this.currentWeapon);
-    this.weapons.set("shovel", new Shovel(this.scene));
-    this.weapons.set("pistol", new Pistol(this.scene));
-    this.weapons.set("fullautogun", new FullAutoGun(this.scene));
-    this.weapons.set("sniper", new Sniper(this.scene));
-    this.weapons.set("shotgun", new Shotgun(this.scene));
-    this.setCurrentWeapon("throw");
+    // this.weapons.set("shovel", new Shovel(this.scene));
+    // this.weapons.set("pistol", new Pistol(this.scene));
+    // this.weapons.set("fullautogun", new FullAutoGun(this.scene));
+    // this.weapons.set("sniper", new Sniper(this.scene));
+    // this.weapons.set("shotgun", new Shotgun(this.scene));
+    // this.setCurrentWeapon("throw");
   }
 
   getCurrentWeapon(): Weapon {

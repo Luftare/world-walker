@@ -1,3 +1,4 @@
+import { gameConfig } from "../config/gameConfig";
 import { CoordinateUtils } from "./CoordinateUtils";
 
 export interface GeoLocation {
@@ -20,6 +21,8 @@ export class GeolocationService {
   private onError: ((error: string) => void) | null = null;
 
   async requestLocationPermission(): Promise<boolean> {
+    if (gameConfig.mockLocation) return true;
+
     if (typeof window === "undefined" || !("geolocation" in window.navigator)) {
       throw new Error("Geolocation is not supported by this browser");
     }
@@ -34,6 +37,9 @@ export class GeolocationService {
   }
 
   async getInitialLocation(): Promise<GeoLocation> {
+    if (gameConfig.mockLocation)
+      return { latitude: 60.1699, longitude: 24.9384 };
+
     if (typeof window === "undefined" || !("geolocation" in window.navigator)) {
       throw new Error("Geolocation is not supported by this browser");
     }

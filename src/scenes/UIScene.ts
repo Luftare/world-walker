@@ -6,6 +6,7 @@ export class UIScene extends Phaser.Scene {
   private weaponInfoText?: Phaser.GameObjects.Text;
   private healthText?: Phaser.GameObjects.Text;
   private debugLogText?: Phaser.GameObjects.Text;
+  private ammoDisplay?: Phaser.GameObjects.Container;
   private isVisible: boolean = true;
   private onWeaponSwitch?: () => void;
   private devicePixelRatio: number;
@@ -115,6 +116,9 @@ export class UIScene extends Phaser.Scene {
       this.switchWeapon();
     });
 
+    // Create ammo display (top-right)
+    this.createAmmoDisplay(gameWidth, padding, fontSize);
+
     // Create health text (below weapon info)
     this.healthText = this.add.text(
       padding,
@@ -130,6 +134,41 @@ export class UIScene extends Phaser.Scene {
     this.healthText.setOrigin(0, 0); // Left-align
     this.healthText.setScrollFactor(0);
     this.healthText.setDepth(1000);
+  }
+
+  private createAmmoDisplay(
+    gameWidth: number,
+    padding: number,
+    fontSize: any
+  ): void {
+    const potatoImage = this.add.image(0, 0, "ammo-pack");
+    potatoImage.setDisplaySize(48, 48);
+    potatoImage.setOrigin(0, 0.5);
+
+    const ammoText = this.add.text(
+      potatoImage.displayWidth + 8 * this.devicePixelRatio,
+      0,
+      "∞",
+      {
+        fontSize: fontSize.score,
+        color: "#ffffff",
+        backgroundColor: "#333333",
+        padding: { x: 8 * this.devicePixelRatio, y: 4 * this.devicePixelRatio },
+      }
+    );
+    ammoText.setOrigin(0, 0.5); // Left-center align
+
+    this.ammoDisplay = this.add.container(
+      gameWidth -
+        padding -
+        potatoImage.displayWidth -
+        ammoText.displayWidth -
+        32 * this.devicePixelRatio,
+      padding + 16 * this.devicePixelRatio,
+      [potatoImage, ammoText]
+    );
+    this.ammoDisplay.setScrollFactor(0);
+    this.ammoDisplay.setDepth(1000);
   }
 
   setWeaponSwitchCallback(callback: () => void): void {
@@ -165,7 +204,17 @@ export class UIScene extends Phaser.Scene {
 
   updateWeaponInfo(weaponName: string, ammo: number): void {
     if (this.weaponInfoText && this.isVisible) {
-      this.weaponInfoText.setText(`${weaponName} - ${ammo}`);
+      this.weaponInfoText.setText(weaponName);
+    }
+    this.updateAmmoDisplay(ammo);
+  }
+
+  private updateAmmoDisplay(ammo: number): void {
+    if (!this.ammoDisplay || !this.isVisible) return;
+
+    const ammoText = this.ammoDisplay.getAt(1) as Phaser.GameObjects.Text;
+    if (ammoText) {
+      ammoText.setText(ammo.toString());
     }
   }
 
@@ -250,6 +299,7 @@ export class UIScene extends Phaser.Scene {
       this.debugLogText.setVisible(false);
     }
     if (this.reloadBar) this.reloadBar.setVisible(visible);
+    if (this.ammoDisplay) this.ammoDisplay.setVisible(visible);
   }
 
   toggleVisibility(): void {
@@ -290,5 +340,6 @@ export class UIScene extends Phaser.Scene {
     if (this.debugLogTimer) this.debugLogTimer.destroy();
     if (this.reloadBar) this.reloadBar.destroy();
     if (this.reloadTween) this.reloadTween.stop();
+    if (this.ammoDisplay) this.ammoDisplay.destroy();
   }
 }
