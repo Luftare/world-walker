@@ -4,6 +4,8 @@ import { Sapling } from "../Sapling";
 import { gameConfig } from "../../config/gameConfig";
 
 export class Shovel extends Weapon {
+  static override id: string = "plant-a-spud";
+
   constructor(scene: GameScene) {
     super(scene, 1000, 1, "Plant-o-Spud", 0.004, 100, "character-no-gun");
   }

@@ -9,6 +9,7 @@ export abstract class Weapon {
   protected shakeIntensity: number = 0.003; // Screen shake intensity
   protected shakeDuration: number = 100; // Screen shake duration in milliseconds
   public characterTexture: string;
+  public static id: string = "weapon";
 
   constructor(
     scene: GameScene,

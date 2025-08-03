@@ -3,6 +3,8 @@ import { Projectile } from "../Projectile";
 import type { GameScene } from "../../scenes/GameScene";
 
 export class Shotgun extends Weapon {
+  static override id: string = "spud-multiplier";
+
   constructor(scene: GameScene) {
     super(scene, 3000, 35, "SpudMultiplier", 0.006, 120, "character-multi-gun");
   }

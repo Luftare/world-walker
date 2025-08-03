@@ -5,6 +5,8 @@ import type { GameScene } from "../../scenes/GameScene";
 import { Point } from "../../types/types";
 
 export class Sniper extends Weapon {
+  static override id: string = "spud-thunder";
+
   constructor(scene: GameScene) {
     super(scene, 1000, 45, "SpudThunder", 0.006, 150, "character-thunder");
   }

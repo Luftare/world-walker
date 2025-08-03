@@ -1,4 +1,10 @@
 import Phaser from "phaser";
+import { Throw } from "../entities/weapons/Throw";
+import { Shovel } from "../entities/weapons/Shovel";
+import { Pistol } from "../entities/weapons/Pistol";
+import { FullAutoGun } from "../entities/weapons/FullAutoGun";
+import { Shotgun } from "../entities/weapons/Shotgun";
+import { Sniper } from "../entities/weapons/Sniper";
 
 export class UIScene extends Phaser.Scene {
   private debugButton?: Phaser.GameObjects.Text;
@@ -323,12 +329,48 @@ export class UIScene extends Phaser.Scene {
     modalWidth: number
   ): Phaser.GameObjects.Text[] {
     const weapons = [
-      { name: "Throw-a-Spud", unlocked: true, cost: null },
-      { name: "Plant-a-Spud", unlocked: false, cost: 10 },
-      { name: "SpudBlaster", unlocked: false, cost: 15 },
-      { name: "SpudSower3000", unlocked: false, cost: 15 },
-      { name: "Spud Multiplier", unlocked: false, cost: 15 },
-      { name: "Spud Thunder", unlocked: false, cost: 15 },
+      {
+        name: "Throw-a-Spud",
+        icon: "character-throw",
+        unlocked: true,
+        cost: null,
+        id: Throw.id,
+      },
+      {
+        name: "Plant-a-Spud",
+        icon: "character-no-gun",
+        unlocked: false,
+        cost: 10,
+        id: Shovel.id,
+      },
+      {
+        name: "SpudBlaster",
+        icon: "character-auto-gun",
+        unlocked: false,
+        cost: 15,
+        id: Pistol.id,
+      },
+      {
+        name: "SpudSower3000",
+        icon: "character-spudblaster",
+        unlocked: false,
+        cost: 15,
+        id: FullAutoGun.id,
+      },
+      {
+        name: "Spud Multiplier",
+        icon: "character-multi-gun",
+        unlocked: false,
+        cost: 15,
+        id: Shotgun.id,
+      },
+      {
+        name: "Spud Thunder",
+        icon: "character-thunder",
+        unlocked: false,
+        cost: 15,
+        id: Sniper.id,
+      },
     ];
 
     const items: Phaser.GameObjects.Text[] = [];
@@ -342,9 +384,9 @@ export class UIScene extends Phaser.Scene {
       const weaponIcon = this.add.image(
         modalX + 30 * this.devicePixelRatio,
         itemY + itemHeight / 2,
-        "character-throw"
+        weapon.icon
       );
-      weaponIcon.setScale(0.15 * this.devicePixelRatio);
+      weaponIcon.setScale(0.1 * this.devicePixelRatio);
       items.push(weaponIcon as any);
 
       // Create weapon name

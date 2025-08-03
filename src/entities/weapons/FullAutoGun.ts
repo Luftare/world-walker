@@ -3,6 +3,8 @@ import { Projectile } from "../Projectile";
 import type { GameScene } from "../../scenes/GameScene";
 
 export class FullAutoGun extends Weapon {
+  static override id: string = "spud-sower-3000";
+
   constructor(scene: GameScene) {
     super(scene, 150, 35, "SpudSower3000", 0.0025, 60, "character-spudblaster");
   }
