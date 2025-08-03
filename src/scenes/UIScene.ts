@@ -122,7 +122,7 @@ export class UIScene extends Phaser.Scene {
     this.createAmmoDisplay(gameWidth, padding, fontSize);
 
     // Create weapon modal
-    this.createWeaponModal(gameWidth, padding, fontSize);
+    this.createWeaponModal(gameWidth);
 
     // Create health text (below weapon info)
     this.healthText = this.add.text(
@@ -176,15 +176,11 @@ export class UIScene extends Phaser.Scene {
     this.ammoDisplay.setDepth(1000);
   }
 
-  private createWeaponModal(
-    gameWidth: number,
-    padding: number,
-    fontSize: any
-  ): void {
-    const modalWidth = gameWidth * 0.8;
-    const modalHeight = 300 * this.devicePixelRatio;
+  private createWeaponModal(gameWidth: number): void {
+    const modalWidth = gameWidth - 32 * this.devicePixelRatio;
+    const modalHeight = (window.innerHeight - 32) * this.devicePixelRatio; // Increased height to accommodate items
     const modalX = (gameWidth - modalWidth) / 2;
-    const modalY = 100 * this.devicePixelRatio;
+    const modalY = 16 * this.devicePixelRatio;
 
     // Create modal background
     const modalBg = this.add.graphics();
@@ -230,7 +226,7 @@ export class UIScene extends Phaser.Scene {
       modalY + 40 * this.devicePixelRatio,
       "character-throw"
     );
-    weaponIcon.setScale(0.3 * this.devicePixelRatio);
+    weaponIcon.setScale(0.225 * this.devicePixelRatio); // 0.75x of 0.3
 
     // Create weapon name in header
     const weaponName = this.add.text(
@@ -250,7 +246,7 @@ export class UIScene extends Phaser.Scene {
       modalY + 40 * this.devicePixelRatio,
       "ammo-pack"
     );
-    ammoIcon.setScale(0.4 * this.devicePixelRatio);
+    ammoIcon.setScale(0.2 * this.devicePixelRatio); // 0.5x of 0.4
     const ammoCount = this.add.text(
       modalX + modalWidth - 50 * this.devicePixelRatio,
       modalY + 25 * this.devicePixelRatio,
@@ -269,24 +265,19 @@ export class UIScene extends Phaser.Scene {
       modalX + 10 * this.devicePixelRatio,
       modalY + 80 * this.devicePixelRatio,
       modalWidth - 20 * this.devicePixelRatio,
-      modalHeight - 120 * this.devicePixelRatio,
+      modalHeight - 140 * this.devicePixelRatio, // Increased space for close button
       10 * this.devicePixelRatio
     );
     listContainer.strokeRoundedRect(
       modalX + 10 * this.devicePixelRatio,
       modalY + 80 * this.devicePixelRatio,
       modalWidth - 20 * this.devicePixelRatio,
-      modalHeight - 120 * this.devicePixelRatio,
+      modalHeight - 140 * this.devicePixelRatio, // Increased space for close button
       10 * this.devicePixelRatio
     );
 
     // Create weapon list items
-    const weaponItems = this.createWeaponListItems(
-      modalX,
-      modalY,
-      modalWidth,
-      fontSize
-    );
+    const weaponItems = this.createWeaponListItems(modalX, modalY, modalWidth);
 
     // Create close button
     const closeButton = this.add.text(
@@ -329,20 +320,19 @@ export class UIScene extends Phaser.Scene {
   private createWeaponListItems(
     modalX: number,
     modalY: number,
-    modalWidth: number,
-    fontSize: any
+    modalWidth: number
   ): Phaser.GameObjects.Text[] {
     const weapons = [
-      { name: "SpudBlaster3000", unlocked: true, cost: null },
-      { name: "Potato Throw", unlocked: false, cost: 15 },
+      { name: "Throw-a-Spud", unlocked: true, cost: null },
+      { name: "Plant-a-Spud", unlocked: false, cost: 10 },
+      { name: "SpudBlaster", unlocked: false, cost: 15 },
+      { name: "SpudSower3000", unlocked: false, cost: 15 },
       { name: "Spud Multiplier", unlocked: false, cost: 15 },
-      { name: "Spud Sower 3000", unlocked: false, cost: 15 },
       { name: "Spud Thunder", unlocked: false, cost: 15 },
-      { name: "Auto Gun", unlocked: false, cost: 15 },
     ];
 
     const items: Phaser.GameObjects.Text[] = [];
-    const itemHeight = 40 * this.devicePixelRatio;
+    const itemHeight = 35 * this.devicePixelRatio; // Slightly smaller items
     const startY = modalY + 100 * this.devicePixelRatio;
 
     weapons.forEach((weapon, index) => {
@@ -354,12 +344,12 @@ export class UIScene extends Phaser.Scene {
         itemY + itemHeight / 2,
         "character-throw"
       );
-      weaponIcon.setScale(0.2 * this.devicePixelRatio);
+      weaponIcon.setScale(0.15 * this.devicePixelRatio);
       items.push(weaponIcon as any);
 
       // Create weapon name
       const weaponName = this.add.text(
-        modalX + 80 * this.devicePixelRatio,
+        modalX + 70 * this.devicePixelRatio, // Adjusted for smaller icon
         itemY + 10 * this.devicePixelRatio,
         weapon.name,
         {
@@ -388,7 +378,7 @@ export class UIScene extends Phaser.Scene {
           itemY + itemHeight / 2,
           "ammo-pack"
         );
-        costIcon.setScale(0.3 * this.devicePixelRatio);
+        costIcon.setScale(0.15 * this.devicePixelRatio); // 0.5x of 0.3
         items.push(costIcon as any);
 
         const costText = this.add.text(
