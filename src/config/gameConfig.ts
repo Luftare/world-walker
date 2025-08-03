@@ -4,7 +4,7 @@
  */
 
 export const gameConfig = {
-  mockLocation: true,
+  mockLocation: false,
   spawnMinDistance: 250,
   geoPixelsPerMeter: 10,
   playerSpeed: 50,
