@@ -229,19 +229,19 @@ export class UIScene extends Phaser.Scene {
       10 * this.devicePixelRatio
     );
 
-    // Create weapon icon in header
-    const weaponIcon = this.add.image(
-      modalX + 30 * this.devicePixelRatio,
-      modalY + 40 * this.devicePixelRatio,
-      "character-throw"
-    );
-    weaponIcon.setScale(0.225 * this.devicePixelRatio); // 0.75x of 0.3
+    // // Create weapon icon in header
+    // const weaponIcon = this.add.image(
+    //   modalX + 30 * this.devicePixelRatio,
+    //   modalY + 40 * this.devicePixelRatio,
+    //   "character-throw"
+    // );
+    // weaponIcon.setScale(0.225 * this.devicePixelRatio); // 0.75x of 0.3
 
     // Create weapon name in header
     const weaponName = this.add.text(
       modalX + 80 * this.devicePixelRatio,
       modalY + 25 * this.devicePixelRatio,
-      "SpudBlaster3000",
+      "Inventory",
       {
         fontSize: `${18 * this.devicePixelRatio}px`,
         color: "#000000",
@@ -310,7 +310,7 @@ export class UIScene extends Phaser.Scene {
     this.weaponModal = this.add.container(0, 0, [
       modalBg,
       headerBg,
-      weaponIcon,
+      // weaponIcon,
       weaponName,
       ammoIcon,
       this.modalAmmoCountText,

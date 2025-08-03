@@ -5,7 +5,7 @@ import { GameScene } from "../../scenes/GameScene";
 export class WeaponInventory {
   private currentWeapon: Weapon;
   private weapons: Map<string, Weapon> = new Map();
-  private sharedAmmo: number = 20; // Initial ammo pool
+  private sharedAmmo: number = 0; // Initial ammo pool
   private scene: GameScene;
 
   constructor(scene: GameScene) {

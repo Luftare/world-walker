@@ -16,7 +16,7 @@ export class Shotgun extends Weapon {
     direction: { x: number; y: number }
   ): void {
     // Create 3 projectiles in a fan pattern
-    const spreadAngle = Math.PI / 15;
+    const spreadAngle = Math.PI / 20;
     const angles = [-spreadAngle, 0, spreadAngle];
 
     for (const angle of angles) {
@@ -33,7 +33,7 @@ export class Shotgun extends Weapon {
         y,
         rotatedDirection,
         this.damage,
-        300
+        200
       );
 
       // Add to scene's projectile array
