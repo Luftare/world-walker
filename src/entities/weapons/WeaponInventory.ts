@@ -5,7 +5,7 @@ import { GameScene } from "../../scenes/GameScene";
 export class WeaponInventory {
   private currentWeapon: Weapon;
   private weapons: Map<string, Weapon> = new Map();
-  private sharedAmmo: number = 10; // Initial ammo pool
+  private sharedAmmo: number = 20; // Initial ammo pool
   private scene: GameScene;
 
   constructor(scene: GameScene) {
@@ -35,22 +35,19 @@ export class WeaponInventory {
   }
 
   addWeapon(weapon: Weapon): void {
-    this.weapons.set(weapon.getWeaponName().toLowerCase(), weapon);
+    this.weapons.set(weapon.getWeaponName(), weapon);
   }
 
   removeWeapon(weaponName: string): boolean {
-    if (
-      this.currentWeapon.getWeaponName().toLowerCase() ===
-      weaponName.toLowerCase()
-    ) {
+    if (this.currentWeapon.getWeaponName() === weaponName) {
       // Don't remove the current weapon
       return false;
     }
-    return this.weapons.delete(weaponName.toLowerCase());
+    return this.weapons.delete(weaponName);
   }
 
   getWeapon(weaponName: string): Weapon | undefined {
-    return this.weapons.get(weaponName.toLowerCase());
+    return this.weapons.get(weaponName);
   }
 
   getAllWeapons(): Weapon[] {
@@ -101,5 +98,19 @@ export class WeaponInventory {
 
   addAmmo(amount: number): void {
     this.sharedAmmo += amount;
+  }
+
+  isWeaponUnlocked(weaponId: string): boolean {
+    return this.weapons.has(weaponId);
+  }
+
+  unlockWeapon(_weaponId: string): boolean {
+    // This method will be called from GameScene when a weapon needs to be unlocked
+    // The actual weapon creation will be handled in GameScene
+    return false; // Placeholder - actual implementation will be in GameScene
+  }
+
+  getWeaponById(weaponId: string): Weapon | undefined {
+    return this.weapons.get(weaponId);
   }
 }

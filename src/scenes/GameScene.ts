@@ -19,6 +19,12 @@ import { EnemyVehicleGroup } from "../entities/EnemyVehicleGroup";
 import { MovingAgent } from "../entities/MovingAgent";
 import { WaveManager } from "../utils/WaveManager";
 import { Sapling } from "../entities/Sapling";
+import { Throw } from "../entities/weapons/Throw";
+import { Shovel } from "../entities/weapons/Shovel";
+import { Pistol } from "../entities/weapons/Pistol";
+import { FullAutoGun } from "../entities/weapons/FullAutoGun";
+import { Shotgun } from "../entities/weapons/Shotgun";
+import { Sniper } from "../entities/weapons/Sniper";
 
 export class GameScene extends Phaser.Scene {
   character: Character | undefined;
@@ -104,6 +110,11 @@ export class GameScene extends Phaser.Scene {
           currentWeapon.getWeaponName(),
           weaponInventory.getAmmo()
         );
+      });
+
+      // Set up weapon selection callback
+      this.uiScene.setWeaponSelectionCallback((weaponId: string) => {
+        this.handleWeaponSelection(weaponId);
       });
     }
   }
@@ -464,5 +475,89 @@ export class GameScene extends Phaser.Scene {
         this.positionMarker.setPosition(pointer.worldX, pointer.worldY);
       }
     });
+  }
+
+  private handleWeaponSelection(weaponId: string): void {
+    if (!this.character) return;
+
+    const weaponInventory = this.character.getWeaponInventory();
+
+    // Check if weapon is already unlocked
+    if (weaponInventory.isWeaponUnlocked(weaponId)) {
+      // Select the weapon
+      weaponInventory.setCurrentWeapon(weaponId);
+      this.updateWeaponUI();
+      return;
+    }
+
+    // Weapon is locked, check if we can afford it
+    const weaponCost = this.getWeaponCost(weaponId);
+    if (weaponCost === null) return; // Weapon not found
+
+    if (weaponInventory.getAmmo() >= weaponCost) {
+      // Unlock and select the weapon
+      this.unlockWeapon(weaponId);
+      weaponInventory.setCurrentWeapon(weaponId);
+      weaponInventory.addAmmo(-weaponCost); // Deduct cost
+      this.updateWeaponUI();
+    }
+  }
+
+  private getWeaponCost(weaponId: string): number | null {
+    const weaponCosts: { [key: string]: number } = {
+      [Throw.id]: 0,
+      [Shovel.id]: 10,
+      [Pistol.id]: 20,
+      [FullAutoGun.id]: 30,
+      [Shotgun.id]: 50,
+      [Sniper.id]: 100,
+    };
+    return weaponCosts[weaponId] ?? null;
+  }
+
+  private unlockWeapon(weaponId: string): void {
+    if (!this.character) return;
+
+    const weaponInventory = this.character.getWeaponInventory();
+
+    // Create the weapon based on ID
+    let weapon;
+    switch (weaponId) {
+      case Throw.id:
+        weapon = new Throw(this);
+        break;
+      case Shovel.id:
+        weapon = new Shovel(this);
+        break;
+      case Pistol.id:
+        weapon = new Pistol(this);
+        break;
+      case FullAutoGun.id:
+        weapon = new FullAutoGun(this);
+        break;
+      case Shotgun.id:
+        weapon = new Shotgun(this);
+        break;
+      case Sniper.id:
+        weapon = new Sniper(this);
+        break;
+      default:
+        return;
+    }
+
+    weaponInventory.addWeapon(weapon);
+  }
+
+  private updateWeaponUI(): void {
+    if (!this.character || !this.uiScene) return;
+
+    const currentWeapon = this.character
+      .getWeaponInventory()
+      .getCurrentWeapon();
+    const weaponInventory = this.character.getWeaponInventory();
+    this.uiScene.updateWeaponInfo(
+      currentWeapon.getWeaponName(),
+      weaponInventory.getAmmo()
+    );
   }
 }

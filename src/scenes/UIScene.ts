@@ -23,6 +23,7 @@ export class UIScene extends Phaser.Scene {
   private debugLogTimer: Phaser.Time.TimerEvent | undefined;
   private reloadBar?: Phaser.GameObjects.Graphics;
   private reloadTween?: Phaser.Tweens.Tween;
+  private weaponSelectionCallback?: (weaponId: string) => void;
 
   constructor() {
     super({ key: "UIScene" });
@@ -329,46 +330,48 @@ export class UIScene extends Phaser.Scene {
     modalY: number,
     modalWidth: number
   ): Phaser.GameObjects.Text[] {
+    const unlockedWeapons = this.getUnlockedWeapons();
+
     const weapons = [
       {
         name: "Throw-a-Spud",
         icon: "character-throw",
-        unlocked: true,
+        unlocked: unlockedWeapons.has(Throw.id),
         cost: null,
         id: Throw.id,
       },
       {
         name: "Plant-a-Spud",
         icon: "character-no-gun",
-        unlocked: false,
+        unlocked: unlockedWeapons.has(Shovel.id),
         cost: 10,
         id: Shovel.id,
       },
       {
         name: "SpudBlaster",
         icon: "character-auto-gun",
-        unlocked: false,
+        unlocked: unlockedWeapons.has(Pistol.id),
         cost: 15,
         id: Pistol.id,
       },
       {
         name: "SpudSower3000",
         icon: "character-spudblaster",
-        unlocked: false,
+        unlocked: unlockedWeapons.has(FullAutoGun.id),
         cost: 15,
         id: FullAutoGun.id,
       },
       {
         name: "Spud Multiplier",
         icon: "character-multi-gun",
-        unlocked: false,
+        unlocked: unlockedWeapons.has(Shotgun.id),
         cost: 15,
         id: Shotgun.id,
       },
       {
         name: "Spud Thunder",
         icon: "character-thunder",
-        unlocked: false,
+        unlocked: unlockedWeapons.has(Sniper.id),
         cost: 15,
         id: Sniper.id,
       },
@@ -436,13 +439,11 @@ export class UIScene extends Phaser.Scene {
         items.push(costText);
       }
 
-      // Make item interactive if unlocked
-      if (weapon.unlocked) {
-        weaponName.setInteractive({ useHandCursor: true });
-        weaponName.on("pointerdown", () => {
-          this.selectWeapon(weapon.name);
-        });
-      }
+      // Make item interactive for all weapons
+      weaponName.setInteractive({ useHandCursor: true });
+      weaponName.on("pointerdown", () => {
+        this.selectWeapon(weapon.id);
+      });
     });
 
     return items;
@@ -472,9 +473,10 @@ export class UIScene extends Phaser.Scene {
     }
   }
 
-  private selectWeapon(weaponName: string): void {
-    // TODO: Implement weapon selection logic
-    console.log(`Selected weapon: ${weaponName}`);
+  private selectWeapon(weaponId: string): void {
+    if (this.weaponSelectionCallback) {
+      this.weaponSelectionCallback(weaponId);
+    }
     this.closeWeaponModal();
   }
 
@@ -613,6 +615,30 @@ export class UIScene extends Phaser.Scene {
 
   toggleVisibility(): void {
     this.setVisible(!this.isVisible);
+  }
+
+  setWeaponSelectionCallback(callback: (weaponId: string) => void): void {
+    this.weaponSelectionCallback = callback;
+  }
+
+  setWeaponSwitchCallback(_callback: () => void): void {
+    // This method is called from GameScene but not used in UIScene
+    // The weapon switching is handled through the weapon selection callback
+  }
+
+  private getUnlockedWeapons(): Set<string> {
+    const gameScene = this.scene.get("GameScene") as any;
+    if (!gameScene?.character) return new Set(["throw-a-spud"]); // Default to throw weapon
+
+    const weaponInventory = gameScene.character.getWeaponInventory();
+    const unlockedWeapons = new Set<string>();
+
+    // Add all weapons in the inventory
+    weaponInventory.getAllWeapons().forEach((weapon: any) => {
+      unlockedWeapons.add(weapon.constructor.id);
+    });
+
+    return unlockedWeapons;
   }
 
   resize(): void {

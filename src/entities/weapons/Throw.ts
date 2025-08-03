@@ -3,7 +3,7 @@ import { Projectile } from "../Projectile";
 import type { GameScene } from "../../scenes/GameScene";
 
 export class Throw extends Weapon {
-  static override id: string = "throw-a-spud";
+  static override id: string = "Throw-a-Spud";
 
   constructor(scene: GameScene) {
     super(scene, 800, 15, "Throw-a-Spud", 0, 10, "character-throw");
