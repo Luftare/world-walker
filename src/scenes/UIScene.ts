@@ -15,6 +15,7 @@ export class UIScene extends Phaser.Scene {
   private ammoDisplay?: Phaser.GameObjects.Container;
   private weaponModal?: Phaser.GameObjects.Container;
   private modalAmmoCountText?: Phaser.GameObjects.Text;
+  private weaponListItems: Phaser.GameObjects.GameObject[] = [];
   private currentAmmo: number = 0;
   private isVisible: boolean = true;
   private isModalOpen: boolean = false;
@@ -284,9 +285,6 @@ export class UIScene extends Phaser.Scene {
       10 * this.devicePixelRatio
     );
 
-    // Create weapon list items
-    const weaponItems = this.createWeaponListItems(modalX, modalY, modalWidth);
-
     // Create close button
     const closeButton = this.add.text(
       modalX + modalWidth / 2,
@@ -308,7 +306,7 @@ export class UIScene extends Phaser.Scene {
       this.closeWeaponModal();
     });
 
-    // Create modal container
+    // Create modal container (without weapon items initially)
     this.weaponModal = this.add.container(0, 0, [
       modalBg,
       headerBg,
@@ -317,7 +315,6 @@ export class UIScene extends Phaser.Scene {
       ammoIcon,
       this.modalAmmoCountText,
       listContainer,
-      ...weaponItems,
       closeButton,
     ]);
     this.weaponModal.setScrollFactor(0);
@@ -331,7 +328,6 @@ export class UIScene extends Phaser.Scene {
     modalWidth: number
   ): Phaser.GameObjects.Text[] {
     const unlockedWeapons = this.getUnlockedWeapons();
-    console.log("Unlocked weapons: ", unlockedWeapons);
     const currentAmmo = this.getCurrentAmmo();
 
     const weapons = [
@@ -488,6 +484,24 @@ export class UIScene extends Phaser.Scene {
 
   private openWeaponModal(): void {
     if (this.weaponModal && this.isVisible) {
+      // Clear existing weapon list items
+      this.clearWeaponListItems();
+
+      // Create fresh weapon list items
+      const gameWidth = this.cameras.main.width;
+      const modalWidth = gameWidth - 32 * this.devicePixelRatio;
+      const modalX = (gameWidth - modalWidth) / 2;
+      const modalY = 16 * this.devicePixelRatio;
+
+      this.weaponListItems = this.createWeaponListItems(
+        modalX,
+        modalY,
+        modalWidth
+      );
+
+      // Add weapon items to modal
+      this.weaponModal.add(this.weaponListItems);
+
       this.weaponModal.setVisible(true);
       this.isModalOpen = true;
       // Update modal ammo count when opening
@@ -639,6 +653,7 @@ export class UIScene extends Phaser.Scene {
     if (this.weaponModal && !visible) {
       this.weaponModal.setVisible(false);
       this.isModalOpen = false;
+      this.clearWeaponListItems();
     }
   }
 
@@ -677,6 +692,17 @@ export class UIScene extends Phaser.Scene {
     return gameScene.character.getWeaponInventory().getAmmo();
   }
 
+  private clearWeaponListItems(): void {
+    // Remove existing weapon list items from modal
+    if (this.weaponModal) {
+      this.weaponListItems.forEach((item) => {
+        this.weaponModal!.remove(item);
+        item.destroy();
+      });
+    }
+    this.weaponListItems = [];
+  }
+
   resize(): void {
     const gameWidth = this.cameras.main.width;
     const padding = 10 * this.devicePixelRatio;
@@ -712,6 +738,7 @@ export class UIScene extends Phaser.Scene {
     if (this.reloadBar) this.reloadBar.destroy();
     if (this.reloadTween) this.reloadTween.stop();
     if (this.ammoDisplay) this.ammoDisplay.destroy();
+    this.clearWeaponListItems();
     if (this.weaponModal) this.weaponModal.destroy();
   }
 }
