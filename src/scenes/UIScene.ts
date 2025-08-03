@@ -7,7 +7,9 @@ export class UIScene extends Phaser.Scene {
   private healthText?: Phaser.GameObjects.Text;
   private debugLogText?: Phaser.GameObjects.Text;
   private ammoDisplay?: Phaser.GameObjects.Container;
+  private weaponModal?: Phaser.GameObjects.Container;
   private isVisible: boolean = true;
+  private isModalOpen: boolean = false;
   private onWeaponSwitch?: () => void;
   private devicePixelRatio: number;
   private isShooting: boolean = false;
@@ -113,11 +115,14 @@ export class UIScene extends Phaser.Scene {
     this.weaponInfoText.setDepth(1000);
     this.weaponInfoText.setInteractive({ useHandCursor: true });
     this.weaponInfoText.on("pointerdown", () => {
-      this.switchWeapon();
+      this.toggleWeaponModal();
     });
 
     // Create ammo display (top-right)
     this.createAmmoDisplay(gameWidth, padding, fontSize);
+
+    // Create weapon modal
+    this.createWeaponModal(gameWidth, padding, fontSize);
 
     // Create health text (below weapon info)
     this.healthText = this.add.text(
@@ -169,6 +174,273 @@ export class UIScene extends Phaser.Scene {
     );
     this.ammoDisplay.setScrollFactor(0);
     this.ammoDisplay.setDepth(1000);
+  }
+
+  private createWeaponModal(
+    gameWidth: number,
+    padding: number,
+    fontSize: any
+  ): void {
+    const modalWidth = gameWidth * 0.8;
+    const modalHeight = 300 * this.devicePixelRatio;
+    const modalX = (gameWidth - modalWidth) / 2;
+    const modalY = 100 * this.devicePixelRatio;
+
+    // Create modal background
+    const modalBg = this.add.graphics();
+    modalBg.fillStyle(0xf5f5dc, 0.95); // Light beige background
+    modalBg.lineStyle(4 * this.devicePixelRatio, 0x000000); // Black border
+    modalBg.fillRoundedRect(
+      modalX,
+      modalY,
+      modalWidth,
+      modalHeight,
+      20 * this.devicePixelRatio
+    );
+    modalBg.strokeRoundedRect(
+      modalX,
+      modalY,
+      modalWidth,
+      modalHeight,
+      20 * this.devicePixelRatio
+    );
+
+    // Create header
+    const headerBg = this.add.graphics();
+    headerBg.fillStyle(0xf0f0e0, 0.95); // Slightly darker beige
+    headerBg.lineStyle(2 * this.devicePixelRatio, 0x000000);
+    headerBg.fillRoundedRect(
+      modalX + 10 * this.devicePixelRatio,
+      modalY + 10 * this.devicePixelRatio,
+      modalWidth - 20 * this.devicePixelRatio,
+      60 * this.devicePixelRatio,
+      10 * this.devicePixelRatio
+    );
+    headerBg.strokeRoundedRect(
+      modalX + 10 * this.devicePixelRatio,
+      modalY + 10 * this.devicePixelRatio,
+      modalWidth - 20 * this.devicePixelRatio,
+      60 * this.devicePixelRatio,
+      10 * this.devicePixelRatio
+    );
+
+    // Create weapon icon in header
+    const weaponIcon = this.add.image(
+      modalX + 30 * this.devicePixelRatio,
+      modalY + 40 * this.devicePixelRatio,
+      "character-throw"
+    );
+    weaponIcon.setScale(0.3 * this.devicePixelRatio);
+
+    // Create weapon name in header
+    const weaponName = this.add.text(
+      modalX + 80 * this.devicePixelRatio,
+      modalY + 25 * this.devicePixelRatio,
+      "SpudBlaster3000",
+      {
+        fontSize: `${18 * this.devicePixelRatio}px`,
+        color: "#000000",
+        fontStyle: "bold",
+      }
+    );
+
+    // Create ammo count in header
+    const ammoIcon = this.add.image(
+      modalX + modalWidth - 80 * this.devicePixelRatio,
+      modalY + 40 * this.devicePixelRatio,
+      "ammo-pack"
+    );
+    ammoIcon.setScale(0.4 * this.devicePixelRatio);
+    const ammoCount = this.add.text(
+      modalX + modalWidth - 50 * this.devicePixelRatio,
+      modalY + 25 * this.devicePixelRatio,
+      "x15",
+      {
+        fontSize: `${16 * this.devicePixelRatio}px`,
+        color: "#000000",
+      }
+    );
+
+    // Create weapon list container
+    const listContainer = this.add.graphics();
+    listContainer.fillStyle(0xe0e0d0, 0.95); // Light gray background
+    listContainer.lineStyle(2 * this.devicePixelRatio, 0x000000);
+    listContainer.fillRoundedRect(
+      modalX + 10 * this.devicePixelRatio,
+      modalY + 80 * this.devicePixelRatio,
+      modalWidth - 20 * this.devicePixelRatio,
+      modalHeight - 120 * this.devicePixelRatio,
+      10 * this.devicePixelRatio
+    );
+    listContainer.strokeRoundedRect(
+      modalX + 10 * this.devicePixelRatio,
+      modalY + 80 * this.devicePixelRatio,
+      modalWidth - 20 * this.devicePixelRatio,
+      modalHeight - 120 * this.devicePixelRatio,
+      10 * this.devicePixelRatio
+    );
+
+    // Create weapon list items
+    const weaponItems = this.createWeaponListItems(
+      modalX,
+      modalY,
+      modalWidth,
+      fontSize
+    );
+
+    // Create close button
+    const closeButton = this.add.text(
+      modalX + modalWidth / 2,
+      modalY + modalHeight - 30 * this.devicePixelRatio,
+      "Close",
+      {
+        fontSize: `${20 * this.devicePixelRatio}px`,
+        color: "#000000",
+        backgroundColor: "#f0f0e0",
+        padding: {
+          x: 20 * this.devicePixelRatio,
+          y: 10 * this.devicePixelRatio,
+        },
+      }
+    );
+    closeButton.setOrigin(0.5, 0.5);
+    closeButton.setInteractive({ useHandCursor: true });
+    closeButton.on("pointerdown", () => {
+      this.closeWeaponModal();
+    });
+
+    // Create modal container
+    this.weaponModal = this.add.container(0, 0, [
+      modalBg,
+      headerBg,
+      weaponIcon,
+      weaponName,
+      ammoIcon,
+      ammoCount,
+      listContainer,
+      ...weaponItems,
+      closeButton,
+    ]);
+    this.weaponModal.setScrollFactor(0);
+    this.weaponModal.setDepth(2000);
+    this.weaponModal.setVisible(false);
+  }
+
+  private createWeaponListItems(
+    modalX: number,
+    modalY: number,
+    modalWidth: number,
+    fontSize: any
+  ): Phaser.GameObjects.Text[] {
+    const weapons = [
+      { name: "SpudBlaster3000", unlocked: true, cost: null },
+      { name: "Potato Throw", unlocked: false, cost: 15 },
+      { name: "Spud Multiplier", unlocked: false, cost: 15 },
+      { name: "Spud Sower 3000", unlocked: false, cost: 15 },
+      { name: "Spud Thunder", unlocked: false, cost: 15 },
+      { name: "Auto Gun", unlocked: false, cost: 15 },
+    ];
+
+    const items: Phaser.GameObjects.Text[] = [];
+    const itemHeight = 40 * this.devicePixelRatio;
+    const startY = modalY + 100 * this.devicePixelRatio;
+
+    weapons.forEach((weapon, index) => {
+      const itemY = startY + index * itemHeight;
+
+      // Create weapon icon
+      const weaponIcon = this.add.image(
+        modalX + 30 * this.devicePixelRatio,
+        itemY + itemHeight / 2,
+        "character-throw"
+      );
+      weaponIcon.setScale(0.2 * this.devicePixelRatio);
+      items.push(weaponIcon as any);
+
+      // Create weapon name
+      const weaponName = this.add.text(
+        modalX + 80 * this.devicePixelRatio,
+        itemY + 10 * this.devicePixelRatio,
+        weapon.name,
+        {
+          fontSize: `${14 * this.devicePixelRatio}px`,
+          color: weapon.unlocked ? "#000000" : "#666666",
+        }
+      );
+      items.push(weaponName);
+
+      // Create selection indicator or cost
+      if (weapon.unlocked) {
+        const checkmark = this.add.text(
+          modalX + modalWidth - 50 * this.devicePixelRatio,
+          itemY + 10 * this.devicePixelRatio,
+          "✓",
+          {
+            fontSize: `${20 * this.devicePixelRatio}px`,
+            color: "#000000",
+            fontStyle: "bold",
+          }
+        );
+        items.push(checkmark);
+      } else {
+        const costIcon = this.add.image(
+          modalX + modalWidth - 80 * this.devicePixelRatio,
+          itemY + itemHeight / 2,
+          "ammo-pack"
+        );
+        costIcon.setScale(0.3 * this.devicePixelRatio);
+        items.push(costIcon as any);
+
+        const costText = this.add.text(
+          modalX + modalWidth - 50 * this.devicePixelRatio,
+          itemY + 10 * this.devicePixelRatio,
+          `x${weapon.cost}`,
+          {
+            fontSize: `${12 * this.devicePixelRatio}px`,
+            color: "#666666",
+          }
+        );
+        items.push(costText);
+      }
+
+      // Make item interactive if unlocked
+      if (weapon.unlocked) {
+        weaponName.setInteractive({ useHandCursor: true });
+        weaponName.on("pointerdown", () => {
+          this.selectWeapon(weapon.name);
+        });
+      }
+    });
+
+    return items;
+  }
+
+  private toggleWeaponModal(): void {
+    if (this.isModalOpen) {
+      this.closeWeaponModal();
+    } else {
+      this.openWeaponModal();
+    }
+  }
+
+  private openWeaponModal(): void {
+    if (this.weaponModal && this.isVisible) {
+      this.weaponModal.setVisible(true);
+      this.isModalOpen = true;
+    }
+  }
+
+  private closeWeaponModal(): void {
+    if (this.weaponModal) {
+      this.weaponModal.setVisible(false);
+      this.isModalOpen = false;
+    }
+  }
+
+  private selectWeapon(weaponName: string): void {
+    // TODO: Implement weapon selection logic
+    console.log(`Selected weapon: ${weaponName}`);
+    this.closeWeaponModal();
   }
 
   setWeaponSwitchCallback(callback: () => void): void {
@@ -300,6 +572,10 @@ export class UIScene extends Phaser.Scene {
     }
     if (this.reloadBar) this.reloadBar.setVisible(visible);
     if (this.ammoDisplay) this.ammoDisplay.setVisible(visible);
+    if (this.weaponModal && !visible) {
+      this.weaponModal.setVisible(false);
+      this.isModalOpen = false;
+    }
   }
 
   toggleVisibility(): void {
@@ -341,5 +617,6 @@ export class UIScene extends Phaser.Scene {
     if (this.reloadBar) this.reloadBar.destroy();
     if (this.reloadTween) this.reloadTween.stop();
     if (this.ammoDisplay) this.ammoDisplay.destroy();
+    if (this.weaponModal) this.weaponModal.destroy();
   }
 }
