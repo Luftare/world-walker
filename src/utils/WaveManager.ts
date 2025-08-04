@@ -74,7 +74,7 @@ export class WaveManager {
   }
 
   getSpawnGapSeconds(waveIndex: number): number {
-    return Math.max(0.5, 10 - waveIndex);
+    return Math.max(0.25, 6 - waveIndex * 0.5);
   }
 
   checkIsSpawnReady(waveIndex: number): boolean {

@@ -6,7 +6,7 @@ export class Throw extends Weapon {
   static override id: string = "Throw-a-Spud";
 
   constructor(scene: GameScene) {
-    super(scene, 800, 15, "Throw-a-Spud", 0, 10, "character-throw");
+    super(scene, 800, 20, "Throw-a-Spud", 0, 10, "character-throw");
   }
 
   shoot(

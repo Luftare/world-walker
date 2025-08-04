@@ -20,6 +20,9 @@ import zombieTractorUrl from "../assets/zombie-tractor.png";
 import fieldTileUrl from "../assets/field-tile.png";
 
 import themeUrl from "../assets/audio/theme.m4a";
+import deathSongUrl from "../assets/audio/death-song.m4a";
+import gameBaseMusicUrl from "../assets/audio/game-rhythm.m4a";
+import brassHitUrl from "../assets/audio/brass-hit.m4a";
 import fxZombie1Url from "../assets/audio/fx-zombie-1.m4a";
 import fxZombie2Url from "../assets/audio/fx-zombie-2.m4a";
 import fxZombie3Url from "../assets/audio/fx-zombie-3.m4a";
@@ -62,7 +65,9 @@ export const loadAssets = (scene: Phaser.Scene) => {
   scene.load.image("field-tile", fieldTileUrl);
 
   scene.load.audio("theme", themeUrl);
-  scene.load.audio("death-music", themeUrl);
+  scene.load.audio("death-music", deathSongUrl);
+  scene.load.audio("game-base-music", gameBaseMusicUrl);
+  scene.load.audio("brass-hit", brassHitUrl);
   scene.load.audio("fx-zombie-1", fxZombie1Url);
   scene.load.audio("fx-zombie-2", fxZombie2Url);
   scene.load.audio("fx-zombie-3", fxZombie3Url);

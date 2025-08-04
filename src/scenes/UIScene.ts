@@ -239,8 +239,8 @@ export class UIScene extends Phaser.Scene {
 
     // Create weapon name in header
     const weaponName = this.add.text(
-      modalX + 80 * this.devicePixelRatio,
-      modalY + 25 * this.devicePixelRatio,
+      modalX + 25 * this.devicePixelRatio,
+      modalY + 30 * this.devicePixelRatio,
       "Inventory",
       {
         fontSize: `${18 * this.devicePixelRatio}px`,
@@ -256,15 +256,19 @@ export class UIScene extends Phaser.Scene {
       "ammo-pack"
     );
     ammoIcon.setScale(0.2 * this.devicePixelRatio); // 0.5x of 0.4
+    ammoIcon.setOrigin(1, 0.5);
+
     this.modalAmmoCountText = this.add.text(
-      modalX + modalWidth - 50 * this.devicePixelRatio,
-      modalY + 25 * this.devicePixelRatio,
+      modalX + modalWidth - 70 * this.devicePixelRatio,
+      modalY + 40 * this.devicePixelRatio,
       "x15",
       {
-        fontSize: `${16 * this.devicePixelRatio}px`,
+        fontSize: `${18 * this.devicePixelRatio}px`,
         color: "#000000",
       }
     );
+
+    this.modalAmmoCountText.setOrigin(0, 0.5);
 
     // Create weapon list container
     const listContainer = this.add.graphics();
@@ -392,11 +396,6 @@ export class UIScene extends Phaser.Scene {
       );
       weaponIcon.setScale(0.1 * this.devicePixelRatio);
 
-      // Set opacity for unaffordable weapons
-      if (isLocked && !canAfford) {
-        weaponIcon.setAlpha(0.5);
-      }
-
       items.push(weaponIcon as any);
 
       // Create weapon name with lock emoji for locked weapons
@@ -411,38 +410,15 @@ export class UIScene extends Phaser.Scene {
         }
       );
 
-      // Set opacity for unaffordable weapons
-      if (isLocked && !canAfford) {
-        weaponName.setAlpha(0.5);
-      }
-
       items.push(weaponName);
 
-      // Create selection indicator or cost
-      if (weapon.unlocked) {
-        const checkmark = this.add.text(
-          modalX + modalWidth - 50 * this.devicePixelRatio,
-          itemY + 10 * this.devicePixelRatio,
-          "✓",
-          {
-            fontSize: `${20 * this.devicePixelRatio}px`,
-            color: "#000000",
-            fontStyle: "bold",
-          }
-        );
-        items.push(checkmark);
-      } else {
+      if (!weapon.unlocked) {
         const costIcon = this.add.image(
           modalX + modalWidth - 80 * this.devicePixelRatio,
           itemY + itemHeight / 2,
           "ammo-pack"
         );
         costIcon.setScale(0.15 * this.devicePixelRatio); // 0.5x of 0.3
-
-        // Set opacity for unaffordable weapons
-        if (!canAfford) {
-          costIcon.setAlpha(0.5);
-        }
 
         items.push(costIcon as any);
 
@@ -452,14 +428,9 @@ export class UIScene extends Phaser.Scene {
           `x${weapon.cost}`,
           {
             fontSize: `${12 * this.devicePixelRatio}px`,
-            color: canAfford ? "#666666" : "#999999",
+            color: canAfford ? "#444444" : "#ff4444",
           }
         );
-
-        // Set opacity for unaffordable weapons
-        if (!canAfford) {
-          costText.setAlpha(0.5);
-        }
 
         items.push(costText);
       }

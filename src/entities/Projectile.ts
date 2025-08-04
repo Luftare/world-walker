@@ -72,8 +72,8 @@ export class Projectile extends Phaser.Physics.Arcade.Sprite {
     // Illusion of flight in arc
     this.scene.tweens.add({
       targets: this,
-      scaleX: startScaleX * 1.4,
-      scaleY: startScaleY * 1.4,
+      scaleX: startScaleX * 1.7,
+      scaleY: startScaleY * 1.7,
       duration: this.timeToLive / 2,
       yoyo: true,
       repeat: -1,

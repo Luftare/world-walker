@@ -60,6 +60,16 @@ export class GameScene extends Phaser.Scene {
       console.log("end", waveIndex, gapSeconds);
     };
 
+    this.sound.play("game-base-music", {
+      loop: true,
+      volume: 0.1,
+    });
+
+    this.sound.play("brass-hit", {
+      loop: true,
+      volume: 0.1,
+    });
+
     // Clean up any existing state first
     this.cleanupEntities();
     this.cleanupSystems();
@@ -451,6 +461,8 @@ export class GameScene extends Phaser.Scene {
     this.events.on("playerDied", () => {
       this.scene.stop("UIScene");
       this.tearDown();
+
+      this.sound.stopAll();
 
       // Transition to lobby with game over state
       this.scene.start("LobbyScene", {
